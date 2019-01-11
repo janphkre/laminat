@@ -6,7 +6,9 @@ import au.com.dius.pact.model.RequestResponsePact
 import com.google.common.collect.Lists
 import org.junit.Assert
 import org.junit.Test
-import java.io.*
+import java.io.BufferedReader
+import java.io.File
+import java.io.InputStreamReader
 
 class PactTest {
 

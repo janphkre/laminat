@@ -1,8 +1,7 @@
 package au.com.dius.pact.model.generators
 
 import au.com.dius.pact.model.*
-import groovy.json.JsonOutput
-import groovy.json.JsonSlurper
+import com.google.gson.JsonParser
 import org.apache.commons.collections4.IteratorUtils
 
 enum class Category {
@@ -27,9 +26,9 @@ data class QueryResult(var value: Any, val key: Any? = null, val parent: Any? = 
 
 object JsonContentTypeHandler : ContentTypeHandler {
   override fun processBody(value: String, fn: (QueryResult) -> Unit): OptionalBody {
-    val bodyJson = QueryResult(JsonSlurper().parseText(value))
+    val bodyJson = QueryResult(JsonParser().parse(value))
     fn.invoke(bodyJson)
-    return OptionalBody.body(JsonOutput.toJson(bodyJson.value))
+    return OptionalBody.body(bodyJson.value.toString())
   }
 
   override fun applyKey(body: QueryResult, key: String, generator: Generator) {

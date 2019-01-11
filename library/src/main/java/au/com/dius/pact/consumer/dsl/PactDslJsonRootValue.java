@@ -2,23 +2,10 @@ package au.com.dius.pact.consumer.dsl;
 
 import au.com.dius.pact.consumer.InvalidMatcherException;
 import au.com.dius.pact.model.generators.Category;
-import au.com.dius.pact.model.generators.DateGenerator;
-import au.com.dius.pact.model.generators.DateTimeGenerator;
-import au.com.dius.pact.model.generators.RandomDecimalGenerator;
-import au.com.dius.pact.model.generators.RandomHexadecimalGenerator;
-import au.com.dius.pact.model.generators.RandomIntGenerator;
-import au.com.dius.pact.model.generators.RandomStringGenerator;
-import au.com.dius.pact.model.generators.RegexGenerator;
-import au.com.dius.pact.model.generators.TimeGenerator;
-import au.com.dius.pact.model.generators.UuidGenerator;
-import au.com.dius.pact.model.matchingrules.MatchingRule;
-import au.com.dius.pact.model.matchingrules.MatchingRuleGroup;
-import au.com.dius.pact.model.matchingrules.NumberTypeMatcher;
-import au.com.dius.pact.model.matchingrules.RuleLogic;
-import au.com.dius.pact.model.matchingrules.TypeMatcher;
+import au.com.dius.pact.model.generators.*;
+import au.com.dius.pact.model.matchingrules.*;
+import com.google.gson.Gson;
 import com.mifmif.common.regex.Generex;
-import groovy.json.JsonOutput;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.json.JSONObject;
@@ -54,7 +41,7 @@ public class PactDslJsonRootValue extends DslPart {
   @Override
   public Object getBody() {
     if (encodeJson) {
-      return JsonOutput.toJson(value);
+      return new Gson().toJson(value);
     }
     return value;
   }

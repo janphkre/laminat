@@ -216,19 +216,6 @@ public class PactDslResponse {
     }
 
     /**
-     * Terminates the DSL and builds a au.com.dius.pact fragment to represent the interactions
-     *
-     * @deprecated Use toPact instead
-     */
-    /*public PactFragment toFragment() {
-        addInteraction();
-        return new PactFragment(
-                request.consumer,
-                request.provider,
-          JavaConversions$.MODULE$.asScalaBuffer(consumerPactBuilder.getInteractions()).toSeq());
-    }*/
-
-    /**
      * Terminates the DSL and builds a au.com.dius.pact to represent the interactions
      */
     public RequestResponsePact toPact() {

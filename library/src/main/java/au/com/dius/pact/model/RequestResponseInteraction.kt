@@ -1,6 +1,6 @@
 package au.com.dius.pact.model
 
-import groovy.json.JsonSlurper
+import com.google.gson.JsonParser
 import java.net.URLEncoder
 
 class RequestResponseInteraction(
@@ -109,12 +109,7 @@ class RequestResponseInteraction(
 
         fun parseBody(httpPart: HttpPart): Any? {
             return if (httpPart.jsonBody() && httpPart.body.isPresent()) {
-                val body = JsonSlurper().parseText(httpPart.body.value)
-                if (body is String) {
-                    httpPart.body.value
-                } else {
-                    body
-                }
+                JsonParser().parse(httpPart.body.value)
             } else {
                 httpPart.body.value
             }
