@@ -8,7 +8,8 @@ From this pact a mocked/stubbed provider can be definied on the consumer side an
 
 This is an early prototype of a lightweight adaption of pact-jvm7.0 for the Android-vm. It is only meant for the consumer side of pact,
 therefore it only contains pact creation, serialization and consumer matching. This adaption was mostly created to get rid of the spring framework and additonal unused HTTPClients to maintain a small library on android so that you can use the HttpLibrary of your choice.
-If you are a bit at loss on how to use this library check out the last section of this readme.
+Also, this lightweight adaption requires neither groovy nor ruby anymore.
+The last section describes how to integrate pacts with okhttp.
 
 ### Pact creation
 Just like the normal pact-jvm project, the PactDSL can be used in this implementation.
