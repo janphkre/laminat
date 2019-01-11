@@ -1,13 +1,12 @@
 package au.com.dius.pact.model
 
 import com.google.gson.GsonBuilder
-import mu.KLogging
 import java.io.PrintWriter
 
 /**
  * Class to write out a au.com.dius.pact to a file
  */
-object PactWriter: KLogging() {
+object PactWriter {
 
   /**
    * Writes out the au.com.dius.pact to the provided au.com.dius.pact file

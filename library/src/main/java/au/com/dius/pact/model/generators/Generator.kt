@@ -1,20 +1,18 @@
 package au.com.dius.pact.model.generators
 
+import android.os.Build
 import au.com.dius.pact.model.PactSpecVersion
 import com.mifmif.common.regex.Generex
-import mu.KotlinLogging
 import org.apache.commons.lang3.RandomStringUtils
 import org.apache.commons.lang3.RandomUtils
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatterBuilder
 import java.math.BigDecimal
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.declaredMemberFunctions
-
-private val logger = KotlinLogging.logger {}
 
 fun lookupGenerator(generatorMap: Map<String, Any>): Generator? {
   var generator: Generator? = null
@@ -24,12 +22,8 @@ fun lookupGenerator(generatorMap: Map<String, Any>): Generator? {
     val fromMap = generatorClass.companionObject?.declaredMemberFunctions?.find { it.name == "fromMap" }
     if (fromMap != null) {
       generator = fromMap.call(generatorClass.companionObjectInstance, generatorMap) as Generator?
-    } else {
-      logger.warn { "Could not invoke generator class 'fromMap' for generator config '$generatorMap'" }
     }
-  } catch (e: ClassNotFoundException) {
-    logger.warn(e) { "Could not find generator class for generator config '$generatorMap'" }
-  }
+  } catch (e: ClassNotFoundException) { }
 
   return generator
 }
@@ -53,13 +47,11 @@ data class RandomIntGenerator(val min: Int, val max: Int) : Generator {
       val min = if (map["min"] is Number) {
         (map["min"] as Number).toInt()
       } else {
-        logger.warn { "Ignoring invalid value for min: '${map["min"]}'" }
         0
       }
       val max = if (map["max"] is Number) {
         (map["max"] as Number).toInt()
       } else {
-        logger.warn { "Ignoring invalid value for max: '${map["max"]}'" }
         Int.MAX_VALUE
       }
       return RandomIntGenerator(min, max)
@@ -79,7 +71,6 @@ data class RandomDecimalGenerator(val digits: Int) : Generator {
       val digits = if (map["digits"] is Number) {
         (map["digits"] as Number).toInt()
       } else {
-        logger.warn { "Ignoring invalid value for digits: '${map["digits"]}'" }
         10
       }
       return RandomDecimalGenerator(digits)
@@ -99,7 +90,6 @@ data class RandomHexadecimalGenerator(val digits: Int) : Generator {
       val digits = if (map["digits"] is Number) {
         (map["digits"] as Number).toInt()
       } else {
-        logger.warn { "Ignoring invalid value for digits: '${map["digits"]}'" }
         10
       }
       return RandomHexadecimalGenerator(digits)
@@ -121,7 +111,6 @@ data class RandomStringGenerator(val size: Int = 20) : Generator {
       val size = if (map["size"] is Number) {
         (map["size"] as Number).toInt()
       } else {
-        logger.warn { "Ignoring invalid value for size: '${map["size"]}'" }
         10
       }
       return RandomStringGenerator(size)
@@ -239,7 +228,11 @@ object RandomBooleanGenerator : Generator {
   }
 
   override fun generate(base: Any?): Any {
-    return ThreadLocalRandom.current().nextBoolean()
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      ThreadLocalRandom.current().nextBoolean()
+    } else {
+      Random().nextBoolean()
+    }
   }
 
   override fun equals(other: Any?) = other is RandomBooleanGenerator

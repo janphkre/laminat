@@ -1,14 +1,8 @@
 package au.com.dius.pact.model.generators
 
-import au.com.dius.pact.model.ContentType
-import au.com.dius.pact.model.InvalidPactException
-import au.com.dius.pact.model.OptionalBody
-import au.com.dius.pact.model.PactSpecVersion
-import au.com.dius.pact.model.PathToken
-import au.com.dius.pact.model.parsePath
+import au.com.dius.pact.model.*
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-import mu.KLogging
 import org.apache.commons.collections4.IteratorUtils
 
 enum class Category {
@@ -98,7 +92,7 @@ object JsonContentTypeHandler : ContentTypeHandler {
 
 data class Generators(val categories: MutableMap<Category, MutableMap<String, Generator>> = HashMap()) {
 
-  companion object : KLogging() {
+  companion object {
 
     @JvmStatic fun fromMap(map: Map<String, Map<String, Any>>?): Generators {
       val generators = Generators()
@@ -111,11 +105,7 @@ data class Generators(val categories: MutableMap<Category, MutableMap<String, Ge
               val generator = lookupGenerator(generatorMap)
               if (generator != null) {
                 generators.addGenerator(category, generator = generator)
-              } else {
-                logger.warn { "Ignoring invalid generator config '$generatorMap'" }
               }
-            } else {
-              logger.warn { "Ignoring invalid generator config '$generatorMap'" }
             }
             else -> generatorMap.forEach { (generatorKey, generatorValue) ->
               if (generatorValue is Map<*, *> && generatorValue.containsKey("type")) {
@@ -123,16 +113,11 @@ data class Generators(val categories: MutableMap<Category, MutableMap<String, Ge
                 val generator = lookupGenerator(generatorValue as Map<String, Any>)
                 if (generator != null) {
                   generators.addGenerator(category, generatorKey, generator)
-                } else {
-                  logger.warn { "Ignoring invalid generator config '$generatorMap'" }
                 }
-              } else {
-                logger.warn { "Ignoring invalid generator config '$generatorKey -> $generatorValue'" }
               }
             }
           }
         } catch (e: IllegalArgumentException) {
-          logger.warn(e) { "Ignoring generator with invalid category '$key'" }
         }
       }
 

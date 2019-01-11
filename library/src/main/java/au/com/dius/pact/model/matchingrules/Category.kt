@@ -1,7 +1,6 @@
 package au.com.dius.pact.model.matchingrules
 
 import au.com.dius.pact.model.PactSpecVersion
-import mu.KLogging
 import org.apache.commons.collections4.Predicate
 import org.apache.commons.collections4.Transformer
 
@@ -11,8 +10,6 @@ import org.apache.commons.collections4.Transformer
 data class Category @JvmOverloads constructor(val name: String,
                                               var matchingRules: MutableMap<String, MatchingRuleGroup> =
                                               mutableMapOf()) {
-
-  companion object : KLogging()
 
   fun addRule(item: String, matchingRule: MatchingRule) {
     if (!matchingRules.containsKey(item)) {
@@ -104,8 +101,6 @@ data class Category @JvmOverloads constructor(val name: String,
         value.forEach {
           addRule(MatchingRuleGroup.ruleFromMap(it as Map<String, Any?>))
         }
-      } else {
-        logger.warn { "$value is not a valid matcher definition" }
       }
     }
   }

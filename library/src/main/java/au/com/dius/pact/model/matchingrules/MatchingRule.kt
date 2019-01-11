@@ -1,8 +1,6 @@
 package au.com.dius.pact.model.matchingrules
 
 import au.com.dius.pact.model.PactSpecVersion
-import mu.KLogging
-import java.lang.IllegalArgumentException
 
 /**
  * Logic to use to combine rules
@@ -118,14 +116,13 @@ data class MatchingRuleGroup @JvmOverloads constructor(val rules: MutableList<Ma
     }
   }
 
-  companion object : KLogging() {
+  companion object {
     fun fromMap(map: Map<String, Any?>): MatchingRuleGroup {
       var ruleLogic = RuleLogic.AND
       if (map.containsKey("combine")) {
         try {
           ruleLogic = RuleLogic.valueOf(map["combine"] as String)
         } catch (e: IllegalArgumentException) {
-          logger.warn { "${map["combine"]} is not a valid matcher rule logic value" }
         }
       }
 
@@ -139,7 +136,6 @@ data class MatchingRuleGroup @JvmOverloads constructor(val rules: MutableList<Ma
             }
           }
         } else {
-          logger.warn { "Map $map does not contain a list of matchers" }
         }
       }
 
@@ -181,7 +177,6 @@ data class MatchingRuleGroup @JvmOverloads constructor(val rules: MutableList<Ma
           "integer" -> NumberTypeMatcher(NumberTypeMatcher.NumberType.INTEGER)
           "decimal" -> NumberTypeMatcher(NumberTypeMatcher.NumberType.DECIMAL)
           "real" -> {
-            logger.warn { "The 'real' type matcher is deprecated, use 'decimal' instead" }
             NumberTypeMatcher (NumberTypeMatcher.NumberType.DECIMAL)
           }
           MIN -> MinTypeMatcher(mapEntryToInt(map, MIN))
@@ -196,7 +191,6 @@ data class MatchingRuleGroup @JvmOverloads constructor(val rules: MutableList<Ma
             if (map.containsKey(DATE)) DateMatcher(map[DATE].toString())
             else DateMatcher()
           else -> {
-            logger.warn { "Unrecognised matcher ${map[MATCH]}, defaulting to equality matching" }
             EqualsMatcher
           }
         }
@@ -214,7 +208,6 @@ data class MatchingRuleGroup @JvmOverloads constructor(val rules: MutableList<Ma
         return DateMatcher(map[DATE] as String)
       }
 
-      logger.warn { "Unrecognised matcher definition $map, defaulting to equality matching" }
       return EqualsMatcher
     }
   }

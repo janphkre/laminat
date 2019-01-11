@@ -37,7 +37,6 @@ dependencies {
     implementation "org.apache.httpcomponents:httpcore:4.4.4"
     implementation "joda-time:joda-time:2.9.9"
     implementation "com.github.mifmif:generex:1.0.1"
-    implementation "io.github.microutils:kotlin-logging:1.4.4"
     implementation "io.gatling:jsonpath_2.11:0.6.4"
     implementation "com.github.zafarkhaja:java-semver:0.9.0"
 
