@@ -116,6 +116,11 @@ interface Pact {
   fun compatibleTo(other: Pact): Boolean
 
   /**
+   * If this au.com.dius.pact is conflicting with the other au.com.dius.pact. Pacts are conflicting if they have a conflicting interaction
+   */
+  fun conflictsWith(other:Pact): List<Pair<Interaction, Interaction>>
+
+  /**
    * Merges all the interactions into this Pact
    * @param interactions
    */

@@ -1,4 +1,4 @@
-package au.com.dius.pact
+package au.com.dius.pact.external
 
 import au.com.dius.pact.model.*
 import java.io.File

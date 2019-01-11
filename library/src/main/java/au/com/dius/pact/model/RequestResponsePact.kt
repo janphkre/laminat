@@ -1,11 +1,12 @@
 package au.com.dius.pact.model
 
+import com.google.common.collect.Lists
 import org.apache.commons.collections4.Predicate
 
 class RequestResponsePact(override val provider: Provider, override val consumer: Consumer, var requestResponseInteractions: List<RequestResponseInteraction>): BasePact() {
 
     override val interactions: List<Interaction>
-    get() = requestResponseInteractions as List<Interaction>
+    get() = requestResponseInteractions
 
     override fun sortInteractions(): Pact {
         requestResponseInteractions = ArrayList<RequestResponseInteraction>(requestResponseInteractions).sortedBy {
@@ -33,5 +34,9 @@ class RequestResponsePact(override val provider: Provider, override val consumer
         return FilteredPact(this, predicate)
     }
 
-
+    override fun conflictsWith(other: Pact): List<Pair<Interaction, Interaction>> {
+        return Lists.cartesianProduct(interactions, other.interactions)
+            .map { it[0] to it[1] }
+            .filter { it.first.conflictsWith(it.second) }
+    }
 }

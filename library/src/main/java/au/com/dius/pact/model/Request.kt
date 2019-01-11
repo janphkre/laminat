@@ -1,8 +1,8 @@
 package au.com.dius.pact.model
 
+import au.com.dius.pact.model.BasePact.Companion.jsonParser
 import au.com.dius.pact.model.generators.Generators
 import au.com.dius.pact.model.matchingrules.MatchingRules
-import com.google.gson.JsonParser
 
 class Request(
     val method: String = DEFAULT_METHOD,
@@ -70,7 +70,6 @@ class Request(
         const val COOKIE_KEY = "cookie"
         const val DEFAULT_METHOD = "GET"
         const val DEFAULT_PATH = "/"
-        val jsonParser = JsonParser()
 
         fun fromMap(map: Map<*, *>): Request {
             return Request(

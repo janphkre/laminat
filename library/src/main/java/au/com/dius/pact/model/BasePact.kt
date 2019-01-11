@@ -1,6 +1,7 @@
 package au.com.dius.pact.model
 
 import au.com.dius.pact.BuildConfig
+import com.google.gson.JsonParser
 
 abstract class BasePact: Pact {
 
@@ -12,6 +13,8 @@ abstract class BasePact: Pact {
     }
 
     companion object {
+
+        val jsonParser = JsonParser()
 
         fun getMetaData(version: String): Map<String, Any?> {
             return mapOf(

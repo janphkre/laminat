@@ -1,7 +1,5 @@
 package au.com.dius.pact.model
 
-import com.google.common.collect.Lists
-
 data class MergeResult(val ok: Boolean, val message: String, val result: Pact? = null)
 
 /**
@@ -19,9 +17,7 @@ object PactMerge {
       return MergeResult(true, "", existing)
     }
 
-    val conflicts = Lists.cartesianProduct(existing.interactions, newPact.interactions)
-      .map { it[0] to it[1] }
-      .filter { it.first.conflictsWith(it.second) }
+    val conflicts = existing.conflictsWith(newPact)
     if (conflicts.isEmpty()) {
       existing.mergeInteractions(newPact.interactions)
       return MergeResult(true, "", existing)

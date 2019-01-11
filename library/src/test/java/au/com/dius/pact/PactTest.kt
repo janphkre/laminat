@@ -1,6 +1,7 @@
 package au.com.dius.pact
 
 import au.com.dius.pact.consumer.ConsumerPactBuilder
+import au.com.dius.pact.external.PactJsonifier
 import au.com.dius.pact.model.PactMergeException
 import au.com.dius.pact.model.RequestResponsePact
 import com.google.common.collect.Lists
