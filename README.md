@@ -61,4 +61,18 @@ override fun dispatch(request: RecordedRequest?): MockResponse {
     val interaction = pactMatcher.findInteraction(pactList, currentProviderStates, request.method, request.path, request.requestUrl, request.headers, bodyString)
     return interaction?.response?.generateResponse()?.mapToMockResponse() ?: MockResponse().setResponseCode(404)
 }
+
+private fun Response.mapToMockResponse(): MockResponse {
+    return MockResponse()
+        .setResponseCode(this.status)
+        .setHeaders(this.headers.mapToMockHeaders())
+        .setBody(this.body.value ?: "")
+}
+
+private fun Map<String, String>?.mapToMockHeaders(): Headers {
+    if(this == null) {
+        return Headers.of()
+    }
+    return Headers.of(this)
+}
 ```
