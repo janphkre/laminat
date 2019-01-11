@@ -40,3 +40,38 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
+apply plugin: 'maven-publish'
+
+def coreAarFile = file('build/outputs/aar/library-release.aar')
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+publishing.publications {
+    broker(MavenPublication) {
+        artifact coreAarFile
+        groupId "com.github.janphkre"
+        artifactId "laminat"
+        version "$pact_version"
+        //The publication doesn't know about our dependencies, so we have to manually add them to the pom
+        pom.withXml {
+            def dependenciesNode = asNode().appendNode('dependencies')
+            consumeNodes(dependenciesNode, configurations.api.allDependencies)
+        }
+    }
+}
+
+static def consumeNodes(Node dependenciesNode, DependencySet dependencySet) {
+    //Iterate over the dependencies (we don't want the test ones), adding a <dependency> node for each
+    dependencySet.each {
+        if(it instanceof ExternalModuleDependency) {
+            def dependencyNode = dependenciesNode.appendNode('dependency')
+            dependencyNode.appendNode('groupId', it.group)
+            dependencyNode.appendNode('artifactId', it.name)
+            dependencyNode.appendNode('version', it.version)
+        }
+    }
+}
+
+publishing.repositories {
+    mavenLocal()
+}
