@@ -4,7 +4,6 @@ import au.com.dius.pact.consumer.ConsumerPactBuilder
 import au.com.dius.pact.external.PactJsonifier
 import au.com.dius.pact.model.PactMergeException
 import au.com.dius.pact.model.RequestResponsePact
-import com.google.common.collect.Lists
 import org.junit.Assert
 import org.junit.Test
 import java.io.BufferedReader
@@ -109,9 +108,7 @@ class PactTest {
                     continue
                 }
                 Assert.assertTrue("Pacts are not compatible: $first; $second", first.compatibleTo(second))
-                val conflicts = Lists.cartesianProduct(first.requestResponseInteractions, second.requestResponseInteractions)
-                    .map { it[0] to it[1] }
-                    .filter { it.first.conflictsWith(it.second) }
+                val conflicts = first.conflictsWith(second)
                 Assert.assertTrue("Pacts are incompatible as there were ${conflicts.size} conflict(s) " +
                         "between the interactions - ${conflicts.joinToString("\n")}", conflicts.isEmpty())
             }
@@ -127,9 +124,7 @@ class PactTest {
                     continue
                 }
                 Assert.assertTrue("Pacts are not compatible: $first; $second", first.compatibleTo(second))
-                val conflicts = Lists.cartesianProduct(first.requestResponseInteractions, second.requestResponseInteractions)
-                    .map { it[0] to it[1] }
-                    .filter { it.first.conflictsWith(it.second) }
+                val conflicts = first.conflictsWith(second)
                 Assert.assertEquals("Expected 1 conflict, found ${conflicts.size}!", 1, conflicts.size)
             }
         }

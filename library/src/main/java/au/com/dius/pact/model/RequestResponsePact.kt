@@ -1,6 +1,5 @@
 package au.com.dius.pact.model
 
-import com.google.common.collect.Lists
 import org.apache.commons.collections4.Predicate
 
 class RequestResponsePact(override val provider: Provider, override val consumer: Consumer, var requestResponseInteractions: List<RequestResponseInteraction>): BasePact() {
@@ -35,14 +34,18 @@ class RequestResponsePact(override val provider: Provider, override val consumer
     }
 
     override fun conflictsWith(other: Pact): List<Pair<Interaction, Interaction>> {
-        return Lists.cartesianProduct(interactions, other.interactions)
-            .map { it[0] to it[1] }
+        return interactions.multiply(other.interactions)
             .filter { it.first.conflictsWith(it.second) }
     }
 
     override fun conflictsWithSelf(): List<Pair<Interaction, Interaction>> {
-        return Lists.cartesianProduct(interactions, interactions)
-            .map{ it[0] to it[1] }
+        return interactions.multiply(interactions)
             .filter { it.first !== it.second && it.first.conflictsWith(it.second) }
+    }
+
+    fun <S, T> List<S>.multiply(other: List<T>): List<Pair<S,T>> {
+        return flatMap { first ->
+            other.map { second -> Pair(first, second) }
+        }
     }
 }
