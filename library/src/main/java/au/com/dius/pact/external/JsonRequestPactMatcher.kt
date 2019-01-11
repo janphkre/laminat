@@ -2,6 +2,7 @@ package au.com.dius.pact.external
 
 import au.com.dius.pact.model.*
 import au.com.dius.pact.model.BasePact.Companion.jsonParser
+import au.com.dius.pact.model.matchingrules.MatchingRules
 
 abstract class JsonRequestPactMatcher<R, S> {
 
@@ -28,12 +29,15 @@ abstract class JsonRequestPactMatcher<R, S> {
                 this.path == path &&
                 this.query.matchQuery(query) &&
                 this.headersWithoutCookie().matchHeader(headers) &&
-                this.body.matchBody(body)
+                this.body.matchBody(body) &&
+                this.matchingRules.matchRules(method, path, query, headers, body)
     }
 
     abstract fun Map<String, List<String>>.matchQuery(userQuery: R): Boolean
 
     abstract fun Map<String, String>?.matchHeader(userHeaders: S): Boolean
+
+    abstract fun MatchingRules.matchRules(method: String, path: String, query: R, headers: S, body: String): Boolean
 
     private fun OptionalBody?.matchBody(userBody: String): Boolean {
         if(this?.isPresent() != true && userBody.isEmpty()) {
