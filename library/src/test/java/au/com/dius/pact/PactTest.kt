@@ -117,7 +117,7 @@ class PactTest {
 
     @Test
     fun pact_conflictingPactList_showConflicts() {
-        val pacts = getInitialPacts().plus(getAdditionalPacts()).plus(getConflictPacts())
+        val pacts = getInitialPacts().plus(getConflictPacts())
         for(first in pacts) {
             for(second in pacts) {
                 if(first === second) {
