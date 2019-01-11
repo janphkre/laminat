@@ -39,4 +39,10 @@ class RequestResponsePact(override val provider: Provider, override val consumer
             .map { it[0] to it[1] }
             .filter { it.first.conflictsWith(it.second) }
     }
+
+    override fun conflictsWithSelf(): List<Pair<Interaction, Interaction>> {
+        return Lists.cartesianProduct(interactions, interactions)
+            .map{ it[0] to it[1] }
+            .filter { it.first !== it.second && it.first.conflictsWith(it.second) }
+    }
 }

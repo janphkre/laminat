@@ -121,6 +121,11 @@ interface Pact {
   fun conflictsWith(other:Pact): List<Pair<Interaction, Interaction>>
 
   /**
+   * If this au.com.dius.pact has conflicting interactions within himself
+   */
+  fun conflictsWithSelf(): List<Pair<Interaction, Interaction>>
+
+  /**
    * Merges all the interactions into this Pact
    * @param interactions
    */
