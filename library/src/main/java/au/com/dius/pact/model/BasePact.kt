@@ -1,45 +1,23 @@
 package au.com.dius.pact.model
 
-import java.util.jar.JarInputStream
+import au.com.dius.pact.BuildConfig
 
-data class BasePact(val consumer: Consumer, val provider: Provider, val pactSource: PactSource) {
+abstract class BasePact: Pact {
 
-    fun compatibleTo(other: Pact): Boolean {
+    override val source: PactSource
+        get() = UnknownPactSource
+
+    override fun compatibleTo(other: Pact): Boolean {
         return provider == other.provider && this::class.isInstance(other)
     }
 
     companion object {
-        fun lookupVersion(): String  {
-            val url = BasePact.protectionDomain?.codeSource?.location
-            return if (url != null) {
-                val openStream = url.openStream().use {
-                    try {
-                        def jarStream = new JarInputStream(openStream)
-                        jarStream.manifest?.mainAttributes?.getValue('Implementation-Version') ?: ''
-                    } catch (e) {
-                        log.warn('Could not load au.com.dius.pact-jvm manifest', e)
-                        ''
-                    }
-                }
-            } else {
-                ""
-            }
-        }
 
-        static Map convertToMap(def object) {
-            if (object == null) {
-                object
-            } else {
-                object.properties.findAll { it.key != 'class' }.collectEntries { k, v ->
-                    if (v instanceof Map) {
-                        [k, convertToMap(v)]
-                    } else if (v instanceof Collection) {
-                        [k, v.collect { convertToMap(v) } ]
-                    } else {
-                        [k, v]
-                    }
-                }
-            }
+        fun getMetaData(version: String): Map<String, Any?> {
+            return mapOf(
+                Pair("pact-specification", mapOf(Pair("version", version))),
+                Pair("pact-jvm", mapOf(Pair("version", BuildConfig.VERSION_NAME)))
+            )
         }
     }
 }

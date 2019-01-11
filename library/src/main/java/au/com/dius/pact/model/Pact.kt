@@ -16,6 +16,10 @@ data class Provider @JvmOverloads constructor (val name: String = "provider") {
       return Provider("provider")
     }
   }
+
+  fun toMap(): Map<String, Any?> {
+    return mapOf(Pair("name",name))
+  }
 }
 
 /**
@@ -31,6 +35,10 @@ data class Consumer @JvmOverloads constructor (val name: String = "consumer") {
       }
       return Consumer("consumer")
     }
+  }
+
+  fun toMap(): Map<String, Any?> {
+    return mapOf(Pair("name", name))
   }
 }
 

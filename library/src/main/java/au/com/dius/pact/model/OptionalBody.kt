@@ -66,4 +66,12 @@ data class OptionalBody(val state: State, val value: String? = null) {
       throw UnwrapMissingBodyException("Failed to unwrap value from a $state body")
     }
   }
+
+  override fun equals(other: Any?): Boolean {
+    if(other !is OptionalBody) {
+      return false
+    }
+    return this.state == other.state &&
+            this.value == other.value
+  }
 }

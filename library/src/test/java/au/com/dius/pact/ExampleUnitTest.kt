@@ -1,4 +1,4 @@
-package de.zweidenker.laminat
+package au.com.dius.pact
 
 import org.junit.Test
 

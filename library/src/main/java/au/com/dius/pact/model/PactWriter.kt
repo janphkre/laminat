@@ -18,8 +18,8 @@ object PactWriter: KLogging() {
   @JvmStatic
   @JvmOverloads
   fun writePact(pact: Pact, writer: PrintWriter, pactSpecVersion: PactSpecVersion = PactSpecVersion.V3) {
-    pact.sortInteractions()
-    val jsonData = pact.toMap(pactSpecVersion)
+    val sortedPact = pact.sortInteractions()
+    val jsonData = sortedPact.toMap(pactSpecVersion)
     val gson = GsonBuilder().setPrettyPrinting().create()
     gson.toJson(jsonData, writer)
   }

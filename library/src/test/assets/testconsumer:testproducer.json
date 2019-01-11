@@ -1,0 +1,35 @@
+{
+  "provider": {
+    "name": "TestProducer"
+  },
+  "consumer": {
+    "name": "TestConsumer"
+  },
+  "interactions": [
+    {
+      "description": "GET testRequest",
+      "request": {
+        "method": "GET",
+        "path": "test/path",
+        "headers": {
+          "We": "will have to see about this!"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "We": "will have to see about this as well."
+        },
+        "body": {}
+      }
+    }
+  ],
+  "metadata": {
+    "pact-specification": {
+      "version": "3.0.0"
+    },
+    "pact-jvm": {
+      "version": "3.5.7-android"
+    }
+  }
+}

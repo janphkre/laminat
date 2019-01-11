@@ -206,12 +206,12 @@ public class PactDslResponse {
     }
 
     private void addInteraction() {
-        consumerPactBuilder.getInteractions().add(RequestResponseInteraction.fromArgs(
+        consumerPactBuilder.getInteractions().add(new RequestResponseInteraction(
           request.description,
           request.state,
-          Request.fromArgs(request.requestMethod, request.path, request.query,
+          new Request(request.requestMethod, request.path, request.query,
             request.requestHeaders, request.requestBody, request.requestMatchers, request.requestGenerators),
-          Response.fromArgs(responseStatus, responseHeaders, responseBody, responseMatchers, responseGenerators)
+          new Response(responseStatus, responseHeaders, responseBody, responseMatchers, responseGenerators)
         ));
     }
 
