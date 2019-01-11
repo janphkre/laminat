@@ -1,4 +1,4 @@
-package pact.consumer;
+package au.com.dius.pact.consumer;
 
 public class InvalidMatcherException extends RuntimeException {
 

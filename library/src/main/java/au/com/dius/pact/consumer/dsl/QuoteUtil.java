@@ -1,4 +1,4 @@
-package pact.consumer.dsl;
+package au.com.dius.pact.consumer.dsl;
 
 /**
  * Util class for dealing with Json format

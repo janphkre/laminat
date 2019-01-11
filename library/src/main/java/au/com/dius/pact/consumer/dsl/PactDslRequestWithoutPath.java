@@ -1,4 +1,4 @@
-package pact.consumer.dsl;
+package au.com.dius.pact.consumer.dsl;
 
 import com.mifmif.common.regex.Generex;
 

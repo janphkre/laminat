@@ -1,7 +1,7 @@
 package au.com.dius.pact.model
 
 /**
- * Exception class to indicate an invalid pact specification
+ * Exception class to indicate an invalid au.com.dius.pact specification
  */
 class InvalidPactException(message: String) : RuntimeException(message)
 

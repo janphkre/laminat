@@ -11,7 +11,7 @@ sealed class PactSource {
 }
 
 /**
- * A source of a pact that comes from some URL
+ * A source of a au.com.dius.pact that comes from some URL
  */
 sealed class UrlPactSource : PactSource() {
   abstract val url: String

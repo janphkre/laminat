@@ -55,7 +55,7 @@ interface Interaction {
   val providerStates: List<ProviderState>
 
   /**
-   * Checks if this interaction conflicts with the other one. Used for merging pact files.
+   * Checks if this interaction conflicts with the other one. Used for merging au.com.dius.pact files.
    */
   fun conflictsWith(other: Interaction): Boolean
 
@@ -70,39 +70,39 @@ interface Interaction {
 }
 
 /**
- * Interface to a pact
+ * Interface to a au.com.dius.pact
  */
 interface Pact {
   /**
-   * Returns the provider of the service for the pact
+   * Returns the provider of the service for the au.com.dius.pact
    */
   val provider: Provider
   /**
-   * Returns the consumer of the service for the pact
+   * Returns the consumer of the service for the au.com.dius.pact
    */
   val consumer: Consumer
   /**
-   * Returns all the interactions of the pact
+   * Returns all the interactions of the au.com.dius.pact
    */
   val interactions: List<Interaction>
 
   /**
-   * The source that this pact was loaded from
+   * The source that this au.com.dius.pact was loaded from
    */
   val source: PactSource
 
   /**
-   * Returns a pact with the interactions sorted
+   * Returns a au.com.dius.pact with the interactions sorted
    */
   fun sortInteractions(): Pact
 
   /**
-   * Returns a Map representation of this pact for the purpose of generating a JSON document.
+   * Returns a Map representation of this au.com.dius.pact for the purpose of generating a JSON document.
    */
   fun toMap(pactSpecVersion: PactSpecVersion): Map<String, *>
 
   /**
-   * If this pact is compatible with the other pact. Pacts are compatible if they have the
+   * If this au.com.dius.pact is compatible with the other au.com.dius.pact. Pacts are compatible if they have the
    * same provider and they are the same type
    */
   fun compatibleTo(other: Pact): Boolean
@@ -115,8 +115,8 @@ interface Pact {
 
   /**
    * Returns a new Pact with all the interactions filtered by the provided predicate
-   * @deprecated Wrap the pact in a FilteredPact instead
+   * @deprecated Wrap the au.com.dius.pact in a FilteredPact instead
    */
-  @Deprecated("Wrap the pact in a FilteredPact instead")
+  @Deprecated("Wrap the au.com.dius.pact in a FilteredPact instead")
   fun filterInteractions(predicate: Predicate<Interaction>): Pact
 }

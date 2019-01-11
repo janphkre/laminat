@@ -1,4 +1,4 @@
-package pact.consumer;
+package au.com.dius.pact.consumer;
 
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
@@ -25,7 +25,7 @@ public class ConsumerPactBuilder {
     }
 
     /**
-     * Name the consumer of the pact
+     * Name the consumer of the au.com.dius.pact
      * @param consumer Consumer name
      */
     public static ConsumerPactBuilder consumer(String consumer) {
@@ -33,7 +33,7 @@ public class ConsumerPactBuilder {
     }
 
     /**
-     * Name the provider that the consumer has a pact with
+     * Name the provider that the consumer has a au.com.dius.pact with
      * @param provider provider name
      */
     public PactDslWithProvider hasPactWith(String provider) {

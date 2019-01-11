@@ -212,7 +212,7 @@ data class Generators(val categories: MutableMap<Category, MutableMap<String, Ge
 
   fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any> {
     if (pactSpecVersion < PactSpecVersion.V3) {
-      throw InvalidPactException("Generators are only supported with pact specification version 3+")
+      throw InvalidPactException("Generators are only supported with au.com.dius.pact specification version 3+")
     }
     return categories.entries.associate { (key, value) ->
       when (key) {

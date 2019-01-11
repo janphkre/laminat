@@ -1,4 +1,4 @@
-package pact.consumer.dsl;
+package au.com.dius.pact.consumer.dsl;
 
 import com.mifmif.common.regex.Generex;
 
@@ -216,7 +216,7 @@ public class PactDslResponse {
     }
 
     /**
-     * Terminates the DSL and builds a pact fragment to represent the interactions
+     * Terminates the DSL and builds a au.com.dius.pact fragment to represent the interactions
      *
      * @deprecated Use toPact instead
      */
@@ -229,7 +229,7 @@ public class PactDslResponse {
     }*/
 
     /**
-     * Terminates the DSL and builds a pact to represent the interactions
+     * Terminates the DSL and builds a au.com.dius.pact to represent the interactions
      */
     public RequestResponsePact toPact() {
         addInteraction();

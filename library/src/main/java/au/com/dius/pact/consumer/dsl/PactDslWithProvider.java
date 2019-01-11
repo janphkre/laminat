@@ -1,4 +1,4 @@
-package pact.consumer.dsl;
+package au.com.dius.pact.consumer.dsl;
 
 import au.com.dius.pact.consumer.ConsumerPactBuilder;
 import au.com.dius.pact.model.ProviderState;
@@ -16,7 +16,7 @@ public class PactDslWithProvider {
     }
 
     /**
-     * Describe the state the provider needs to be in for the pact test to be verified.
+     * Describe the state the provider needs to be in for the au.com.dius.pact test to be verified.
      *
      * @param state Provider state
      */
@@ -26,7 +26,7 @@ public class PactDslWithProvider {
     }
 
     /**
-     * Describe the state the provider needs to be in for the pact test to be verified.
+     * Describe the state the provider needs to be in for the au.com.dius.pact test to be verified.
      *
      * @param state Provider state
      * @param params Data parameters for the state
@@ -37,7 +37,7 @@ public class PactDslWithProvider {
     }
 
     /**
-     * Describe the state the provider needs to be in for the pact test to be verified.
+     * Describe the state the provider needs to be in for the au.com.dius.pact test to be verified.
      *
      * @param firstKey Key of first parameter element
      * @param firstValue Value of first parameter element

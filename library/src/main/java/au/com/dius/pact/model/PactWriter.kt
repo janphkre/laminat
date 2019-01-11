@@ -5,12 +5,12 @@ import mu.KLogging
 import java.io.PrintWriter
 
 /**
- * Class to write out a pact to a file
+ * Class to write out a au.com.dius.pact to a file
  */
 object PactWriter: KLogging() {
 
   /**
-   * Writes out the pact to the provided pact file
+   * Writes out the au.com.dius.pact to the provided au.com.dius.pact file
    * @param pact Pact to write
    * @param writer Writer to write out with
    * @param pactSpecVersion Pact version to use to control writing

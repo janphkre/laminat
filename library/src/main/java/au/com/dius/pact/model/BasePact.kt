@@ -17,7 +17,7 @@ data class BasePact(val consumer: Consumer, val provider: Provider, val pactSour
                         def jarStream = new JarInputStream(openStream)
                         jarStream.manifest?.mainAttributes?.getValue('Implementation-Version') ?: ''
                     } catch (e) {
-                        log.warn('Could not load pact-jvm manifest', e)
+                        log.warn('Could not load au.com.dius.pact-jvm manifest', e)
                         ''
                     }
                 }

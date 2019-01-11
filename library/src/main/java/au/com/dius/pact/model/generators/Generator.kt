@@ -20,7 +20,7 @@ fun lookupGenerator(generatorMap: Map<String, Any>): Generator? {
   var generator: Generator? = null
 
   try {
-    val generatorClass = Class.forName("au.com.dius.pact.model.generators.${generatorMap["type"]}Generator").kotlin
+    val generatorClass = Class.forName("au.com.dius.au.com.dius.pact.model.generators.${generatorMap["type"]}Generator").kotlin
     val fromMap = generatorClass.companionObject?.declaredMemberFunctions?.find { it.name == "fromMap" }
     if (fromMap != null) {
       generator = fromMap.call(generatorClass.companionObjectInstance, generatorMap) as Generator?

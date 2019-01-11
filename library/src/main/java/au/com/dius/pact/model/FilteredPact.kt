@@ -11,6 +11,6 @@ class FilteredPact(val pact: Pact, private val interactionPredicate: Predicate<I
   fun isFiltered() = pact.interactions.any { !interactionPredicate.evaluate(it) }
 
   override fun toString(): String {
-    return "FilteredPact(pact=$pact, filtered=${isFiltered()})"
+    return "FilteredPact(au.com.dius.pact=$pact, filtered=${isFiltered()})"
   }
 }
