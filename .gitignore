@@ -1,33 +1,45 @@
+# This template is taken from the first answer in SO: http://stackoverflow.com/questions/16736856/what-should-be-in-my-gitignore-for-an-android-studio-project/24679853#24679853
+#built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
 *.class
-*.log
-*/bin
-# sbt specific
-dist/*
-target/
-lib_managed/
-src_managed/
-project/boot/
-project/plugins/project/
 
-# Scala-IDE specific
-.scala_dependencies
+# generated files
+bin/
+gen/
 
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Windows thumbnail db
+Thumbs.db
+
+# OSX files
 .DS_Store
 
-*/.settings
-
-.idea
-.idea_modules
-*.iml
-
-# Eclipse
-*/.cache
+# Eclipse project files
 .classpath
-.settings
 .project
+
+# Android Studio
+*.iml
+.idea
+.gradle
 build/
-pkgdiff_reports/
-.gradle/
+reports/
 
-out/
-
+#NDK
+obj/
+########################################################
+#Our customization
+#Log files
+*.log
+# Android Studio
+.navigation/
+captures/
+gradle.properties
