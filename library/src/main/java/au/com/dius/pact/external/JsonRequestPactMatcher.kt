@@ -5,7 +5,7 @@ import au.com.dius.pact.model.BasePact.Companion.jsonParser
 
 abstract class JsonRequestPactMatcher<R, S> {
 
-    fun List<RequestResponsePact>.findInteraction(
+    fun findInteraction(
         pacts: List<RequestResponsePact>,
         states: List<ProviderState>,
         method: String,
