@@ -1,4 +1,6 @@
 # laminat
+THIS IS STILL WORK IN PROGRESS, I AM CURRENTLY ADDING THE MATCHING TOGETHER WITH A OKHTTP MOCKWEBSERVER.
+
 Lightweight Android version of Pact. Enables consumer driven contract testing, providing DSL for the consumer project.
 
 The pact library is meant for consumer driven contracts. This means that you, as a consumer, define the content and form of a request or message towards a provider.
