@@ -32,7 +32,7 @@ class RequestResponseInteraction(
             if(other !is RequestResponseInteraction) {
                 return false
             }
-            return request.equals(other.request)
+            return request == other.request
         }
         return false
 

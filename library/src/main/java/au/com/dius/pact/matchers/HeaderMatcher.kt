@@ -20,17 +20,17 @@ object HeaderMatcher {
             Matchers.doMatch(category, path, expected, actual, MismatchFactory.HeaderMismatchFactory)
         }
         else if (headerKey.equals("Content-Type", true)) {
-            listOf(matchContentType(expected, actual))
+            matchContentType(expected, actual)
         }
         else if (stripWhiteSpaceAfterCommas(expected) == stripWhiteSpaceAfterCommas(actual)){
-            listOf(RequestMatchProblem.None)
+            emptyList()
         }
         else {
             listOf(RequestMatchProblem.HeaderMismatch(headerKey, "Expected header '$headerKey' to have value '$expected' but was '$actual'"))
         }
     }
 
-    private fun matchContentType(expected: String, actual: String?): RequestMatchProblem {
+    private fun matchContentType(expected: String, actual: String?): List<RequestMatchProblem> {
         val expectedValues = expected.split(';').map { it.trim() }
         val actualValues = actual?.split(';')?.map { it.trim() }
         val expectedContentType = expectedValues.firstOrNull()
@@ -39,20 +39,27 @@ object HeaderMatcher {
         val actualParameters = parseParameters(actualValues?.drop(1))
         val headerMismatch = RequestMatchProblem.HeaderMismatch("Content-Type", "Expected header 'Content-Type' to have value '$expected' but was '$actual'")
 
-        return if (expectedContentType == actualContentType) {
+        val problem = if (expectedContentType == actualContentType) {
             expectedParameters.map { entry ->
                 if (actualParameters.contains(entry.key)) {
                     if (entry.value == actualParameters.get(entry.key)) {
-                        RequestMatchProblem.None
+                        null
                     } else {
                         headerMismatch
                     }
                 } else {
                     headerMismatch
                 }
-            }.firstOrNull { it == headerMismatch } ?: RequestMatchProblem.None
+            }.firstOrNull { it == headerMismatch }
+        } else  {
+            headerMismatch
         }
-        else headerMismatch
+
+        return if(problem != null) {
+            listOf(problem)
+        } else {
+            emptyList()
+        }
     }
 
     private fun parseParameters(values: List<String>?): Map<String, String> {

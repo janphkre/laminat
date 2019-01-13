@@ -3,9 +3,23 @@ package au.com.dius.pact.matchers
 import au.com.dius.pact.model.matchingrules.Category
 import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
 import au.com.dius.pact.model.matchingrules.MatchingRules
+import io.gatling.jsonpath.AST
 import org.apache.commons.collections4.Predicate
 
 object Matchers {
+
+    private val arrayRegex = Regex("\\d+")
+
+    fun matchesToken(pathElement: String, token: AST.PathToken): Int {
+        when(token) {
+            is AST.`RootNode$` -> if (pathElement == "$") 2 else 0
+            is AST.Field ->  if (pathElement == token.name()) 2 else 0
+            is AST.ArrayRandomAccess -> if (pathElement.matches(arrayRegex) && token.indices().contains(pathElement.toInt())) 2 else 0
+            is AST.ArraySlice -> if (pathElement.matches(arrayRegex)) 1 else 0
+            is AST.`AnyField$` -> 1
+            else -> 0
+        }
+    }
 
     fun matchPath(pathExp: String?, actualItems: List<String>): Int {
         /*return with(Parser().compile(pathExp)) {

@@ -1,7 +1,6 @@
 package au.com.dius.pact.matchers
 
 sealed class RequestMatchProblem {
-    object None: RequestMatchProblem()
     class MethodMismatch(val expected: String, val actual: String?): RequestMatchProblem()
     class PathMismatch(val expected: String?, val actual: String?): RequestMatchProblem()
     class QueryMismatch(val message: String, val path: String): RequestMatchProblem()

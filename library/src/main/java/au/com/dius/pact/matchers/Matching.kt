@@ -6,32 +6,30 @@ import java.util.*
 
 internal object Matching {
 
-    fun matchMethod(expectedMethod: String, actualMethod: String?): RequestMatchProblem {
+    fun matchMethod(expectedMethod: String, actualMethod: String?): List<RequestMatchProblem> {
         return if(expectedMethod.equals(actualMethod, true)) {
-            RequestMatchProblem.None
+            emptyList()
         }
         else {
-            RequestMatchProblem.MethodMismatch(expectedMethod, actualMethod)
+            listOf(RequestMatchProblem.MethodMismatch(expectedMethod, actualMethod))
         }
     }
 
-    fun matchPath(expected: Request, actual: RecordedRequest): RequestMatchProblem {
+    fun matchPath(expected: Request, actual: RecordedRequest): List<RequestMatchProblem> {
         val matchers = Matchers.definedMatchers("path", emptyList(), expected.matchingRules)
         return if (matchers?.isNotEmpty() == true) {
-            val mismatch = Matchers.doMatch(
+            Matchers.doMatch(
                 matchers,
                 emptyList(),
                 expected.path,
                 actual.path,
-                MismatchFactory.PathMismatchFactory
-            )
-            mismatch.firstOrNull() ?: RequestMatchProblem.None
+                MismatchFactory.PathMismatchFactory)
         }
         else if(expected.path == actual.path || actual.path.matches(Regex(expected.path))){
-            RequestMatchProblem.None
+            emptyList()
         }
         else {
-            RequestMatchProblem.PathMismatch(expected.path, actual.path)
+            listOf(RequestMatchProblem.PathMismatch(expected.path, actual.path))
         }
     }
 
@@ -78,11 +76,11 @@ internal object Matching {
         return problems
     }
 
-    fun matchCookie(expectedCookie: List<String>?, actualCookie: List<String>?): RequestMatchProblem {
+    fun matchCookie(expectedCookie: List<String>?, actualCookie: List<String>?): List<RequestMatchProblem> {
         return if(actualCookie?.containsAll(expectedCookie ?: emptyList()) == true) {
-            RequestMatchProblem.None
+            emptyList()
         } else {
-            RequestMatchProblem.CookieMismatch(expectedCookie, actualCookie)
+            listOf(RequestMatchProblem.CookieMismatch(expectedCookie, actualCookie))
         }
     }
 

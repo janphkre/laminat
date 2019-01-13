@@ -1,9 +1,6 @@
 package au.com.dius.pact.external
 
-import au.com.dius.pact.model.ProviderState
-import au.com.dius.pact.model.RequestResponseInteraction
-import au.com.dius.pact.model.RequestResponsePact
-import au.com.dius.pact.model.Response
+import au.com.dius.pact.model.*
 import okhttp3.Headers
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
@@ -11,10 +8,10 @@ import okhttp3.mockwebserver.RecordedRequest
 import java.util.LinkedHashSet
 import java.util.LinkedList
 
-internal class PactDispatcher: Dispatcher() {
+internal class PactDispatcher(allowUnexpectedKeys: Boolean): Dispatcher() {
 
-    private val notFoundResponseCode = 501
-    private val pactMatcher = OkHttpRequestMatcher()
+    private val notImplementedCode = 501
+    private var pactMatcher = OkHttpRequestMatcher(allowUnexpectedKeys)
     private val definedPactList = LinkedList<RequestResponsePact>()
     private var currentProviderStates: List<ProviderState> = emptyList()
     private val currentInteractionList = LinkedList<RequestResponseInteraction>()
@@ -58,10 +55,24 @@ internal class PactDispatcher: Dispatcher() {
         val bodyString = request.body.inputStream().use {
             it.bufferedReader().readText()
         }
-        //TODO: TRY CATCH:
-        val interaction = pactMatcher.findInteraction(currentInteractionList, request)
-        matchedRequestCount++
-        return interaction?.response?.generateResponse()?.mapToMockResponse() ?: notFoundMockResponse()
+        try {
+            val requestMatch = pactMatcher.findInteraction(currentInteractionList, request)
+            return when (requestMatch) {
+                is OkHttpRequestMatcher.RequestMatch.FullRequestMatch ->  {
+                    matchedRequestCount++
+                    requestMatch.interaction.response.generateResponse()?.mapToMockResponse()
+                }
+                is OkHttpRequestMatcher.RequestMatch.PartialRequestMatch -> {
+                    notFoundMockResponse().setBody(requestMatch.problems.joinToString("\n"))
+                }
+                else -> {
+                    notFoundMockResponse()
+                }
+            }
+        } catch(e: PactMergeException) {
+            return notFoundMockResponse().setBody(e.message)
+        }
+        //TODO: ADD ADDITIONAL try catch to not crash app when an error happens.
     }
 
     private fun Response.mapToMockResponse(): MockResponse {
@@ -80,7 +91,7 @@ internal class PactDispatcher: Dispatcher() {
 
     private fun notFoundMockResponse() : MockResponse {
         unmatchedRequestsCount++
-        return MockResponse().setResponseCode(notFoundResponseCode)
+        return MockResponse().setResponseCode(notImplementedCode)
     }
 
     private fun calculateInteractions(pact: RequestResponsePact) {

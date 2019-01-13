@@ -93,10 +93,10 @@ fun <Mismatch> matchEquality(expected: Any?, actual: Any?,
     }
 }
 
-fun <Mismatch> matchRegex(regex: String, expected: Any?, actual: Any?,
+fun <Mismatch> matchRegex(regex: Regex, expected: Any?, actual: Any?,
                           mismatchFactory: MismatchFactory<Mismatch>
 ): List<Mismatch> {
-    val matches = actual.toString().matches(Regex(regex))
+    val matches = actual.toString().matches(regex)
     return if (matches
         || expected is List<*> && actual is List<*>
         || expected is Map<*, *> && actual is Map<*, *>) {
