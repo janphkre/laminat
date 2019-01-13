@@ -52,7 +52,7 @@ class Request(
                 matchesBody(other)
     }
 
-    fun matchesBody(other: Request): Boolean {
+    private fun matchesBody(other: Request): Boolean {
         if(mimeType() != other.mimeType()) {
             return false
         }
@@ -63,7 +63,7 @@ class Request(
                 return jsonModel == otherJsonModel
             } catch(e: Exception) { }
         }
-        return body.equals(other.body)
+        return body == other.body
     }
 
     companion object {

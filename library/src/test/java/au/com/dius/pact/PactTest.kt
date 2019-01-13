@@ -128,5 +128,7 @@ class PactTest {
                 Assert.assertEquals("Expected 1 conflict, found ${conflicts.size}!", 1, conflicts.size)
             }
         }
+        val rules = pacts.first().requestResponseInteractions.first().request.matchingRules
+        System.currentTimeMillis()
     }
 }

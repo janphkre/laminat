@@ -74,8 +74,8 @@ data class NumberTypeMatcher(val numberType: NumberType) : MatchingRule {
 /**
  * Regular Expression Matcher
  */
-data class RegexMatcher @JvmOverloads constructor (val regex: String, val example: String? = null) : MatchingRule {
-  override fun toMap() = mapOf("match" to "regex", "regex" to regex)
+data class RegexMatcher @JvmOverloads constructor (val regex: Regex, val example: String? = null) : MatchingRule {
+  override fun toMap() = mapOf("match" to "regex", "regex" to regex.toString())
 }
 
 /**
@@ -158,7 +158,7 @@ data class MatchingRuleGroup @JvmOverloads constructor(val rules: MutableList<Ma
     fun ruleFromMap(map: Map<String, Any?>): MatchingRule {
       if (map.containsKey(MATCH)) {
         return when (map[MATCH]) {
-          REGEX -> RegexMatcher(map[REGEX] as String)
+          REGEX -> RegexMatcher(Regex(map[REGEX] as String))
           "equality" -> EqualsMatcher
           "null" -> NullMatcher
           "include" -> IncludeMatcher(map["value"].toString())
@@ -195,7 +195,7 @@ data class MatchingRuleGroup @JvmOverloads constructor(val rules: MutableList<Ma
           }
         }
       } else if (map.containsKey(REGEX)) {
-        return RegexMatcher(map[REGEX] as String)
+        return RegexMatcher(Regex(map[REGEX] as String))
       } else if (map.containsKey(MIN)) {
         return MinTypeMatcher(mapEntryToInt(map, MIN))
       } else if (map.containsKey(MAX)) {

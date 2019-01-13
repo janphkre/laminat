@@ -1,9 +1,16 @@
 package au.com.dius.pact.model
 
+import au.com.dius.pact.model.BasePact.Companion.jsonParser
+import com.google.gson.JsonElement
+
 /**
  * Class to represent missing, empty, null and present bodies
  */
 data class OptionalBody(val state: State, val value: String? = null) {
+
+  val parsedBodyAsJson: JsonElement by lazy {
+    jsonParser.parse(unwrap())
+  }
 
   enum class State {
     MISSING, EMPTY, NULL, PRESENT
@@ -51,9 +58,9 @@ data class OptionalBody(val state: State, val value: String? = null) {
     return state == State.PRESENT
   }
 
-  fun orElse(defaultValue: String) : String? {
+  fun orElse(defaultValue: String) : String {
     return if (state == State.EMPTY || state == State.PRESENT) {
-      value
+      value!!
     } else {
       defaultValue
     }

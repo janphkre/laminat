@@ -83,4 +83,8 @@ class MatchingRules {
 
         return map
     }
+
+    fun getCategory(category: String): Category? {
+        return rules.get(category)
+    }
 }
