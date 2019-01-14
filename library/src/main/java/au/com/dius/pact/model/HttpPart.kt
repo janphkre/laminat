@@ -49,7 +49,7 @@ abstract class HttpPart {
         const val CONTENT_TYPE = "Content-Type"
         val XMLREGEXP by lazy { Regex("^\\s*<\\?xml\\s*version.*") }
         val HTMLREGEXP by lazy { Regex("^\\s*(<!DOCTYPE)|(<HTML>).*") }
-        val JSONREGEXP by lazy { Regex("^\\s*(true|false|null|[0-9]+|\"\\w*|\\{\\s*(}|\"\\w+)|\\[\\s*).*") }
+        val JSONREGEXP by lazy { Regex("^\\s*(true|false|null|[0-9]+|\"\\w*|\\{\\s*(\\}|\"\\w+)|\\[\\s*).*") }
         val XMLREGEXP2 by lazy { Regex("^\\s*<\\w+\\s*(:\\w+=[\"”][^\"”]+[\"”])?.*") }
     }
 }
