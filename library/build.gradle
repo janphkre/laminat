@@ -24,9 +24,10 @@ repositories {
 }
 
 dependencies {
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    api "com.squareup.okhttp3:mockwebserver:$mockserver_version"
 
+    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.google.code.gson:gson:$gson_version"
     implementation "org.apache.commons:commons-lang3:$apache_commons_version"
     implementation "org.apache.commons:commons-collections4:$apache_collections_version"
@@ -35,8 +36,6 @@ dependencies {
     implementation "com.github.mifmif:generex:$generex_version"
     implementation "io.gatling:jsonpath_2.11:$jsonpath_version"
     implementation "com.github.zafarkhaja:java-semver:$semver_version"
-
-    implementation "com.squareup.okhttp3:mockwebserver:$mockserver_version"
 
     testImplementation 'junit:junit:4.12'
 }
@@ -51,7 +50,7 @@ publishing.publications {
     broker(MavenPublication) {
         artifact coreAarFile
         groupId "com.github.janphkre"
-        artifactId "laminat"
+        artifactId "laminat-android"
         version "$pact_version"
         //The publication doesn't know about our dependencies, so we have to manually add them to the pom
         pom.withXml {

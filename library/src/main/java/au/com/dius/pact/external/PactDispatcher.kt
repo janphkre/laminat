@@ -1,16 +1,15 @@
 package au.com.dius.pact.external
 
-import au.com.dius.pact.model.*
+import au.com.dius.pact.model.PactMergeException
+import au.com.dius.pact.model.RequestResponseInteraction
+import au.com.dius.pact.model.Response
 import okhttp3.Headers
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
-import java.util.LinkedHashSet
-import java.util.LinkedList
 
-internal class PactDispatcher(allowUnexpectedKeys: Boolean): Dispatcher() {
+internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErrorCode: Int): Dispatcher() {
 
-    private val notImplementedCode = 501
     private var pactMatcher = OkHttpRequestMatcher(allowUnexpectedKeys)
     private var interactionList = emptyList<RequestResponseInteraction>()
     private var matchedRequestCount: Long = 0L
@@ -33,9 +32,6 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean): Dispatcher() {
         if(request == null) {
             return notFoundMockResponse()
         }
-        val bodyString = request.body.inputStream().use {
-            it.bufferedReader().readText()
-        }
         try {
             val requestMatch = pactMatcher.findInteraction(interactionList, request)
             return when (requestMatch) {
@@ -44,10 +40,11 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean): Dispatcher() {
                     requestMatch.interaction.response.generateResponse().mapToMockResponse()
                 }
                 is OkHttpRequestMatcher.RequestMatch.PartialRequestMatch -> {
-                    notFoundMockResponse().setBody(requestMatch.problems.joinToString("\n"))
+                    notFoundMockResponse().setBody("Partially matched ${requestMatch.interaction.uniqueKey()}:\n${requestMatch.problems.joinToString("\n")}")
                 }
-                else -> {
-                    notFoundMockResponse()
+                is OkHttpRequestMatcher.RequestMatch.RequestMismatch -> {
+                    notFoundMockResponse().setBody("Failed to match request at all! Best match was with ${requestMatch.interaction?.uniqueKey()}:\n" +
+                        "${requestMatch.problems?.joinToString("\n")}")
                 }
             }
         } catch(e: PactMergeException) {
@@ -72,6 +69,6 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean): Dispatcher() {
 
     private fun notFoundMockResponse() : MockResponse {
         unmatchedRequestsCount++
-        return MockResponse().setResponseCode(notImplementedCode)
+        return MockResponse().setResponseCode(pactErrorCode)
     }
 }

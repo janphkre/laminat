@@ -4,7 +4,7 @@ import au.com.dius.pact.model.ProviderState
 import au.com.dius.pact.model.RequestResponsePact
 import java.util.*
 
-class StateFullPactWebServer(allowUnexpectedKeys: Boolean): StatelessPactWebServer(allowUnexpectedKeys) {
+class StatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int): StatelessPactWebServer(allowUnexpectedKeys, pactErrorCode) {
 
     private val definedPactList = LinkedList<RequestResponsePact>()
     private var currentProviderStates: List<ProviderState> = emptyList()

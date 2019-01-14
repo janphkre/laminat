@@ -6,10 +6,10 @@ import okhttp3.mockwebserver.MockWebServer
 import java.io.IOException
 import java.util.*
 
-open class StatelessPactWebServer(allowUnexpectedKeys: Boolean) {
+open class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int) {
 
     private val mockWebServer = MockWebServer()
-    private val dispatcher = PactDispatcher(allowUnexpectedKeys)
+    private val dispatcher = PactDispatcher(allowUnexpectedKeys, pactErrorCode)
     private val currentInteractionList = LinkedList<RequestResponseInteraction>()
 
     init {
@@ -41,6 +41,10 @@ open class StatelessPactWebServer(allowUnexpectedKeys: Boolean) {
 
     fun validatePactsCompleted(count: Long): Boolean {
         return dispatcher.validatePactsCompleted(count)
+    }
+
+    fun getUrlString(): String {
+        return mockWebServer.url("").toString()
     }
 
     protected fun clearCurrentInteractions() {

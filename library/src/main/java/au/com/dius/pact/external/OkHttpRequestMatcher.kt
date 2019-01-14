@@ -13,7 +13,7 @@ internal class OkHttpRequestMatcher(private val allowUnexpectedKeys: Boolean) {
         request: RecordedRequest
     ): RequestMatch {
         val matches = interactions.map { compareRequest(it, request) }
-        return matches.fold(RequestMatch.RequestMismatch as RequestMatch) { bestResult, current ->
+        return matches.fold(RequestMatch.RequestMismatch() as RequestMatch) { bestResult, current ->
             return@fold if(current is RequestMatch.FullRequestMatch && (bestResult is RequestMatch.RequestMismatch || bestResult is RequestMatch.PartialRequestMatch))  {
                 current
             } else if(current is RequestMatch.FullRequestMatch && bestResult is RequestMatch.FullRequestMatch) {
@@ -22,6 +22,12 @@ internal class OkHttpRequestMatcher(private val allowUnexpectedKeys: Boolean) {
                 current
             } else if (current is RequestMatch.PartialRequestMatch && bestResult is RequestMatch.PartialRequestMatch) {
                 if(current.problems.size < bestResult.problems.size) {
+                    current
+                } else {
+                    bestResult
+                }
+            } else if(current is RequestMatch.RequestMismatch && bestResult is RequestMatch.RequestMismatch) {
+                if(current.problems?.size ?: Int.MAX_VALUE < bestResult.problems?.size ?: Int.MAX_VALUE) {
                     current
                 } else {
                     bestResult
@@ -52,7 +58,7 @@ internal class OkHttpRequestMatcher(private val allowUnexpectedKeys: Boolean) {
         return when {
             problems.isEmpty() -> RequestMatch.FullRequestMatch(expected)
             isPartialMatch(problems) -> RequestMatch.PartialRequestMatch(expected, problems)
-            else -> RequestMatch.RequestMismatch
+            else -> RequestMatch.RequestMismatch(expected, problems)
         }
     }
 
@@ -63,7 +69,7 @@ internal class OkHttpRequestMatcher(private val allowUnexpectedKeys: Boolean) {
     }
 
     sealed class RequestMatch {
-        object RequestMismatch: RequestMatch()
+        class RequestMismatch(val interaction: RequestResponseInteraction? = null, val problems: List<RequestMatchProblem>? = null): RequestMatch()
         class FullRequestMatch(val interaction: RequestResponseInteraction): RequestMatch()
         class PartialRequestMatch(val interaction: RequestResponseInteraction, val problems: List<RequestMatchProblem>): RequestMatch()
     }

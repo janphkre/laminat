@@ -17,19 +17,20 @@ internal object Matching {
 
     fun matchPath(expected: Request, actual: RecordedRequest): List<RequestMatchProblem> {
         val matchers = Matchers.definedMatchers("path", emptyList(), expected.matchingRules)
+        val actualPath = actual.requestUrl.encodedPath().split('?').firstOrNull()
         return if (matchers?.isNotEmpty() == true) {
             Matchers.doMatch(
                 matchers,
                 emptyList(),
                 expected.path,
-                actual.path,
+                actualPath,
                 MismatchFactory.PathMismatchFactory)
         }
-        else if(expected.path == actual.path || actual.path.matches(Regex(expected.path))){
+        else if(expected.path == actualPath || actualPath?.matches(Regex(expected.path)) == true){
             emptyList()
         }
         else {
-            listOf(RequestMatchProblem.PathMismatch(expected.path, actual.path))
+            listOf(RequestMatchProblem.PathMismatch(expected.path, actualPath))
         }
     }
 
