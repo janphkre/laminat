@@ -39,8 +39,9 @@ internal object Matching {
         expected.query.entries.forEach { expectedEntry ->
             val actualValues = actual.requestUrl.queryParameterValues(expectedEntry.key)
             if(actualValues == null) {
-                problems.add(
-                    RequestMatchProblem.QueryMismatch("Expected query parameter '${expectedEntry.key}' but was missing", "$.query.${expectedEntry.key}"))
+                problems.add(RequestMatchProblem.QueryMismatch(
+                    "Expected query parameter '${expectedEntry.key}' but was missing",
+                    "$.query.${expectedEntry.key}"))
             } else {
                 problems.addAll(QueryMatcher.compareQuery(expectedEntry.key, expectedEntry.value, actualValues, expected.matchingRules))
             }

@@ -59,15 +59,17 @@ object QueryMatcher {
         val path = listOf(parameter)
         val category = Matchers.definedMatchers("query", path, matchers)
         if (category?.isNotEmpty() == true) {
-            result.addAll(
-                Matchers.doMatch(
-                    category,
-                    path,
-                    expected,
-                    actual,
-                    MismatchFactory.QueryMismatchFactory
+            expected.zip(actual).forEach {
+                result.addAll(
+                    Matchers.doMatch(
+                        category,
+                        path,
+                        it.first,
+                        it.second,
+                        MismatchFactory.QueryMismatchFactory
+                    )
                 )
-            )
+            }
             result.addAll(
                 compareQueryParameterValues(
                     parameter,
