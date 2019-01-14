@@ -12,40 +12,21 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean): Dispatcher() {
 
     private val notImplementedCode = 501
     private var pactMatcher = OkHttpRequestMatcher(allowUnexpectedKeys)
-    private val definedPactList = LinkedList<RequestResponsePact>()
-    private var currentProviderStates: List<ProviderState> = emptyList()
-    private val currentInteractionList = LinkedList<RequestResponseInteraction>()
+    private var interactionList = emptyList<RequestResponseInteraction>()
     private var matchedRequestCount: Long = 0L
     private var unmatchedRequestsCount: Long = 0L
 
-    fun addPact(pact: RequestResponsePact) {
-        definedPactList.add(pact)
-        calculateInteractions(pact)
+    fun setInteractions(interactions: List<RequestResponseInteraction>) {
+        interactionList = interactions
     }
 
-    fun addPacts(pacts: Collection<RequestResponsePact>) {
-        definedPactList.addAll(pacts)
-        pacts.forEach { pact -> calculateInteractions(pact) }
-    }
-
-    fun clearPacts() {
-        definedPactList.clear()
-        currentInteractionList.clear()
+    fun clearPactCompletions() {
         matchedRequestCount = 0L
         unmatchedRequestsCount = 0L
     }
 
-    fun setStates(states: List<ProviderState>) {
-        currentProviderStates = states
-        currentInteractionList.clear()
-        definedPactList.forEach { pact -> calculateInteractions(pact) }
-    }
-
-    fun validatePactComplete(): Boolean {
-        val calculateInteractionCount = definedPactList.fold(0L) { count, item ->
-            count + item.requestResponseInteractions.size
-        }
-        return matchedRequestCount == calculateInteractionCount && unmatchedRequestsCount == 0L
+    fun validatePactsCompleted(count: Long): Boolean {
+        return matchedRequestCount == count && unmatchedRequestsCount == 0L
     }
 
     override fun dispatch(request: RecordedRequest?): MockResponse {
@@ -56,11 +37,11 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean): Dispatcher() {
             it.bufferedReader().readText()
         }
         try {
-            val requestMatch = pactMatcher.findInteraction(currentInteractionList, request)
+            val requestMatch = pactMatcher.findInteraction(interactionList, request)
             return when (requestMatch) {
                 is OkHttpRequestMatcher.RequestMatch.FullRequestMatch ->  {
                     matchedRequestCount++
-                    requestMatch.interaction.response.generateResponse()?.mapToMockResponse()
+                    requestMatch.interaction.response.generateResponse().mapToMockResponse()
                 }
                 is OkHttpRequestMatcher.RequestMatch.PartialRequestMatch -> {
                     notFoundMockResponse().setBody(requestMatch.problems.joinToString("\n"))
@@ -92,9 +73,5 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean): Dispatcher() {
     private fun notFoundMockResponse() : MockResponse {
         unmatchedRequestsCount++
         return MockResponse().setResponseCode(notImplementedCode)
-    }
-
-    private fun calculateInteractions(pact: RequestResponsePact) {
-        currentInteractionList.addAll(pact.requestResponseInteractions.filter { interaction -> currentProviderStates.containsAll(interaction.providerStates) })
     }
 }

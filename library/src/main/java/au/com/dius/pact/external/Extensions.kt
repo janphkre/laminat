@@ -9,13 +9,13 @@ val jsonCache = WeakHashMap<RecordedRequest, JsonElement>()
 
 @Synchronized
 fun RecordedRequest.parseBodyToJson(): JsonElement {
-    val resolvedItem = synchronized(jsonCache) { jsonCache[this] }
+    val resolvedItem = jsonCache[this]
     if(resolvedItem != null) { return resolvedItem }
     synchronized(this) {
-        val resolvedItemNew = synchronized(jsonCache) { jsonCache[this] }
+        val resolvedItemNew = jsonCache[this]
         if(resolvedItemNew != null) { return resolvedItemNew }
         val element = body.inputStream().use { jsonParser.parse(it.reader()) }
-        synchronized(jsonCache) { jsonCache.put(this, element) }
+        jsonCache.put(this, element)
         return element
     }
 }

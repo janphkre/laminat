@@ -129,8 +129,7 @@ class JsonBodyMatcher : BodyMatcher() {
                 "Expected a Map with ${expectedEntrySet.size} elements but received ${actualEntrySet.size} elements",
                 path.joinToString(".")))
             }
-            val category = Matchers.definedWildcardMatchers( "body", path.plus("any"), matchers)
-            if (category?.isNotEmpty() == true) {
+            if (Matchers.definedWildcardMatchers( "body", path.plus("any"), matchers)) {
                 actualEntrySet.forEach { entry ->
                     val expectedValue = expectedObject.get(entry.key)
                     if (expectedValue != null || !allowUnexpectedKeys) {

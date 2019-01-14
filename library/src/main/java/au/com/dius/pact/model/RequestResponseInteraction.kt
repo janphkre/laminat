@@ -28,7 +28,7 @@ class RequestResponseInteraction(
         }
 
     override fun conflictsWith(other: Interaction): Boolean {
-        if(providerStates.containsAll(other.providerStates) || other.providerStates.containsAll(providerStates)) {
+        if(providerStates.containsAll(other.providerStates) && other.providerStates.containsAll(providerStates)) {
             if(other !is RequestResponseInteraction) {
                 return false
             }
