@@ -10,23 +10,16 @@ object HeaderMatcher {
 
     fun compareHeader(headerKey: String, expected: String, actualValue: List<String>?, matchingRules: MatchingRules): List<RequestMatchProblem> {
         if(actualValue?.size ?: 0 > 1) {
-            val actualValueString = actualValue!!.joinToString(",")
-            return listOf(RequestMatchProblem.HeaderMismatch(headerKey, "Expected header '$headerKey' to have only a single value but received ${actualValue.size} values"))
+            return listOf(RequestMatchProblem.HeaderMismatch(headerKey, "Expected header '$headerKey' to have only a single value but received ${actualValue?.size} values"))
         }
         val path = listOf(headerKey)
         val category = Matchers.definedMatchers("header", path, matchingRules)
         val actual = actualValue?.firstOrNull()
-        return if (category?.isNotEmpty() == true) {
-            Matchers.doMatch(category, path, expected, actual, MismatchFactory.HeaderMismatchFactory)
-        }
-        else if (headerKey.equals("Content-Type", true)) {
-            matchContentType(expected, actual)
-        }
-        else if (stripWhiteSpaceAfterCommas(expected) == stripWhiteSpaceAfterCommas(actual)){
-            emptyList()
-        }
-        else {
-            listOf(RequestMatchProblem.HeaderMismatch(headerKey, "Expected header '$headerKey' to have value '$expected' but was '$actual'"))
+        return when {
+            category?.isNotEmpty() == true -> Matchers.doMatch(category, path, expected, actual, MismatchFactory.HeaderMismatchFactory)
+            headerKey.equals("Content-Type", true) -> matchContentType(expected, actual)
+            stripWhiteSpaceAfterCommas(expected) == stripWhiteSpaceAfterCommas(actual) -> listOf(RequestMatchProblem.None)
+            else -> listOf(RequestMatchProblem.HeaderMismatch(headerKey, "Expected header '$headerKey' to have value '$expected' but was '$actual'"))
         }
     }
 
@@ -58,7 +51,7 @@ object HeaderMatcher {
         return if(problem != null) {
             listOf(problem)
         } else {
-            emptyList()
+            listOf(RequestMatchProblem.None)
         }
     }
 

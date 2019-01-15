@@ -13,11 +13,15 @@ internal class OkHttpRequestMatcher(private val allowUnexpectedKeys: Boolean) {
         request: RecordedRequest
     ): RequestMatch {
         val matches = interactions.map { compareRequest(it, request) }
-        return matches.fold(RequestMatch.RequestMismatch() as RequestMatch) { bestResult, current ->
+        val bestMatch = matches.fold(RequestMatch.RequestMismatch() as RequestMatch) { bestResult, current ->
             return@fold if(current is RequestMatch.FullRequestMatch && (bestResult is RequestMatch.RequestMismatch || bestResult is RequestMatch.PartialRequestMatch))  {
                 current
             } else if(current is RequestMatch.FullRequestMatch && bestResult is RequestMatch.FullRequestMatch) {
-                throw PactMergeException("Multiple interactions have matched this request: ${current.interaction.uniqueKey()} and ${current.interaction.uniqueKey()}")
+                if(current.matchedCount > bestResult.matchedCount) {
+                    current
+                } else {
+                    bestResult
+                }
             } else if (current is RequestMatch.PartialRequestMatch && bestResult is RequestMatch.RequestMismatch) {
                 current
             } else if (current is RequestMatch.PartialRequestMatch && bestResult is RequestMatch.PartialRequestMatch) {
@@ -36,6 +40,14 @@ internal class OkHttpRequestMatcher(private val allowUnexpectedKeys: Boolean) {
                 bestResult
             }
         }
+        val conflictingMatch = matches.firstOrNull { it !== bestMatch && it is RequestMatch.FullRequestMatch && it.matchedCount == (bestMatch as RequestMatch.FullRequestMatch).matchedCount }
+        if(conflictingMatch != null) {
+            throw PactMergeException("Multiple interactions have matched this request: " +
+                    "${(bestMatch as RequestMatch.FullRequestMatch).interaction.uniqueKey()} and " +
+                    (conflictingMatch as RequestMatch.FullRequestMatch).interaction.uniqueKey()
+            )
+        }
+        return bestMatch
     }
 
     private fun compareRequest(expected: RequestResponseInteraction, actual: RecordedRequest): RequestMatch {
@@ -56,7 +68,7 @@ internal class OkHttpRequestMatcher(private val allowUnexpectedKeys: Boolean) {
 
     private fun decideRequestMatch(expected: RequestResponseInteraction, problems: List<RequestMatchProblem>): RequestMatch {
         return when {
-            problems.isEmpty() -> RequestMatch.FullRequestMatch(expected)
+            problems.all { it == RequestMatchProblem.None } -> RequestMatch.FullRequestMatch(expected, problems.size)
             isPartialMatch(problems) -> RequestMatch.PartialRequestMatch(expected, problems)
             else -> RequestMatch.RequestMismatch(expected, problems)
         }
@@ -70,7 +82,7 @@ internal class OkHttpRequestMatcher(private val allowUnexpectedKeys: Boolean) {
 
     sealed class RequestMatch {
         class RequestMismatch(val interaction: RequestResponseInteraction? = null, val problems: List<RequestMatchProblem>? = null): RequestMatch()
-        class FullRequestMatch(val interaction: RequestResponseInteraction): RequestMatch()
+        class FullRequestMatch(val interaction: RequestResponseInteraction, val matchedCount: Int): RequestMatch()
         class PartialRequestMatch(val interaction: RequestResponseInteraction, val problems: List<RequestMatchProblem>): RequestMatch()
     }
 }

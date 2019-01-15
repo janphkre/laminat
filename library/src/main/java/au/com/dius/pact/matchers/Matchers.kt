@@ -108,7 +108,7 @@ object Matchers {
         }
     }
 
-    fun <T> doMatch(category: Category, path: List<String>, expected: Any?, actual: Any?, mismatchFactory: MismatchFactory<T>): List<T> {
+    fun doMatch(category: Category, path: List<String>, expected: Any?, actual: Any?, mismatchFactory: MismatchFactory<RequestMatchProblem>): List<RequestMatchProblem> {
         val matcherDef = selectBestMatcher(category, path)
         return domatch(matcherDef, expected, actual, mismatchFactory)
     }

@@ -5,7 +5,7 @@ import java.util.*
 
 object QueryMatcher {
 
-    private fun compare(parameter: String, path: List<String>, expected: String, actual: String, matchers: MatchingRules): List<RequestMatchProblem.QueryMismatch> {
+    private fun compare(parameter: String, path: List<String>, expected: String, actual: String, matchers: MatchingRules): List<RequestMatchProblem> {
         val category = Matchers.definedMatchers("query", path, matchers)
         return if (category?.isNotEmpty() == true) {
             Matchers.doMatch(
@@ -17,7 +17,7 @@ object QueryMatcher {
             )
         } else {
             if (expected == actual) {
-                emptyList()
+                listOf(RequestMatchProblem.None)
             } else {
                 listOf(
                     RequestMatchProblem.QueryMismatch(
@@ -29,8 +29,8 @@ object QueryMatcher {
         }
     }
 
-    private fun compareQueryParameterValues(parameter: String, expected: List<String>, actual: List<String>, path: List<String>, matchers: MatchingRules): List<RequestMatchProblem.QueryMismatch> {
-        val result = LinkedList<RequestMatchProblem.QueryMismatch>()
+    private fun compareQueryParameterValues(parameter: String, expected: List<String>, actual: List<String>, path: List<String>, matchers: MatchingRules): List<RequestMatchProblem> {
+        val result = LinkedList<RequestMatchProblem>()
         expected.forEachIndexed { index, item ->
             if (index < actual.size) {
                 result.addAll(
@@ -54,8 +54,8 @@ object QueryMatcher {
         return result
     }
 
-    fun compareQuery(parameter: String, expected: List<String>, actual: List<String>, matchers: MatchingRules): List<RequestMatchProblem.QueryMismatch> {
-        val result = LinkedList<RequestMatchProblem.QueryMismatch>()
+    fun compareQuery(parameter: String, expected: List<String>, actual: List<String>, matchers: MatchingRules): List<RequestMatchProblem> {
+        val result = LinkedList<RequestMatchProblem>()
         val path = listOf(parameter)
         val category = Matchers.definedMatchers("query", path, matchers)
         if (category?.isNotEmpty() == true) {

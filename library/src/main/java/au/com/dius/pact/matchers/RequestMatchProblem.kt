@@ -3,6 +3,10 @@ package au.com.dius.pact.matchers
 sealed class RequestMatchProblem() {
     abstract override fun toString(): String
 
+    object None: RequestMatchProblem() {
+        override fun toString(): String = "No mismatch"
+    }
+
     class MethodMismatch(val expected: String, val actual: String?): RequestMatchProblem() {
         override fun toString(): String = "MismatchedMethod: Expected '$expected' but got '$actual'"
     }

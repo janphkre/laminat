@@ -10,12 +10,12 @@ abstract class BodyMatcher {
     fun matchBody(expected: Request, actual: RecordedRequest, allowUnexpectedKeys: Boolean): List<RequestMatchProblem> {
         val actualBodyString = actual.body?.readUtf8()
         return when(expected.body.state) {
-            OptionalBody.State.MISSING -> emptyList()
+            OptionalBody.State.MISSING -> listOf(RequestMatchProblem.None)
             OptionalBody.State.NULL, OptionalBody.State.EMPTY -> {
                 if(actualBodyString.isNullOrEmpty()) {
                     listOf(RequestMatchProblem.BodyMismatch("Expected empty body but received '$actualBodyString'"))
                 } else {
-                    emptyList()
+                    listOf(RequestMatchProblem.None)
                 }
             }
             else -> {

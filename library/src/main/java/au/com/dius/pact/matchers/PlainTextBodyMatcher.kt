@@ -13,12 +13,12 @@ class PlainTextBodyMatcher: BodyMatcher() {
         val actualString = actual.body?.readUtf8()
         return if(regex?.rules?.get(0) !is RegexMatcher) {
             if(expected.value == actualString) {
-                emptyList()
+                listOf(RequestMatchProblem.None)
             } else {
                 listOf(RequestMatchProblem.BodyMismatch("Expected body '$expected' to match '$actual' using equality but did not match"))
             }
         } else if (actualString?.matches((regex.rules[0] as RegexMatcher).regex) == true) {
-            emptyList()
+            listOf(RequestMatchProblem.None)
         } else {
             listOf(RequestMatchProblem.BodyMismatch("Expected body '$expected' to match '$actual' using regex '$regex' but did not match"))
         }

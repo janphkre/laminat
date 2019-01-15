@@ -27,12 +27,12 @@ fun valueOf(value: Any?): String {
     }
 }
 
-fun <Mismatch> matchInclude(includedValue: String, expected: Any?, actual: Any?,
-                            mismatchFactory: MismatchFactory<Mismatch>
-): List<Mismatch> {
+fun matchInclude(includedValue: String, expected: Any?, actual: Any?,
+                            mismatchFactory: MismatchFactory<RequestMatchProblem>
+): List<RequestMatchProblem> {
     val matches = actual.toString().contains(includedValue)
     return if (matches) {
-        listOf()
+        listOf(RequestMatchProblem.None)
     } else {
         listOf(mismatchFactory.create(expected, actual,
             "Expected ${valueOf(actual)} to include ${valueOf(
@@ -44,9 +44,9 @@ fun <Mismatch> matchInclude(includedValue: String, expected: Any?, actual: Any?,
 /**
  * Executor for matchers
  */
-fun <Mismatch> domatch(matchers: MatchingRuleGroup, expected: Any?, actual: Any?,
-                       mismatchFn: MismatchFactory<Mismatch>
-): List<Mismatch> {
+fun domatch(matchers: MatchingRuleGroup, expected: Any?, actual: Any?,
+                       mismatchFn: MismatchFactory<RequestMatchProblem>
+): List<RequestMatchProblem> {
     val result = matchers.rules.map { matchingRule ->
         domatch(matchingRule, expected, actual, mismatchFn)
     }
@@ -55,16 +55,16 @@ fun <Mismatch> domatch(matchers: MatchingRuleGroup, expected: Any?, actual: Any?
         result.flatten()
     } else {
         if (result.any { it.isEmpty() }) {
-            emptyList()
+            listOf(RequestMatchProblem.None)
         } else {
             result.flatten()
         }
     }
 }
 
-fun <Mismatch> domatch(matcher: MatchingRule, expected: Any?, actual: Any?,
-                       mismatchFn: MismatchFactory<Mismatch>
-): List<Mismatch> {
+fun domatch(matcher: MatchingRule, expected: Any?, actual: Any?,
+                       mismatchFn: MismatchFactory<RequestMatchProblem>
+): List<RequestMatchProblem> {
     return when (matcher) {
         is RegexMatcher -> matchRegex(matcher.regex, expected, actual, mismatchFn)
         is TypeMatcher -> matchType(expected, actual, mismatchFn)
@@ -80,12 +80,12 @@ fun <Mismatch> domatch(matcher: MatchingRule, expected: Any?, actual: Any?,
     }
 }
 
-fun <Mismatch> matchEquality(expected: Any?, actual: Any?,
-                             mismatchFactory: MismatchFactory<Mismatch>
-): List<Mismatch> {
+fun matchEquality(expected: Any?, actual: Any?,
+                             mismatchFactory: MismatchFactory<RequestMatchProblem>
+): List<RequestMatchProblem> {
     val matches = actual == null && expected == null || actual != null && actual == expected
     return if (matches) {
-        emptyList()
+        listOf(RequestMatchProblem.None)
     } else {
         listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to equal ${valueOf(
             actual
@@ -93,31 +93,31 @@ fun <Mismatch> matchEquality(expected: Any?, actual: Any?,
     }
 }
 
-fun <Mismatch> matchRegex(regex: Regex, expected: Any?, actual: Any?,
-                          mismatchFactory: MismatchFactory<Mismatch>
-): List<Mismatch> {
+fun matchRegex(regex: Regex, expected: Any?, actual: Any?,
+                          mismatchFactory: MismatchFactory<RequestMatchProblem>
+): List<RequestMatchProblem> {
     val matches = actual.toString().matches(regex)
     return if (matches
         || expected is List<*> && actual is List<*>
         || expected is Map<*, *> && actual is Map<*, *>) {
-        emptyList()
+        listOf(RequestMatchProblem.None)
     } else {
         listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to match '$regex'"))
     }
 }
 
-fun <Mismatch> matchType(expected: Any?, actual: Any?,
-                         mismatchFactory: MismatchFactory<Mismatch>
-): List<Mismatch> {
+fun matchType(expected: Any?, actual: Any?,
+                         mismatchFactory: MismatchFactory<RequestMatchProblem>
+): List<RequestMatchProblem> {
     return if (expected is String && actual is String
         || expected is Number && actual is Number
         || expected is Boolean && actual is Boolean
         || expected is List<*> && actual is List<*>
         || expected is Map<*, *> && actual is Map<*, *>) {
-        emptyList()
+        listOf(RequestMatchProblem.None)
     } else if (expected == null) {
         if (actual == null) {
-            emptyList()
+            listOf(RequestMatchProblem.None)
         } else {
             listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to be null"))
         }
@@ -129,9 +129,9 @@ fun <Mismatch> matchType(expected: Any?, actual: Any?,
     }
 }
 
-fun <Mismatch> matchNumber(numberType: NumberTypeMatcher.NumberType,  expected: Any?, actual: Any?,
-                           mismatchFactory: MismatchFactory<Mismatch>
-): List<Mismatch> {
+fun matchNumber(numberType: NumberTypeMatcher.NumberType,  expected: Any?, actual: Any?,
+                           mismatchFactory: MismatchFactory<RequestMatchProblem>
+): List<RequestMatchProblem> {
     if (expected == null && actual != null) {
         return listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to be null"))
     }
@@ -155,15 +155,15 @@ fun <Mismatch> matchNumber(numberType: NumberTypeMatcher.NumberType,  expected: 
             }
         }
     }
-    return emptyList()
+    return listOf(RequestMatchProblem.None)
 }
 
-fun <Mismatch> matchDate(pattern: String, expected: Any?, actual: Any?,
-                         mismatchFactory: MismatchFactory<Mismatch>
-): List<Mismatch> {
+fun matchDate(pattern: String, expected: Any?, actual: Any?,
+                         mismatchFactory: MismatchFactory<RequestMatchProblem>
+): List<RequestMatchProblem> {
     return try {
         DateUtils.parseDate(actual.toString(), pattern)
-        emptyList()
+        listOf(RequestMatchProblem.None)
     } catch (e: ParseException) {
         listOf(mismatchFactory.create(expected, actual,
             "Expected ${valueOf(actual)} to match a date of '$pattern': " +
@@ -171,12 +171,12 @@ fun <Mismatch> matchDate(pattern: String, expected: Any?, actual: Any?,
     }
 }
 
-fun <Mismatch> matchTime(pattern: String, expected: Any?, actual: Any?,
-                         mismatchFactory: MismatchFactory<Mismatch>
-): List<Mismatch> {
+fun matchTime(pattern: String, expected: Any?, actual: Any?,
+                         mismatchFactory: MismatchFactory<RequestMatchProblem>
+): List<RequestMatchProblem> {
     return try {
         DateUtils.parseDate(actual.toString(), pattern)
-        emptyList()
+        listOf(RequestMatchProblem.None)
     } catch (e: ParseException) {
         listOf(mismatchFactory.create(expected, actual,
             "Expected ${valueOf(actual)} to match a time of '$pattern': " +
@@ -184,12 +184,12 @@ fun <Mismatch> matchTime(pattern: String, expected: Any?, actual: Any?,
     }
 }
 
-fun <Mismatch> matchTimestamp(pattern: String, expected: Any?, actual: Any?,
-                              mismatchFactory: MismatchFactory<Mismatch>
-): List<Mismatch> {
+fun matchTimestamp(pattern: String, expected: Any?, actual: Any?,
+                              mismatchFactory: MismatchFactory<RequestMatchProblem>
+): List<RequestMatchProblem> {
     return try {
         DateUtils.parseDate(actual.toString(), pattern)
-        emptyList()
+        listOf(RequestMatchProblem.None)
     } catch (e: ParseException) {
         listOf(mismatchFactory.create(expected, actual,
             "Expected ${valueOf(actual)} to match a timestamp of '$pattern': " +
@@ -197,62 +197,62 @@ fun <Mismatch> matchTimestamp(pattern: String, expected: Any?, actual: Any?,
     }
 }
 
-fun <Mismatch> matchMinType(min: Int, expected: Any?, actual: Any?,
-                            mismatchFactory: MismatchFactory<Mismatch>
-): List<Mismatch> {
+fun matchMinType(min: Int, expected: Any?, actual: Any?,
+                            mismatchFactory: MismatchFactory<RequestMatchProblem>
+): List<RequestMatchProblem> {
     return if (actual is List<*>) {
         if (actual.size < min) {
             listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to have minimum $min"))
         } else {
-            emptyList()
+            listOf(RequestMatchProblem.None)
         }
     } else if (actual is scala.collection.immutable.List<*>) {
         if (actual.size() < min) {
             listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to have minimum $min"))
         } else {
-            emptyList()
+            listOf(RequestMatchProblem.None)
         }
     } else if (actual is JsonElement) {
         if (actual.isJsonArray && actual.asJsonArray.size() < min) {
             listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to have minimum $min"))
         } else {
-            emptyList()
+            listOf(RequestMatchProblem.None)
         }
     } else {
         matchType(expected, actual, mismatchFactory)
     }
 }
 
-fun <Mismatch> matchMaxType(max: Int, expected: Any?, actual: Any?,
-                            mismatchFactory: MismatchFactory<Mismatch>
-): List<Mismatch> {
+fun matchMaxType(max: Int, expected: Any?, actual: Any?,
+                            mismatchFactory: MismatchFactory<RequestMatchProblem>
+): List<RequestMatchProblem> {
     return if (actual is List<*>) {
         if (actual.size > max) {
             listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to have maximum $max"))
         } else {
-            emptyList()
+            listOf(RequestMatchProblem.None)
         }
     } else if (actual is scala.collection.immutable.List<*>) {
         if (actual.size() > max) {
             listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to have maximum $max"))
         } else {
-            emptyList()
+            listOf(RequestMatchProblem.None)
         }
     } else if (actual is JsonElement) {
         if (actual.isJsonArray && actual.asJsonArray.size() > max) {
             listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to have maximum $max"))
         } else {
-            emptyList()
+            listOf(RequestMatchProblem.None)
         }
     } else {
         matchType(expected, actual, mismatchFactory)
     }
 }
 
-fun <Mismatch> matchNull(actual: Any?, mismatchFactory: MismatchFactory<Mismatch>): List<Mismatch> {
+fun matchNull(actual: Any?, mismatchFactory: MismatchFactory<RequestMatchProblem>): List<RequestMatchProblem> {
     val matches = actual == null
     return if (matches) {
-        emptyList()
+        listOf(RequestMatchProblem.None)
     } else {
         listOf(mismatchFactory.create(null, actual, "Expected ${valueOf(actual)} to be null"))
     }

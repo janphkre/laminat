@@ -8,7 +8,7 @@ internal object Matching {
 
     fun matchMethod(expectedMethod: String, actualMethod: String?): List<RequestMatchProblem> {
         return if(expectedMethod.equals(actualMethod, true)) {
-            emptyList()
+            listOf(RequestMatchProblem.None)
         }
         else {
             listOf(RequestMatchProblem.MethodMismatch(expectedMethod, actualMethod))
@@ -27,7 +27,7 @@ internal object Matching {
                 MismatchFactory.PathMismatchFactory)
         }
         else if(expected.path == actualPath || actualPath?.matches(Regex(expected.path)) == true){
-            emptyList()
+            listOf(RequestMatchProblem.None)
         }
         else {
             listOf(RequestMatchProblem.PathMismatch(expected.path, actualPath))
@@ -35,7 +35,7 @@ internal object Matching {
     }
 
     fun matchQuery(expected: Request, actual: RecordedRequest): List<RequestMatchProblem> {
-        val problems = LinkedList<RequestMatchProblem.QueryMismatch>()
+        val problems = LinkedList<RequestMatchProblem>()
         expected.query.entries.forEach { expectedEntry ->
             val actualValues = actual.requestUrl.queryParameterValues(expectedEntry.key)
             if(actualValues == null) {
@@ -80,7 +80,7 @@ internal object Matching {
 
     fun matchCookie(expectedCookie: List<String>?, actualCookie: List<String>?): List<RequestMatchProblem> {
         return if(actualCookie?.containsAll(expectedCookie ?: emptyList()) == true) {
-            emptyList()
+            listOf(RequestMatchProblem.None)
         } else {
             listOf(RequestMatchProblem.CookieMismatch(expectedCookie, actualCookie))
         }
@@ -93,7 +93,7 @@ internal object Matching {
             MatchingConfig.lookupBodyMatcher(actualMimeType).matchBody(expected, actual, allowUnexpectedKeys)
         } else {
             if (!expected.body.isPresent()) {
-                emptyList()
+                listOf(RequestMatchProblem.None)
             }
             else {
                 listOf(RequestMatchProblem.BodyTypeMismatch(expectedMimeType, actualMimeType))

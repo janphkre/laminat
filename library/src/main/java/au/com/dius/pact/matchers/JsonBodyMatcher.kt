@@ -165,7 +165,7 @@ class JsonBodyMatcher : BodyMatcher() {
             Matchers.doMatch(category, path, expectedValue, actualValue, MismatchFactory.BodyMismatchFactory)
         } else {
             if (expectedValue == actualValue) {
-                emptyList()
+                listOf(RequestMatchProblem.None)
             } else {
                 listOf(RequestMatchProblem.BodyMismatch(
                     "Expected $expectedValue but received $actualValue",
@@ -184,7 +184,7 @@ class JsonBodyMatcher : BodyMatcher() {
     }
 
     private fun matchJsonNull(): List<RequestMatchProblem> {
-        return emptyList()
+        return listOf(RequestMatchProblem.None)
     }
 
 
