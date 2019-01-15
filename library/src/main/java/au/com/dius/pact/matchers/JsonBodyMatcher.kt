@@ -61,7 +61,7 @@ class JsonBodyMatcher : BodyMatcher() {
         val category = Matchers.definedMatchers("body", path, matchers)
         return if (category?.isNotEmpty() == true) {
             //TODO: DoMatch on JSONArray?!
-            var problems = Matchers.doMatch(category, path, expectedValues, actualValues, MismatchFactory.BodyMismatchFactory) as List<RequestMatchProblem>
+            var problems = Matchers.doMatch(category, path, expectedValues, actualValues, MismatchFactory.BodyMismatchFactory)
             if (expectedValues.size() != 0) {
                 val paddedExpectedValues = Array(Math.min(actualValues.size() - expectedValues.size(), 0)) { expectedValues.first() }
                 problems = problems.plus(matchJsonArrayContent(expectedValues.plus(elements=paddedExpectedValues), actualValues, path, allowUnexpectedKeys, matchers))

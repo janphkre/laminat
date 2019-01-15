@@ -69,8 +69,8 @@ internal class OkHttpRequestMatcher(private val allowUnexpectedKeys: Boolean) {
     private fun decideRequestMatch(expected: RequestResponseInteraction, problems: List<RequestMatchProblem>): RequestMatch {
         return when {
             problems.all { it == RequestMatchProblem.None } -> RequestMatch.FullRequestMatch(expected, problems.size)
-            isPartialMatch(problems) -> RequestMatch.PartialRequestMatch(expected, problems)
-            else -> RequestMatch.RequestMismatch(expected, problems)
+            isPartialMatch(problems) -> RequestMatch.PartialRequestMatch(expected, problems.filter { it != RequestMatchProblem.None })
+            else -> RequestMatch.RequestMismatch(expected, problems.filter { it != RequestMatchProblem.None })
         }
     }
 

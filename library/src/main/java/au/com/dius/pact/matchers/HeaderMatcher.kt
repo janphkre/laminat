@@ -35,7 +35,7 @@ object HeaderMatcher {
         val problem = if (expectedContentType == actualContentType) {
             expectedParameters.map { entry ->
                 if (actualParameters.contains(entry.key)) {
-                    if (entry.value == actualParameters.get(entry.key)) {
+                    if (entry.value == actualParameters[entry.key]) {
                         null
                     } else {
                         headerMismatch
@@ -58,7 +58,7 @@ object HeaderMatcher {
     private fun parseParameters(values: List<String>?): Map<String, String> {
         return values?.asSequence()?.map { it.split('=').map { split -> split.trim() }
         }?.fold(HashMap()) { map, item ->
-            map.set(item.component1(), item.component2())
+            map[item.component1()] = item.component2()
             map
         } ?: emptyMap()
     }

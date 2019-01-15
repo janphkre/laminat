@@ -38,7 +38,7 @@ object QueryMatcher {
                         parameter,
                         path.plus(index.toString()),
                         item,
-                        actual.get(index),
+                        actual[index],
                         matchers
                     )
                 )

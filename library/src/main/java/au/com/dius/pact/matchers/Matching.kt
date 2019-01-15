@@ -47,7 +47,7 @@ internal object Matching {
             }
         }
         actual.requestUrl.queryParameterNames().forEach { actualName ->
-            if(expected.query.get(actualName) == null) {
+            if(expected.query[actualName] == null) {
                 problems.add(
                     RequestMatchProblem.QueryMismatch("Unexpected query parameter  '$actualName' received", "$.query.$actualName"))
             }
@@ -60,7 +60,7 @@ internal object Matching {
         val expectedWithoutCookies = expected.headersWithoutCookie()
         val actualWithoutCookies = actual.headers.toMultimap().filterKeys { it.toLowerCase() != "cookie" }
         expectedWithoutCookies.forEach { expectedEntry ->
-            val actualValue = actualWithoutCookies.get(expectedEntry.key)
+            val actualValue = actualWithoutCookies[expectedEntry.key]
             if(actualValue == null) {
                 problems.add(RequestMatchProblem.HeaderMismatch(expectedEntry.key, "Expected a header '${expectedEntry.key}' but was missing"))
 
