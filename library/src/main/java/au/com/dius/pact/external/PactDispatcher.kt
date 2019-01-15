@@ -7,6 +7,8 @@ import okhttp3.Headers
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 
 internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErrorCode: Int): Dispatcher() {
 
@@ -49,8 +51,15 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
             }
         } catch(e: PactMergeException) {
             return notFoundMockResponse().setBody(e.message)
+        } catch(e: Exception) {
+            ByteArrayOutputStream().use { outputStream ->
+                PrintStream(outputStream, true, "UTF-8").use { printStream ->
+                    printStream.print("${e::class.qualifiedName}: ${e.message}")
+                    e.printStackTrace(printStream)
+                }
+                return notFoundMockResponse().setBody(outputStream.toString("UTF-8"))
+            }
         }
-        //TODO: ADD ADDITIONAL try catch to not crash app when an error happens.
     }
 
     private fun Response.mapToMockResponse(): MockResponse {
