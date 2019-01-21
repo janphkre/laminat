@@ -11,7 +11,7 @@ class RequestResponseInteraction(
 ) : Interaction {
 
     override fun toString(): String {
-        return "Interaction: $description\n\tin states ${displayState()}\nrequest:\n$request\n\nresponse:\n$response"
+        return "Interaction: $description\n\tin states ${displayState()}\nrequest:\n$request\n"
     }
 
     fun displayState(): String {
