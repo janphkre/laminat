@@ -49,6 +49,8 @@ class Request(
                 this.path == other.path &&
                 this.query.keys.size == other.query.keys.size &&
                 this.query.keys.containsAll(other.query.keys) &&
+                this.headers.keys.size == other.headers.keys.size &&
+                this.headers.keys.containsAll(other.headers.keys) &&
                 matchesBody(other)
     }
 
