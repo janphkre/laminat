@@ -89,8 +89,8 @@ internal object Matching {
     fun matchBody(expected: Request, actual: RecordedRequest, allowUnexpectedKeys: Boolean): List<RequestMatchProblem> {
         val expectedMimeType = expected.mimeType()
         val actualMimeType = actual.getHeader("Content-Type")
-        return if (expectedMimeType == actualMimeType) {
-            MatchingConfig.lookupBodyMatcher(actualMimeType).matchBody(expected, actual, allowUnexpectedKeys)
+        return if (actualMimeType.split(';').contains(expectedMimeType)) {
+            MatchingConfig.lookupBodyMatcher(expectedMimeType).matchBody(expected, actual, allowUnexpectedKeys)
         } else {
             if (!expected.body.isPresent()) {
                 listOf(RequestMatchProblem.None)
