@@ -32,10 +32,10 @@ dependencies {
     api "org.apache.commons:commons-collections4:$apache_collections_version"
     api "io.gatling:jsonpath_2.11:$jsonpath_version"
 
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.google.code.gson:gson:$gson_version"
-    implementation "org.apache.commons:commons-lang3:$apache_commons_version"
-    implementation "org.apache.httpcomponents:httpcore:$apache_httpcore_version"
+    api "org.apache.commons:commons-lang3:$apache_commons_version"
+    api "org.apache.httpcomponents:httpcore:$apache_httpcore_version"
     implementation "joda-time:joda-time:$jodatime_version"
     implementation "com.github.mifmif:generex:$generex_version"
     implementation "com.github.zafarkhaja:java-semver:$semver_version"
