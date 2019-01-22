@@ -54,7 +54,6 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
         } catch(e: Exception) {
             ByteArrayOutputStream().use { outputStream ->
                 PrintStream(outputStream, true, "UTF-8").use { printStream ->
-                    printStream.print("${e::class.qualifiedName}: ${e.message}")
                     e.printStackTrace(printStream)
                 }
                 return notFoundMockResponse().setBody(outputStream.toString("UTF-8"))
