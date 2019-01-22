@@ -34,7 +34,7 @@ class Response(
             generatedHeaders[key] = g?.generate(r.headers[key]) as? String ?: ""
         }
         r.headers = generatedHeaders
-        r.body = generators.applyBodyGenerators(r.body, ContentType(mimeType()))
+        r.body = generators.applyBodyGenerators(r.body, mimeType())
         return r
     }
 

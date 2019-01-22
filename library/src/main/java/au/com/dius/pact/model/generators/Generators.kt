@@ -1,8 +1,10 @@
 package au.com.dius.pact.model.generators
 
+import au.com.dius.pact.matchers.MatchingConfig
 import au.com.dius.pact.model.*
 import com.google.gson.JsonParser
 import org.apache.commons.collections4.IteratorUtils
+import org.apache.http.entity.ContentType
 
 enum class Category {
   METHOD, PATH, HEADER, QUERY, BODY, STATUS
@@ -14,12 +16,12 @@ interface ContentTypeHandler {
 }
 
 val contentTypeHandlers: MutableMap<String, ContentTypeHandler> = mutableMapOf(
-  "application/json" to JsonContentTypeHandler
+  ContentType.APPLICATION_JSON.mimeType to JsonContentTypeHandler
 )
 
 fun setupDefaultContentTypeHandlers() {
   contentTypeHandlers.clear()
-  contentTypeHandlers["application/json"] = JsonContentTypeHandler
+  contentTypeHandlers[ContentType.APPLICATION_JSON.mimeType] = JsonContentTypeHandler
 }
 
 data class QueryResult(var value: Any, val key: Any? = null, val parent: Any? = null)
@@ -162,12 +164,12 @@ data class Generators(val categories: MutableMap<Category, MutableMap<String, Ge
     }
   }
 
-  fun applyBodyGenerators(body: OptionalBody, contentType: ContentType): OptionalBody {
+  fun applyBodyGenerators(body: OptionalBody, contentType: String): OptionalBody {
     return when (body.state) {
       OptionalBody.State.EMPTY, OptionalBody.State.MISSING, OptionalBody.State.NULL -> body
       OptionalBody.State.PRESENT -> when {
-        contentType.isJson() -> processBody(body.value!!, "application/json")
-        contentType.isXml() -> processBody(body.value!!, "application/xml")
+        MatchingConfig.isJson(contentType) -> processBody(body.value!!, ContentType.APPLICATION_JSON.mimeType)
+        MatchingConfig.isXml(contentType) -> processBody(body.value!!, ContentType.APPLICATION_XML.mimeType)
         else -> body
       }
     }

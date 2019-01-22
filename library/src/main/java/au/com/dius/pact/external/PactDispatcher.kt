@@ -7,6 +7,7 @@ import okhttp3.Headers
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
+import org.apache.http.Consts
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
@@ -53,10 +54,10 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
             return notFoundMockResponse().setBody(e.message)
         } catch(e: Exception) {
             ByteArrayOutputStream().use { outputStream ->
-                PrintStream(outputStream, true, "UTF-8").use { printStream ->
+                PrintStream(outputStream, true, Consts.UTF_8.name()).use { printStream ->
                     e.printStackTrace(printStream)
                 }
-                return notFoundMockResponse().setBody(outputStream.toString("UTF-8"))
+                return notFoundMockResponse().setBody(outputStream.toString(Consts.UTF_8.name()))
             }
         }
     }

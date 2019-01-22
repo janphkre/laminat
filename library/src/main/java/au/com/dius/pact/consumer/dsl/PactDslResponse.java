@@ -23,7 +23,6 @@ import au.com.dius.pact.model.matchingrules.MatchingRules;
 import au.com.dius.pact.model.matchingrules.RegexMatcher;
 
 public class PactDslResponse {
-    private static final String CONTENT_TYPE = "Content-Type";
     private final ConsumerPactBuilder consumerPactBuilder;
     private PactDslRequestWithPath request;
 
@@ -78,7 +77,7 @@ public class PactDslResponse {
      */
     public PactDslResponse body(String body, String mimeType) {
         responseBody = OptionalBody.body(body);
-        responseHeaders.put(CONTENT_TYPE, mimeType);
+        responseHeaders.put(ContentType.CONTENT_TYPE, mimeType);
         return this;
     }
 
@@ -137,8 +136,8 @@ public class PactDslResponse {
      */
     public PactDslResponse body(JSONObject body) {
         this.responseBody = OptionalBody.body(body.toString());
-        if (!responseHeaders.containsKey(CONTENT_TYPE)) {
-            responseHeaders.put(CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
+        if (!responseHeaders.containsKey(ContentType.CONTENT_TYPE)) {
+            responseHeaders.put(ContentType.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
         }
         return this;
     }
@@ -163,8 +162,8 @@ public class PactDslResponse {
             responseBody = OptionalBody.nullBody();
         }
 
-        if (!responseHeaders.containsKey(CONTENT_TYPE)) {
-            responseHeaders.put(CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
+        if (!responseHeaders.containsKey(ContentType.CONTENT_TYPE)) {
+            responseHeaders.put(ContentType.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
         }
         return this;
     }
@@ -176,8 +175,8 @@ public class PactDslResponse {
      */
     public PactDslResponse body(Document body) throws TransformerException {
         responseBody = OptionalBody.body(ConsumerPactBuilder.xmlToString(body));
-        if (!responseHeaders.containsKey(CONTENT_TYPE)) {
-            responseHeaders.put(CONTENT_TYPE, ContentType.APPLICATION_XML.toString());
+        if (!responseHeaders.containsKey(ContentType.CONTENT_TYPE)) {
+            responseHeaders.put(ContentType.CONTENT_TYPE, ContentType.APPLICATION_XML.toString());
         }
         return this;
     }

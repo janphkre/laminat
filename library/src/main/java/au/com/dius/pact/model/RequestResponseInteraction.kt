@@ -1,6 +1,7 @@
 package au.com.dius.pact.model
 
 import com.google.gson.JsonParser
+import org.apache.http.Consts
 import java.net.URLEncoder
 
 class RequestResponseInteraction(
@@ -104,7 +105,7 @@ class RequestResponseInteraction(
         }
 
         fun mapToQueryStr(query: Map<String, List<String>>): String {
-            return query.flatMap { entry -> entry.value.map { "${entry.key}=${URLEncoder.encode(it, "UTF-8")}" } }.joinToString("&")
+            return query.flatMap { entry -> entry.value.map { "${entry.key}=${URLEncoder.encode(it, Consts.UTF_8.name())}" } }.joinToString("&")
         }
 
         fun parseBody(httpPart: HttpPart): Any? {

@@ -24,8 +24,6 @@ repositories {
 }
 
 dependencies {
-    //TODO: TRY TO GET RID OF commons-collections4 & kotlin-reflect
-    //As well as io.gatling.jsonpath
     
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     api "com.squareup.okhttp3:mockwebserver:$mockserver_version"
@@ -35,12 +33,15 @@ dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     api "com.google.code.gson:gson:$gson_version"
     api "org.apache.commons:commons-lang3:$apache_commons_version"
-    api "org.apache.httpcomponents:httpcore:$apache_httpcore_version"
     api "joda-time:joda-time:$jodatime_version"
     api "com.github.mifmif:generex:$generex_version"
     api "com.github.zafarkhaja:java-semver:$semver_version"
 
     testImplementation 'junit:junit:4.12'
+
+    // The Android vm does not like the library "org.apache.httpcomponents:httpcore:4.4.4"
+    // because it already contains parts from it that are final for example but a super class in the lib.
+    // The java classes are added manually into org.apache.http...
 }
 
 apply plugin: 'maven-publish'

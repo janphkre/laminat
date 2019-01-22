@@ -1,6 +1,7 @@
 package au.com.dius.pact.matchers
 
 import au.com.dius.pact.model.matchingrules.MatchingRules
+import org.apache.http.entity.ContentType
 
 object HeaderMatcher {
 
@@ -17,7 +18,7 @@ object HeaderMatcher {
         val actual = actualValue?.firstOrNull()
         return when {
             category?.isNotEmpty() == true -> Matchers.doMatch(category, path, expected, actual, MismatchFactory.HeaderMismatchFactory)
-            headerKey.equals("Content-Type", true) -> matchContentType(expected, actual)
+            headerKey.equals(ContentType.CONTENT_TYPE, true) -> matchContentType(expected, actual)
             stripWhiteSpaceAfterCommas(expected) == stripWhiteSpaceAfterCommas(actual) -> listOf(RequestMatchProblem.None)
             else -> listOf(RequestMatchProblem.HeaderMismatch(headerKey, "Expected header '$headerKey' to have value '$expected' but was '$actual'"))
         }
@@ -30,7 +31,7 @@ object HeaderMatcher {
         val actualContentType = actualValues?.firstOrNull()
         val expectedParameters = parseParameters(expectedValues.drop(1))
         val actualParameters = parseParameters(actualValues?.drop(1))
-        val headerMismatch = RequestMatchProblem.HeaderMismatch("Content-Type", "Expected header 'Content-Type' to have value '$expected' but was '$actual'")
+        val headerMismatch = RequestMatchProblem.HeaderMismatch(ContentType.CONTENT_TYPE, "Expected header '${ContentType.CONTENT_TYPE}' to have value '$expected' but was '$actual'")
 
         val problem = if (expectedContentType == actualContentType) {
             expectedParameters.map { entry ->

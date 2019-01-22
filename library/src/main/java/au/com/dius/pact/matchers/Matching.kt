@@ -2,6 +2,7 @@ package au.com.dius.pact.matchers
 
 import au.com.dius.pact.model.Request
 import okhttp3.mockwebserver.RecordedRequest
+import org.apache.http.entity.ContentType
 import java.util.*
 
 internal object Matching {
@@ -88,7 +89,7 @@ internal object Matching {
 
     fun matchBody(expected: Request, actual: RecordedRequest, allowUnexpectedKeys: Boolean): List<RequestMatchProblem> {
         val expectedMimeType = expected.mimeType()
-        val actualMimeType = actual.getHeader("Content-Type") ?: ""
+        val actualMimeType = actual.getHeader(ContentType.CONTENT_TYPE) ?: ""
         return if (actualMimeType.split(';').contains(expectedMimeType)) {
             MatchingConfig.lookupBodyMatcher(expectedMimeType).matchBody(expected, actual, allowUnexpectedKeys)
         } else {

@@ -1,6 +1,8 @@
 package au.com.dius.pact.model
 
+import au.com.dius.pact.matchers.MatchingConfig
 import au.com.dius.pact.model.matchingrules.MatchingRules
+import org.apache.http.entity.ContentType
 import java.util.regex.Pattern
 
 abstract class HttpPart {
@@ -10,7 +12,7 @@ abstract class HttpPart {
     abstract val matchingRules: MatchingRules
 
     fun mimeType(): String {
-        val contentTypeKey = headers.keys.find { CONTENT_TYPE.equals(it, true) }
+        val contentTypeKey = headers.keys.find { ContentType.CONTENT_TYPE.equals(it, true) }
         return if (contentTypeKey != null) {
             headers[contentTypeKey]!!.split(';').first()
         } else {
@@ -22,31 +24,30 @@ abstract class HttpPart {
         return if (body.isPresent()) {
             val s = body.value!!.substring(0,Math.min(body.value!!.length, 32)).filter { it != '\n' }
             if (XMLREGEXP.matches(s)) {
-                "application/xml"
+                ContentType.APPLICATION_XML.mimeType
             } else if (HTMLREGEXP.matches(s.toUpperCase())) {
-                "text/html"
+                ContentType.TEXT_HTML.mimeType
             } else if (JSONREGEXP.matches(s)) {
-                "application/json"
+                ContentType.APPLICATION_JSON.mimeType
             } else if (XMLREGEXP2.matches(s)) {
-                "application/xml"
+                ContentType.APPLICATION_XML.mimeType
             } else {
-                "text/plain"
+                ContentType.TEXT_PLAIN.mimeType
             }
         } else {
-            "text/plain"
+            ContentType.TEXT_PLAIN.mimeType
         }
     }
 
     fun jsonBody(): Boolean {
-        return Pattern.matches("application/.*json", mimeType())
+        return MatchingConfig.isJson(mimeType())
     }
 
     fun xmlBody(): Boolean {
-        return Pattern.matches("application/.*xml", mimeType())
+        return MatchingConfig.isXml(mimeType())
     }
 
     companion object {
-        const val CONTENT_TYPE = "Content-Type"
         val XMLREGEXP by lazy { Regex("^\\s*<\\?xml\\s*version.*") }
         val HTMLREGEXP by lazy { Regex("^\\s*(<!DOCTYPE)|(<HTML>).*") }
         val JSONREGEXP by lazy { Regex("^\\s*(true|false|null|[0-9]+|\"\\w*|\\{\\s*(\\}|\"\\w+)|\\[\\s*).*") }

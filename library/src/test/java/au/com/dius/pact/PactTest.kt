@@ -4,6 +4,7 @@ import au.com.dius.pact.consumer.ConsumerPactBuilder
 import au.com.dius.pact.external.PactJsonifier
 import au.com.dius.pact.model.PactMergeException
 import au.com.dius.pact.model.RequestResponsePact
+import org.apache.http.Consts
 import org.junit.Assert
 import org.junit.Test
 import java.io.BufferedReader
@@ -63,7 +64,7 @@ class PactTest {
     private fun readFile(file: File): String {
         val text = StringBuilder()
         try {
-            val br = BufferedReader(InputStreamReader(file.inputStream(), "UTF-8"))
+            val br = BufferedReader(InputStreamReader(file.inputStream(), Consts.UTF_8.name()))
             var line: String?
 
             while (true) {
