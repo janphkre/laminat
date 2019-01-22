@@ -60,7 +60,7 @@ internal object Matching {
         val expectedWithoutCookies = expected.headersWithoutCookie()
         val actualWithoutCookies = actual.headers.toMultimap().filterKeys { it.toLowerCase() != "cookie" }
         expectedWithoutCookies.forEach { expectedEntry ->
-            val actualValue = actualWithoutCookies[expectedEntry.key]
+            val actualValue = actualWithoutCookies[expectedEntry.key.toLowerCase()]
             if(actualValue == null) {
                 problems.add(RequestMatchProblem.HeaderMismatch(expectedEntry.key, "Expected a header '${expectedEntry.key}' but was missing"))
 

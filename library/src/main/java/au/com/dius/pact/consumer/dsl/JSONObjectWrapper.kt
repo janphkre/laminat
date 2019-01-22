@@ -9,4 +9,8 @@ class JSONObjectWrapper {
     }
 
     private val jsonObject = JSONObject()
+
+    override fun toString(): String {
+        return jsonObject.toString()
+    }
 }

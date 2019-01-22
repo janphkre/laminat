@@ -8,18 +8,18 @@ import okhttp3.mockwebserver.RecordedRequest
 abstract class BodyMatcher {
 
     fun matchBody(expected: Request, actual: RecordedRequest, allowUnexpectedKeys: Boolean): List<RequestMatchProblem> {
-        val actualBodyString = actual.body?.readUtf8()
         return when(expected.body.state) {
             OptionalBody.State.MISSING -> listOf(RequestMatchProblem.None)
             OptionalBody.State.NULL, OptionalBody.State.EMPTY -> {
-                if(actualBodyString.isNullOrEmpty()) {
+                if(actual.bodySize <= 0) {
+                    val actualBodyString = actual.body?.readUtf8()
                     listOf(RequestMatchProblem.BodyMismatch("Expected empty body but received '$actualBodyString'"))
                 } else {
                     listOf(RequestMatchProblem.None)
                 }
             }
             else -> {
-                if(actualBodyString.isNullOrEmpty()) {
+                if(actual.bodySize <= 0) {
                     listOf(RequestMatchProblem.BodyMismatch("Expected body '${expected.body.value}' but was missing"))
                 } else {
                     matchContent(expected.body, actual, expected.matchingRules, allowUnexpectedKeys)
