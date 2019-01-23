@@ -7,8 +7,8 @@ import java.util.*
 
 internal object Matching {
 
-    fun matchMethod(expectedMethod: String, actualMethod: String?): List<RequestMatchProblem> {
-        return if(expectedMethod.equals(actualMethod, true)) {
+    fun matchMethod(expectedMethod: String?, actualMethod: String?): List<RequestMatchProblem> {
+        return if(expectedMethod?.equals(actualMethod, true) != false) {
             listOf(RequestMatchProblem.None)
         }
         else {

@@ -3,7 +3,6 @@ package au.com.dius.pact.model
 import au.com.dius.pact.matchers.MatchingConfig
 import au.com.dius.pact.model.matchingrules.MatchingRules
 import org.apache.http.entity.ContentType
-import java.util.regex.Pattern
 
 abstract class HttpPart {
 

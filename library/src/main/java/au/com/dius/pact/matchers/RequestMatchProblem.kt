@@ -1,31 +1,31 @@
 package au.com.dius.pact.matchers
 
-sealed class RequestMatchProblem() {
-    abstract override fun toString(): String
+sealed class RequestMatchProblem(val message: String) {
 
-    object None: RequestMatchProblem() {
-        override fun toString(): String = "No mismatch"
-    }
+    override fun toString(): String = message
 
-    class MethodMismatch(val expected: String, val actual: String?): RequestMatchProblem() {
-        override fun toString(): String = "MismatchedMethod: Expected '$expected' but got '$actual'"
-    }
-    class PathMismatch(val expected: String?, val actual: String?): RequestMatchProblem() {
-        override fun toString(): String = "MismatchedPath: Expected '$expected' but got '$actual'"
-    }
-    class QueryMismatch(val message: String, val path: String): RequestMatchProblem() {
-        override fun toString(): String = "MismatchedQuery $path:\n$message"
-    }
-    class HeaderMismatch(val name: String, val message: String): RequestMatchProblem() {
-        override fun toString(): String = "MismatchedHeader $name:\n$message"
-    }
-    class CookieMismatch(val expected: List<String>?, val actual: List<String>?): RequestMatchProblem() {
-        override fun toString(): String = "MismatchedCookie: Expected '${expected?.joinToString(";")}' but got '${actual?.joinToString(";")}'"
-    }
-    class BodyTypeMismatch(val expectedMime: String, val actualMime: String?): RequestMatchProblem() {
-        override fun toString(): String = "MismatchedBodyType: Expected '$expectedMime' but got '$actualMime'"
-    }
-    class BodyMismatch(val message: String, val path: String? = null): RequestMatchProblem() {
-        override fun toString(): String = "MismatchedBody on $path:\n$message"
-    }
+    object None: RequestMatchProblem(
+        "No mismatch"
+    )
+    class MethodMismatch(expected: String, actual: String?): RequestMatchProblem(
+        "MismatchedMethod: Expected '$expected' but got '$actual'"
+    )
+    class PathMismatch(expected: String?, actual: String?): RequestMatchProblem(
+        "MismatchedPath: Expected '$expected' but got '$actual'"
+    )
+    class QueryMismatch(message: String, path: String): RequestMatchProblem(
+        "MismatchedQuery $path:\n$message"
+    )
+    class HeaderMismatch(name: String, message: String): RequestMatchProblem(
+        "MismatchedHeader $name:\n$message"
+    )
+    class CookieMismatch(expected: List<String>?, actual: List<String>?): RequestMatchProblem(
+        "MismatchedCookie: Expected '${expected?.joinToString(";")}' but got '${actual?.joinToString(";")}'"
+    )
+    class BodyTypeMismatch(expectedMime: String?, actualMime: String?): RequestMatchProblem(
+        "MismatchedBodyType: Expected '$expectedMime' but got '$actualMime'"
+    )
+    class BodyMismatch(message: String, path: String? = null): RequestMatchProblem(
+        "MismatchedBody on $path:\n$message"
+    )
 }

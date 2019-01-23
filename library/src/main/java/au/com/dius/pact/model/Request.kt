@@ -5,7 +5,7 @@ import au.com.dius.pact.model.generators.Generators
 import au.com.dius.pact.model.matchingrules.MatchingRules
 
 class Request(
-    val method: String = DEFAULT_METHOD,
+    val method: String? = DEFAULT_METHOD,
     val path: String = DEFAULT_PATH,
     val query: Map<String, List<String>> = emptyMap(),
     override var headers: Map<String, String> = emptyMap(),
@@ -75,8 +75,8 @@ class Request(
 
         fun fromMap(map: Map<*, *>): Request {
             return Request(
-            method = (map["method"] ?: DEFAULT_METHOD) as String,
-            path = (map["path"] ?: DEFAULT_PATH) as String,
+            method = map["method"] as? String?,
+            path = map["path"] as? String? ?: DEFAULT_PATH,
             query = map["query"] as? Map<String, List<String>> ?: emptyMap(),
             headers = map["headers"] as? Map<String, String> ?: emptyMap(),
             body = if(map.containsKey("body")) OptionalBody.body(map["body"] as String?) else OptionalBody.missing(),
