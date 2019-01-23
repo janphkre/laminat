@@ -47,12 +47,13 @@ internal object Matching {
                 problems.addAll(QueryMatcher.compareQuery(expectedEntry.key, expectedEntry.value, actualValues, expected.matchingRules))
             }
         }
-        actual.requestUrl.queryParameterNames().forEach { actualName ->
+        //TODO: DO WE REALLY WANT TO FAIL ON UNMATCHED QUERY PARAMETERS?
+        /*actual.requestUrl.queryParameterNames().forEach { actualName ->
             if(expected.query[actualName] == null) {
                 problems.add(
                     RequestMatchProblem.QueryMismatch("Unexpected query parameter  '$actualName' received", "$.query.$actualName"))
             }
-        }
+        }*/
         return problems
     }
 
