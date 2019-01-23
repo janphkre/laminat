@@ -39,6 +39,10 @@ open class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: I
         dispatcher.clearPactCompletions()
     }
 
+    fun getCurrentInteractionCount(): Int {
+        return currentInteractionList.size
+    }
+
     fun validatePactsCompleted(count: Long): Boolean {
         return dispatcher.validatePactsCompleted(count)
     }

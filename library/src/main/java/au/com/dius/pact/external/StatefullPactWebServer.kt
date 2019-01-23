@@ -43,6 +43,14 @@ class StatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int): 
         definedPactList.forEach { pact -> updateInteractions(pact) }
     }
 
+    fun getDefinedPactCount(): Int {
+        return definedPactList.size
+    }
+
+    fun getDefinedInteractionCount(): Int {
+        return definedPactList.sumBy { it.requestResponseInteractions.size }
+    }
+
     override fun updateInteractions(pact: RequestResponsePact) {
         addCurrentInteractions(pact.requestResponseInteractions.filter { interaction -> currentProviderStates.containsAll(interaction.providerStates) })
     }
