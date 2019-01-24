@@ -25,8 +25,8 @@ class PactTest {
     private fun getInitialPacts(): List<RequestResponsePact> {
         return listOf(ConsumerPactBuilder("TestConsumer").hasPactWith("TestProducer")
             .uponReceiving("GET testRequest")
-            .path("test/path")
             .method("GET")
+            .path("test/path")
             .headers(defaultRequestHeaders)
             .willRespondWith()
             .status(200)
@@ -38,8 +38,8 @@ class PactTest {
     private fun getAdditionalPacts(): List<RequestResponsePact> {
         return listOf(ConsumerPactBuilder("TestConsumer").hasPactWith("TestProducer")
             .uponReceiving("GET additionaltestRequest")
-            .path("test/path/additional")
             .method("GET")
+            .path("test/path/additional")
             .headers(defaultRequestHeaders)
             .willRespondWith()
             .status(200)
@@ -51,8 +51,8 @@ class PactTest {
     private fun getConflictPacts(): List<RequestResponsePact> {
         return listOf(ConsumerPactBuilder("TestConsumer").hasPactWith("TestProducer")
             .uponReceiving("GET testRequest")
-            .path("test/path")
             .method("GET")
+            .path("test/path")
             .headers(defaultRequestHeaders)
             .willRespondWith()
             .status(200)

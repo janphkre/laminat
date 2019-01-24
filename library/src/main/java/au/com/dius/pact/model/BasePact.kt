@@ -19,7 +19,7 @@ abstract class BasePact: Pact {
         fun getMetaData(version: String): Map<String, Any?> {
             return mapOf(
                 Pair("pact-specification", mapOf(Pair("version", version))),
-                Pair("pact-jvm", mapOf(Pair("version", BuildConfig.VERSION_NAME)))
+                Pair("pact-laminat-android", mapOf(Pair("version", BuildConfig.VERSION_NAME)))
             )
         }
     }

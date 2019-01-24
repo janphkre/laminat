@@ -28,7 +28,7 @@
     "pact-specification": {
       "version": "3.0.0"
     },
-    "pact-jvm": {
+    "pact-laminat-android": {
       "version": "3.5.7"
     }
   }

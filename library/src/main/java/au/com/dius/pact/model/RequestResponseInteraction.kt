@@ -64,11 +64,9 @@ class RequestResponseInteraction(
     companion object {
         fun requestToMap(request: Request, pactSpecVersion: PactSpecVersion): Map<*, *> {
             val map = mutableMapOf<String, Any?>(
+                Pair("method", request.method.toUpperCase()),
                 Pair("path", request.path)
             )
-            if(request.method != null) {
-                map.set("method", request.method.toUpperCase())
-            }
             if (request.headers.isNotEmpty()) {
                 map.set("headers", request.headers)
             }
