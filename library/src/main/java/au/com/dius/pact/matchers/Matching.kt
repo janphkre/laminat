@@ -7,8 +7,8 @@ import java.util.*
 
 internal object Matching {
 
-    fun matchMethod(expectedMethod: String?, actualMethod: String?): List<RequestMatchProblem> {
-        return if(expectedMethod?.equals(actualMethod, true) != false) {
+    fun matchMethod(expectedMethod: String, actualMethod: String?): List<RequestMatchProblem> {
+        return if(expectedMethod.equals(actualMethod, true) != false) {
             listOf(RequestMatchProblem.None)
         }
         else {
@@ -47,13 +47,13 @@ internal object Matching {
                 problems.addAll(QueryMatcher.compareQuery(expectedEntry.key, expectedEntry.value, actualValues, expected.matchingRules))
             }
         }
-        //TODO: DO WE REALLY WANT TO FAIL ON UNMATCHED QUERY PARAMETERS?
-        /*actual.requestUrl.queryParameterNames().forEach { actualName ->
+        //DO WE REALLY WANT TO FAIL ON UNMATCHED QUERY PARAMETERS? Apparently if we want to meet pact-spec.
+        actual.requestUrl.queryParameterNames().forEach { actualName ->
             if(expected.query[actualName] == null) {
                 problems.add(
                     RequestMatchProblem.QueryMismatch("Unexpected query parameter  '$actualName' received", "$.query.$actualName"))
             }
-        }*/
+        }
         return problems
     }
 
