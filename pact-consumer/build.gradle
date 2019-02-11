@@ -46,12 +46,12 @@ dependencies {
 
 apply plugin: 'maven-publish'
 
-def coreAarFile = file('build/outputs/aar/library-release.aar')
+def coreAarFile = file('build/outputs/aar/pact-consumer-release.aar')
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 publishing.publications {
-    broker(MavenPublication) {
+    consumer(MavenPublication) {
         artifact coreAarFile
         groupId "com.github.janphkre"
         artifactId "laminat-android"
