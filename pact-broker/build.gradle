@@ -25,6 +25,7 @@ if (project.tasks.findByName('compileKotlin')) {
     }
 }
 
+group = group
 version = pact_version
 jar {
     manifest {
@@ -32,5 +33,5 @@ jar {
                 "Implementation-Version": pact_version,
                 "Implementation-Version-Code": pact_version_code)
     }
-    baseName = 'laminat-pact-broker'
+    baseName = broker_artifact
 }
