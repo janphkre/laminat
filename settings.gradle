@@ -1,1 +1,1 @@
-include ':pact-consumer', ':pact-broker'
+include ':pact-consumer'
