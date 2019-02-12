@@ -53,9 +53,9 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 publishing.publications {
     consumer(MavenPublication) {
         artifact coreAarFile
-        groupId group
-        artifactId lib_artifact
-        version pact_version
+        groupId rootProject.ext.group
+        artifactId rootProject.ext.lib_artifact
+        version rootProject.ext.pact_version
         //The publication doesn't know about our dependencies, so we have to manually add them to the pom
         pom.withXml {
             def dependenciesNode = asNode().appendNode('dependencies')
