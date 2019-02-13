@@ -2,7 +2,7 @@ package au.com.dius.pact.consumer.dsl;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.UUID;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -399,7 +399,9 @@ public class PactDslRootValue extends DslPart {
     PactDslRootValue value = new PactDslRootValue();
     value.generators.addGenerator(Category.BODY, "", new DateTimeGenerator(format));
     FastDateFormat instance = FastDateFormat.getInstance(format);
-    value.setValue(instance.format(new Date(DATE_2000)));
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTimeInMillis(DATE_2000);
+    value.setValue(instance.format(calendar));
     value.setMatcher(value.matchTimestamp(format));
     return value;
   }
@@ -409,7 +411,7 @@ public class PactDslRootValue extends DslPart {
    * @param format timestamp format
    * @param example example date and time to use for generated bodies
    */
-  public static PactDslRootValue timestamp(String format, Date example) {
+  public static PactDslRootValue timestamp(String format, Calendar example) {
     FastDateFormat instance = FastDateFormat.getInstance(format);
     PactDslRootValue value = new PactDslRootValue();
     value.setValue(instance.format(example));
@@ -432,7 +434,9 @@ public class PactDslRootValue extends DslPart {
     FastDateFormat instance = FastDateFormat.getInstance(format);
     PactDslRootValue value = new PactDslRootValue();
     value.generators.addGenerator(Category.BODY, "", new DateGenerator(format));
-    value.setValue(instance.format(new Date(DATE_2000)));
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTimeInMillis(DATE_2000);
+    value.setValue(instance.format(calendar));
     value.setMatcher(value.matchDate(format));
     return value;
   }
@@ -442,7 +446,7 @@ public class PactDslRootValue extends DslPart {
    * @param format date format to match
    * @param example example date to use for generated values
    */
-  public static PactDslRootValue date(String format, Date example) {
+  public static PactDslRootValue date(String format, Calendar example) {
     FastDateFormat instance = FastDateFormat.getInstance(format);
     PactDslRootValue value = new PactDslRootValue();
     value.setValue(instance.format(example));
@@ -465,7 +469,9 @@ public class PactDslRootValue extends DslPart {
     FastDateFormat instance = FastDateFormat.getInstance(format);
     PactDslRootValue value = new PactDslRootValue();
     value.generators.addGenerator(Category.BODY, "", new TimeGenerator(format));
-    value.setValue(instance.format(new Date(DATE_2000)));
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTimeInMillis(DATE_2000);
+    value.setValue(instance.format(calendar));
     value.setMatcher(value.matchTime(format));
     return value;
   }
@@ -475,7 +481,7 @@ public class PactDslRootValue extends DslPart {
    * @param format time format to match
    * @param example example time to use for generated bodies
    */
-  public static PactDslRootValue time(String format, Date example) {
+  public static PactDslRootValue time(String format, Calendar example) {
     FastDateFormat instance = FastDateFormat.getInstance(format);
     PactDslRootValue value = new PactDslRootValue();
     value.setValue(instance.format(example));

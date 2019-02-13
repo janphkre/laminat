@@ -24,9 +24,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * DSL to define a JSON array
@@ -404,7 +403,9 @@ public class PactDslJsonArray extends DslPart {
      */
     public PactDslJsonArray timestamp() {
       String pattern = DateFormatUtils.ISO_DATETIME_FORMAT.getPattern();
-      body.put(DateFormatUtils.ISO_DATETIME_FORMAT.format(new Date(DATE_2000)));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(DATE_2000);
+      body.put(DateFormatUtils.ISO_DATETIME_FORMAT.format(calendar));
       generators.addGenerator(Category.BODY, rootPath + appendArrayIndex(0), new DateTimeGenerator(pattern));
       matchers.addRule(rootPath + appendArrayIndex(0), matchTimestamp(pattern));
       return this;
@@ -416,7 +417,9 @@ public class PactDslJsonArray extends DslPart {
      */
     public PactDslJsonArray timestamp(String format) {
       FastDateFormat instance = FastDateFormat.getInstance(format);
-      body.put(instance.format(new Date(DATE_2000)));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(DATE_2000);
+      body.put(instance.format(calendar));
       generators.addGenerator(Category.BODY, rootPath + appendArrayIndex(0), new DateTimeGenerator(format));
       matchers.addRule(rootPath + appendArrayIndex(0), matchTimestamp(format));
       return this;
@@ -427,7 +430,7 @@ public class PactDslJsonArray extends DslPart {
      * @param format timestamp format
      * @param example example date and time to use for generated bodies
      */
-    public PactDslJsonArray timestamp(String format, Date example) {
+    public PactDslJsonArray timestamp(String format, Calendar example) {
         FastDateFormat instance = FastDateFormat.getInstance(format);
         body.put(instance.format(example));
         matchers.addRule(rootPath + appendArrayIndex(0), matchTimestamp(format));
@@ -439,7 +442,9 @@ public class PactDslJsonArray extends DslPart {
      */
     public PactDslJsonArray date() {
       String pattern = DateFormatUtils.ISO_DATE_FORMAT.getPattern();
-      body.put(DateFormatUtils.ISO_DATE_FORMAT.format(new Date(DATE_2000)));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(DATE_2000);
+      body.put(DateFormatUtils.ISO_DATE_FORMAT.format(calendar));
       generators.addGenerator(Category.BODY, rootPath + appendArrayIndex(0), new DateGenerator(pattern));
       matchers.addRule(rootPath + appendArrayIndex(0), matchDate(pattern));
       return this;
@@ -451,7 +456,9 @@ public class PactDslJsonArray extends DslPart {
      */
     public PactDslJsonArray date(String format) {
       FastDateFormat instance = FastDateFormat.getInstance(format);
-      body.put(instance.format(new Date(DATE_2000)));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(DATE_2000);
+      body.put(instance.format(calendar));
       generators.addGenerator(Category.BODY, rootPath + appendArrayIndex(0), new DateTimeGenerator(format));
       matchers.addRule(rootPath + appendArrayIndex(0), matchDate(format));
       return this;
@@ -462,7 +469,7 @@ public class PactDslJsonArray extends DslPart {
      * @param format date format to match
      * @param example example date to use for generated values
      */
-    public PactDslJsonArray date(String format, Date example) {
+    public PactDslJsonArray date(String format, Calendar example) {
         FastDateFormat instance = FastDateFormat.getInstance(format);
         body.put(instance.format(example));
         matchers.addRule(rootPath + appendArrayIndex(0), matchDate(format));
@@ -474,7 +481,9 @@ public class PactDslJsonArray extends DslPart {
      */
     public PactDslJsonArray time() {
       String pattern = DateFormatUtils.ISO_TIME_FORMAT.getPattern();
-      body.put(DateFormatUtils.ISO_TIME_FORMAT.format(new Date(DATE_2000)));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(DATE_2000);
+      body.put(DateFormatUtils.ISO_TIME_FORMAT.format(calendar));
       generators.addGenerator(Category.BODY, rootPath + appendArrayIndex(0), new TimeGenerator(pattern));
       matchers.addRule(rootPath + appendArrayIndex(0), matchTime(pattern));
       return this;
@@ -486,7 +495,9 @@ public class PactDslJsonArray extends DslPart {
      */
     public PactDslJsonArray time(String format) {
       FastDateFormat instance = FastDateFormat.getInstance(format);
-      body.put(instance.format(new Date(DATE_2000)));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(DATE_2000);
+      body.put(instance.format(calendar));
       generators.addGenerator(Category.BODY, rootPath + appendArrayIndex(0), new TimeGenerator(format));
       matchers.addRule(rootPath + appendArrayIndex(0), matchTime(format));
       return this;
@@ -497,7 +508,7 @@ public class PactDslJsonArray extends DslPart {
      * @param format time format to match
      * @param example example time to use for generated bodies
      */
-    public PactDslJsonArray time(String format, Date example) {
+    public PactDslJsonArray time(String format, Calendar example) {
         FastDateFormat instance = FastDateFormat.getInstance(format);
         body.put(instance.format(example));
         matchers.addRule(rootPath + appendArrayIndex(0), matchTime(format));
