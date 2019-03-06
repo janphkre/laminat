@@ -15,7 +15,7 @@ class JSONObjectWrapper {
         jsonObject.put(rootName, body)
     }
 
-    private val jsonObject = JSONObject()
+    val jsonObject = JSONObject()
 
     override fun toString(): String {
         return jsonObject.toString()

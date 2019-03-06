@@ -89,7 +89,7 @@ public class PactDslJsonBody extends DslPart {
 
     @Override
     public Object getBody() {
-        return body;
+        return body.getJsonObject();
     }
 
     /**
