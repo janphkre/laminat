@@ -2,8 +2,8 @@
 
 buildscript {
     ext {
-        pact_version = '3.5.8'
-        pact_version_code = 2
+        pact_version = '3.5.9'
+        pact_version_code = 3
         group = 'com.github.janphkre'
         lib_artifact = 'laminat-android'
         broker_artifact = 'laminat-broker'
