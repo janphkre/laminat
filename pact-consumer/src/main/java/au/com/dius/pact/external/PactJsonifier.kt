@@ -6,7 +6,6 @@ import java.io.PrintWriter
 
 object PactJsonifier {
     fun generateJson(pacts: Collection<RequestResponsePact>, baseDir: File) {
-        baseDir.deleteRecursively()
         baseDir.mkdir()
         pacts.forEach {
             val conflicts = it.conflictsWithSelf()
@@ -35,7 +34,6 @@ object PactJsonifier {
     private fun getEmptyFileFor(pact: Pact, baseDir: File): File {
         val name = "${pact.consumer.name.toLowerCase().replace(' ','_')}:${pact.provider.name.toLowerCase().replace(' ','_')}.json"
         val file = File(baseDir, name)
-        file.createNewFile()
         return file
     }
 }
