@@ -70,7 +70,13 @@ data class Category @JvmOverloads constructor(val name: String,
   }
 
   fun applyMatcherRootPrefix(prefix: String) {
-    matchingRules = matchingRules.mapKeys { e -> prefix + e.key }.toMutableMap()
+    matchingRules = matchingRules.mapKeys { e ->
+      if(e.key.startsWith(prefix)) {
+          e.key
+        } else {
+          prefix + e.key
+      }
+    }.toMutableMap()
   }
 
   fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any?> {

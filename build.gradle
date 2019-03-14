@@ -2,7 +2,7 @@
 
 buildscript {
     ext {
-        pact_version = '3.5.10'
+        pact_version = '3.5.11'
         pact_version_code = 4
         group = 'com.github.janphkre'
         lib_artifact = 'laminat-android'
