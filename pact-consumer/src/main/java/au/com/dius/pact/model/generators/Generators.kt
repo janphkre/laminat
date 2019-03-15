@@ -212,7 +212,13 @@ data class Generators(val categories: MutableMap<Category, MutableMap<String, Ge
 
   fun applyRootPrefix(prefix: String) {
     categories.keys.forEach { category ->
-      categories[category] = categories[category]!!.mapKeys { entry -> prefix + entry.key }.toMutableMap()
+      categories[category] = categories[category]!!.mapKeys { e ->
+        if(e.key.startsWith(prefix)) {
+          e.key
+        } else {
+          prefix + e.key
+        }
+      }.toMutableMap()
     }
   }
 }

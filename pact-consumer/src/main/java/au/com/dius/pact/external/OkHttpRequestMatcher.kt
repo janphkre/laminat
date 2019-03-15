@@ -6,7 +6,7 @@ import au.com.dius.pact.matchers.RequestMatchProblem
 import okhttp3.mockwebserver.RecordedRequest
 import java.util.*
 
-internal class OkHttpRequestMatcher(private val allowUnexpectedKeys: Boolean) {
+class OkHttpRequestMatcher(private val allowUnexpectedKeys: Boolean) {
 
     fun findInteraction(
         interactions: List<RequestResponseInteraction>,

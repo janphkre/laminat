@@ -1,5 +1,6 @@
 package au.com.dius.pact.matchers
 
+import android.util.Log
 import au.com.dius.pact.model.matchingrules.Category
 import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
 import au.com.dius.pact.model.matchingrules.MatchingRules
@@ -78,10 +79,20 @@ object Matchers {
         return true
     }
 
+//  SCALA:
+//  def calculatePathWeight(pathExp: String, path: Seq[String]) = {
+//      new Parser().compile(pathExp) match {
+//          case Parser.Success(q, _) =>
+//          path.zip(q).map(entry => matchesToken(entry._1, entry._2)).product
+//          case ns: Parser.NoSuccess =>
+//          logger.warn(s"Path expression $pathExp is invalid, ignoring: $ns")
+//          0
+//      }
+//  }
     private fun calculatePathWeight(pathExp: String?, actualItems: List<String>): Int {
         val compiledPath = getCompiledPath(pathExp)
         return if(compiledPath != null) {
-            actualItems.zip(compiledPath).asSequence().map { entry -> matchesToken(entry.first, entry.second) }.fold(0) { result, element -> result * element }
+            actualItems.zip(compiledPath).asSequence().map { entry -> matchesToken(entry.first, entry.second) }.fold(1) { result, element -> result * element }
         } else {
             0
         }

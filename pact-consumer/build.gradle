@@ -38,6 +38,8 @@ dependencies {
     api "com.github.zafarkhaja:java-semver:$semver_version"
 
     testImplementation 'junit:junit:4.12'
+    testImplementation "org.json:json:20180130"
+    testImplementation "org.mockito:mockito-core:1.9.5"
 
     // The Android vm does not like the library "org.apache.httpcomponents:httpcore:4.4.4"
     // because it already contains parts from it that are final for example but a super class in the lib.
