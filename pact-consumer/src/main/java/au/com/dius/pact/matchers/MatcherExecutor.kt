@@ -14,6 +14,7 @@ import au.com.dius.pact.model.matchingrules.TimeMatcher
 import au.com.dius.pact.model.matchingrules.TimestampMatcher
 import au.com.dius.pact.model.matchingrules.TypeMatcher
 import com.google.gson.JsonElement
+import com.google.gson.internal.LazilyParsedNumber
 import org.apache.commons.lang3.time.DateUtils
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -135,23 +136,70 @@ fun matchNumber(numberType: NumberTypeMatcher.NumberType,  expected: Any?, actua
     if (expected == null && actual != null) {
         return listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to be null"))
     }
-    when (numberType) {
-        NumberTypeMatcher.NumberType.NUMBER -> {
-            if (actual !is Number) {
-                return listOf(mismatchFactory.create(expected, actual,
-                    "Expected ${valueOf(actual)} to be a number"))
+    if(actual is LazilyParsedNumber) {
+        when (numberType) {
+            NumberTypeMatcher.NumberType.NUMBER -> {
+                if (!actual.isNumber()) {
+                    return listOf(
+                        mismatchFactory.create(
+                            expected, actual,
+                            "Expected ${valueOf(actual)} to be a number"
+                        )
+                    )
+                }
+            }
+            NumberTypeMatcher.NumberType.INTEGER -> {
+                if (!actual.isInt() && !actual.isLong()) {
+                    return listOf(
+                        mismatchFactory.create(
+                            expected, actual,
+                            "Expected ${valueOf(actual)} to be an integer"
+                        )
+                    )
+                }
+            }
+            NumberTypeMatcher.NumberType.DECIMAL -> {
+                if (!actual.isFloat() && !actual.isDouble()) {
+                    return listOf(
+                        mismatchFactory.create(
+                            expected, actual,
+                            "Expected ${valueOf(actual)} to be a decimal number"
+                        )
+                    )
+                }
             }
         }
-        NumberTypeMatcher.NumberType.INTEGER -> {
-            if (actual !is Int && actual !is Long && actual !is BigInteger) {
-                return listOf(mismatchFactory.create(expected, actual,
-                    "Expected ${valueOf(actual)} to be an integer"))
+    } else {
+        when (numberType) {
+            NumberTypeMatcher.NumberType.NUMBER -> {
+                if (actual !is Number) {
+                    return listOf(
+                        mismatchFactory.create(
+                            expected, actual,
+                            "Expected ${valueOf(actual)} to be a number"
+                        )
+                    )
+                }
             }
-        }
-        NumberTypeMatcher.NumberType.DECIMAL -> {
-            if (actual !is Float && actual !is Double && actual !is BigDecimal && actual != 0) {
-                return listOf(mismatchFactory.create(expected, actual,
-                    "Expected ${valueOf(actual)} to be a decimal number"))
+            NumberTypeMatcher.NumberType.INTEGER -> {
+                if (actual !is Int && actual !is Long && actual !is BigInteger) {
+                    return listOf(
+                        mismatchFactory.create(
+                            expected, actual,
+                            "Expected ${valueOf(actual)} to be an integer"
+                        )
+                    )
+                }
+            }
+            NumberTypeMatcher.NumberType.DECIMAL -> {
+                if (actual !is Float && actual !is Double && actual !is BigDecimal && actual != 0) {
+                    return listOf(
+                        mismatchFactory.create(
+                            expected, actual,
+                            "Expected ${valueOf(actual)} to be a decimal number"
+                        )
+                    )
+                }
             }
         }
     }

@@ -2,8 +2,8 @@
 
 buildscript {
     ext {
-        pact_version = '3.5.12'
-        pact_version_code = 5
+        pact_version = '3.5.14'
+        pact_version_code = 7
         group = 'com.github.janphkre'
         lib_artifact = 'laminat-android'
 
@@ -18,12 +18,10 @@ buildscript {
 
         mockserver_version = '3.9.0'
 
-        //Broker:
-        groovy_version='2.4.12'
-        http_builder_version = '0.7.1'
-        kotson_version = '2.5.0'
-        http_client_version = '4.5.2'
-        guava_version = '23.0'
+        //Testing:
+        test_junit_version = '4.12'
+        test_json_version = '20180130'
+        test_mockito_version = '1.9.5'
     }
     repositories {
         google()

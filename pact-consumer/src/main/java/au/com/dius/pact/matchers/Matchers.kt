@@ -1,6 +1,5 @@
 package au.com.dius.pact.matchers
 
-import android.util.Log
 import au.com.dius.pact.model.matchingrules.Category
 import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
 import au.com.dius.pact.model.matchingrules.MatchingRules
@@ -29,7 +28,10 @@ object Matchers {
         } }
     }
 
-    private fun matchesToken(pathElement: String, token: AST.PathToken): Int {
+    private fun matchesToken(pathElement: String?, token: AST.PathToken): Int {
+        if(pathElement == null) {
+            return 0
+        }
         return when(token) {
             is AST.`RootNode$` -> if (pathElement == "$") 2 else 0
             is AST.Field ->  if (pathElement == token.name()) 2 else 0
@@ -37,6 +39,24 @@ object Matchers {
             is AST.ArraySlice -> if (pathElement.matches(arrayRegex)) 1 else 0
             is AST.`AnyField$` -> 1
             else -> 0
+        }
+    }
+
+    private fun matchPathExact(pathExp: String?, actualItems: List<String>): Int {
+        val compiledPath = getCompiledPath(pathExp)
+        return if(compiledPath != null) {
+            val filter = actualItems.tailsFilter { list ->
+                list.allIndexed { index, element ->
+                    matchesToken(element, compiledPath.elementAt(index)) != 0
+                }
+            }
+            if (filter.isNotEmpty()) {
+                filter.maxBy { it.size }?.size ?: 0
+            } else {
+                0
+            }
+        } else {
+            0
         }
     }
 
@@ -92,7 +112,7 @@ object Matchers {
     private fun calculatePathWeight(pathExp: String?, actualItems: List<String>): Int {
         val compiledPath = getCompiledPath(pathExp)
         return if(compiledPath != null) {
-            actualItems.zip(compiledPath).asSequence().map { entry -> matchesToken(entry.first, entry.second) }.fold(1) { result, element -> result * element }
+            actualItems.zipFirstNullable(compiledPath).asSequence().map { entry -> matchesToken(entry.first, entry.second) }.fold(1) { result, element -> result * element }
         } else {
             0
         }

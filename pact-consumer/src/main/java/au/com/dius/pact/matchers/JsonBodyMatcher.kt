@@ -60,13 +60,17 @@ class JsonBodyMatcher : BodyMatcher() {
         val actualValues = actualJson.asJsonArray
         val category = Matchers.definedMatchers("body", path, matchers)
         return if (category?.isNotEmpty() == true) {
-            //TODO: DoMatch on JSONArray?!
-            var problems = Matchers.doMatch(category, path, expectedValues, actualValues, MismatchFactory.BodyMismatchFactory)
+            val problems = if(Matchers.definedWildcardMatchers( "body", path.plus("any"), matchers)) {
+                Matchers.doMatch(category, path, expectedValues, actualValues, MismatchFactory.BodyMismatchFactory)
+            } else {
+                emptyList<RequestMatchProblem>()
+            }
             if (expectedValues.size() != 0) {
                 val paddedExpectedValues = Array(Math.min(actualValues.size() - expectedValues.size(), 0)) { expectedValues.first() }
-                problems = problems.plus(matchJsonArrayContent(expectedValues.plus(elements=paddedExpectedValues), actualValues, path, allowUnexpectedKeys, matchers))
+                problems.plus(matchJsonArrayContent(expectedValues.plus(elements=paddedExpectedValues), actualValues, path, allowUnexpectedKeys, matchers))
+            } else {
+                problems
             }
-            problems
         } else {
             if (expectedValues.size() != 0 && actualValues.size() == 0) {
                 listOf(RequestMatchProblem.BodyMismatch("Expected an empty List but received $actualValues",

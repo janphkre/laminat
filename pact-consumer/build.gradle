@@ -37,9 +37,9 @@ dependencies {
     api "com.github.mifmif:generex:$generex_version"
     api "com.github.zafarkhaja:java-semver:$semver_version"
 
-    testImplementation 'junit:junit:4.12'
-    testImplementation "org.json:json:20180130"
-    testImplementation "org.mockito:mockito-core:1.9.5"
+    testImplementation "junit:junit:$test_junit_version"
+    testImplementation "org.json:json:$test_json_version"
+    testImplementation "org.mockito:mockito-core:$test_mockito_version"
 
     // The Android vm does not like the library "org.apache.httpcomponents:httpcore:4.4.4"
     // because it already contains parts from it that are final for example but a super class in the lib.
