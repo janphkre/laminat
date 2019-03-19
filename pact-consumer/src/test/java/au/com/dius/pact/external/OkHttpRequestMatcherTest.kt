@@ -10,6 +10,7 @@ import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.mock
+import java.io.File
 import java.net.InetAddress
 import java.net.Socket
 
@@ -65,6 +66,12 @@ class OkHttpRequestMatcherTest {
                     .stringMatcher("regex2", ".{4}", "abcd")
                     .decimalType("decimal1", 50.99234)
                     .closeObject()
+                    !!.`object`()
+                    .minArrayLike("nestedArray",2)
+                    .stringMatcher("regex5","\\d{9}")
+                    .closeObject()
+                    !!.closeArray()
+                    .closeObject()
                     !!.closeArray()
 
             )
@@ -73,8 +80,21 @@ class OkHttpRequestMatcherTest {
             .headers(hashMapOf(Pair("Content-Type", "application/json; charset=UTF-8")))
             .body(
                 PactDslJsonBody()
-                    .stringMatcher("regex3", "\\d{5,6}", "12345")
-                    .stringMatcher("regex4", ".{3}", "abc")
+                    .`object`("_embedded")
+                        .stringMatcher("regex3", "\\d{5,6}", "12345")
+                        .stringMatcher("regex4", ".{3}", "abc")
+                        .array("firstArray")
+                            .`object`().closeObject()
+                            !!.`object`().closeObject()
+                            !!.`object`().closeObject()
+                            !!.`object`()
+                                .minArrayLike("nestedArray",80)
+                                .stringMatcher("uid","[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|([A-Z0-9]{40})")
+                                .closeObject()
+                                !!.closeArray()
+                            .closeObject()
+                        !!.closeArray()
+                    .closeObject()
             )
             .toPact()
     }
@@ -157,7 +177,8 @@ class OkHttpRequestMatcherTest {
     @Test
     fun pactDispatcher_PostArrayRequest_MatchingCorrectly() {
         val arrayObject = "{ \"regex1\": \"123456789\", \"regex2\": \"abcd\", \"decimal1\": 50.99234}"
-        val request = "{ \"array\": [$arrayObject,$arrayObject]}".toByteArray()
+        val nestedArrayObject = "{ \"nestedArray\": [ { \"regex5\": \"123456789\" }, { \"regex5\": \"987654321\" } ] }"
+        val request = "{ \"array\": [$arrayObject,$arrayObject,$nestedArrayObject]}".toByteArray()
 
         val matcher = OkHttpRequestMatcher(false)
         val recordedRequest = getRecordedRequest(request)
@@ -174,5 +195,10 @@ class OkHttpRequestMatcherTest {
                 Assert.fail("Match is only a Request Mismatch: \n${match.problems?.joinToString("\n")}")
             }
         }
+    }
+
+    @Test
+    fun pactDispatcher_Serialize_Pact() {
+        PactJsonifier.generateJson(listOf(testPostArray), File("build/outputs/pact"))
     }
 }

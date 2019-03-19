@@ -6,14 +6,15 @@ import au.com.dius.pact.model.matchingrules.MatchingRules
 import io.gatling.jsonpath.AST
 import io.gatling.jsonpath.Parser
 import org.apache.commons.collections4.Predicate
+import java.lang.IndexOutOfBoundsException
 import java.util.*
 
 object Matchers {
 
     private val arrayRegex = Regex("\\d+")
-    private val compiledPaths = WeakHashMap<String, Iterable<AST.PathToken>>()
+    private val compiledPaths = WeakHashMap<String, ArrayList<AST.PathToken>>()
 
-    private fun getCompiledPath(pathExp: String?): Iterable<AST.PathToken>? {
+    private fun getCompiledPath(pathExp: String?): ArrayList<AST.PathToken>? {
         return compiledPaths.getOrPut(pathExp) { Parser().compile(pathExp).let {
             if(it.successful() && !it.isEmpty) {
                 val parseList = it.get()
@@ -61,11 +62,15 @@ object Matchers {
     }
 
     private fun matchPath(pathExp: String?, actualItems: List<String>): Int {
-        val compiledPath = getCompiledPath(pathExp)
+        val compiledPath = getCompiledPath(pathExp)?.toList()
         return if(compiledPath != null) {
             val filter = actualItems.tailsFilter { list ->
                 list.allIndexed { index, element ->
-                    matchesToken(element, compiledPath.elementAt(index)) != 0
+                    if(compiledPath.size <= index) {
+                        false
+                    } else {
+                        matchesToken(element, compiledPath.elementAt(index)) != 0
+                    }
                 }
             }
             if (filter.isNotEmpty()) {
