@@ -74,13 +74,15 @@ fun identifier(ch: Char, chars: PushbackIterator<IndexedValue<Char>>, tokens: Mu
   tokens.add(PathToken.Field(id))
 }
 
+private val validCharacters = listOf('_')
+
 // path_identifier -> identifier | *
 fun pathIdentifier(chars: PushbackIterator<IndexedValue<Char>>, tokens: MutableList<PathToken>, path: String, index: Int) {
   if (chars.hasNext()) {
     val ch = chars.next()
     when {
       ch.value == '*' -> tokens.add(PathToken.Star)
-      ch.value.isLetterOrDigit() -> identifier(ch.value, chars, tokens, path)
+      ch.value.isLetterOrDigit() || validCharacters.contains(ch.value) -> identifier(ch.value, chars, tokens, path)
       else -> throw InvalidPathExpression("Expected either a \"*\" or path identifier in path expression \"$path\"" +
         " at index ${ch.index}")
     }

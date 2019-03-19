@@ -187,7 +187,10 @@ class OkHttpRequestMatcherTest {
         val match = matcher.findInteraction(interactions, recordedRequest)
 
         when (match) {
-            is OkHttpRequestMatcher.RequestMatch.FullRequestMatch -> return
+            is OkHttpRequestMatcher.RequestMatch.FullRequestMatch -> {
+                val response = match.interaction.response.generateResponse()
+                Assert.assertNotNull(response)
+            }
             is OkHttpRequestMatcher.RequestMatch.PartialRequestMatch -> {
                 Assert.fail("Match is only a Partial Request Match: \n${match.problems.joinToString("\n")}")
             }
