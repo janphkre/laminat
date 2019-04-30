@@ -40,10 +40,6 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
     private val EXAMPLE = "Example \""
     private var body = JSONObject()
 
-    override fun toString(): String {
-        return body.toString()
-    }
-
     override fun putObject(`object`: DslPart) {
         for (matcherName in `object`.matchers.matchingRules.keys) {
             matchers.setRules(matcherName, `object`.matchers.matchingRules[matcherName]!!)

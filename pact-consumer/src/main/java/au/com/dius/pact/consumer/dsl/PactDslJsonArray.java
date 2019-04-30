@@ -673,11 +673,6 @@ public class PactDslJsonArray extends DslPart {
 		}
 		return this;
 	}
-	
-	@Override
-	public String toString() {
-		return body.toString();
-	}
 
     private String appendArrayIndex(Integer offset) {
         String index = "*";

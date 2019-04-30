@@ -20,7 +20,6 @@ public abstract class DslPart {
     public static final String HEXADECIMAL = "[0-9a-fA-F]+";
     public static final String IP_ADDRESS = "(\\d{1,3}\\.)+\\d{1,3}";
     public static final String UUID_REGEX = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
-    private static final String MATCH = "match";
     public static final long DATE_2000 = 949323600000L;
 
     protected final DslPart parent;
@@ -45,6 +44,11 @@ public abstract class DslPart {
     protected abstract void putObject(DslPart object);
     protected abstract void putArray(DslPart object);
     public abstract Object getBody();
+
+    @Override
+    public String toString() {
+        return getBody().toString();
+    }
 
     /**
      * Field which is an array

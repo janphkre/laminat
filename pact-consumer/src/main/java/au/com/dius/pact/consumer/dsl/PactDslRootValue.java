@@ -37,7 +37,6 @@ public class PactDslRootValue extends DslPart {
   private static final String EXAMPLE = "Example \"";
 
   private Object value;
-  private boolean encodeJson = false;
 
   public PactDslRootValue() {
     super("", "");
