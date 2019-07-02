@@ -13,7 +13,16 @@ This is a lightweight adaption of [pact-jvm7.0][2] for the Android-vm. It is onl
 therefore it only contains pact creation, serialization and consumer matching. This adaption was mostly created to get rid of the spring framework and additonal unused HTTP-Clients to maintain a small library on android so you can use a HttpLibrary of your choice. At the moment it comes bundled with the [OkHttp MockWebServer library][1].
 Also, this lightweight adaption requires neither groovy, scala nor ruby anymore.
 
-The last section describes how to integrate pacts with okhttp.
+Get the library through jitpack:
+```
+repositories {
+    ...
+    maven { url 'https://jitpack.io' }
+}
+dependencies {
+    implementation 'com.github.janphkre:laminat:3.5.7'
+}
+```
 
 ### Pact creation
 Just like the normal [pact-jvm project][2], the PactDSL can be used in this implementation.
