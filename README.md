@@ -1,4 +1,4 @@
-laminat
+#laminat
 
 Lightweight Android version of Pact. Enables consumer driven contract testing, providing DSL for the consumer project.
 
