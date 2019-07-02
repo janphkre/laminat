@@ -35,7 +35,7 @@ import io.gatling.jsonpath.`Parser$`
 /**
  * DSL to define a JSON Object
  */
-class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: DslPart? = null): DslPart(parent,rootPath, rootName) {
+class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: DslPart? = null) : DslPart(parent, rootPath, rootName) {
 
     private val EXAMPLE = "Example \""
     private var body = JSONObject()
@@ -188,7 +188,6 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         generators.addGenerator(Category.BODY, matcherKey(name), RandomIntGenerator(0, Integer.MAX_VALUE))
         return integerType(name, 100 as Int)
     }
-
 
     /**
      * Attributes that must be an integer
@@ -379,7 +378,6 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         matchers.addRule(matcherKey(name), matchTimestamp(format))
         return this
     }
-
 
     /**
      * Attribute that must match the given timestamp format

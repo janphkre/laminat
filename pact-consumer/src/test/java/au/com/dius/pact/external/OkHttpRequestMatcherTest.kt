@@ -67,8 +67,8 @@ class OkHttpRequestMatcherTest {
                     .decimalType("decimal1", 50.99234)
                     .closeObject()
                     !!.`object`()
-                    .minArrayLike("nestedArray",2)
-                    .stringMatcher("regex5","\\d{9}")
+                    .minArrayLike("nestedArray", 2)
+                    .stringMatcher("regex5", "\\d{9}")
                     .closeObject()
                     !!.closeArray()
                     .closeObject()
@@ -88,8 +88,8 @@ class OkHttpRequestMatcherTest {
                             !!.`object`().closeObject()
                             !!.`object`().closeObject()
                             !!.`object`()
-                                .minArrayLike("nestedArray",80)
-                                .stringMatcher("uid","[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|([A-Z0-9]{40})")
+                                .minArrayLike("nestedArray", 80)
+                                .stringMatcher("uid", "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|([A-Z0-9]{40})")
                                 .closeObject()
                                 !!.closeArray()
                             .closeObject()
@@ -126,7 +126,7 @@ class OkHttpRequestMatcherTest {
         body.outputStream().use {
             it.write(requestBody)
         }
-        return RecordedRequest("POST /test/path HTTP/1.1", headers, ArrayList(), body.size(), body,0, mockSocket)
+        return RecordedRequest("POST /test/path HTTP/1.1", headers, ArrayList(), body.size(), body, 0, mockSocket)
     }
 
     @Test

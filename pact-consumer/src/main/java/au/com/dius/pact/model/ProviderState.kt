@@ -8,33 +8,22 @@ package au.com.dius.pact.model
  */
 data class ProviderState(val name: String, val params: Map<String, Any> = mapOf()) {
 
-  constructor(name: String?) : this(name ?: "None")
+    constructor(name: String?) : this(name ?: "None")
 
-  fun toMap(): Map<String, Any> {
-    val map = mutableMapOf<String, Any>("name" to name)
-    if (params.isNotEmpty()) {
-      map["params"] = params
+    fun toMap(): Map<String, Any> {
+        val map = mutableMapOf<String, Any>("name" to name)
+        if (params.isNotEmpty()) {
+            map["params"] = params
+        }
+        return map
     }
-    return map
-  }
 
-  companion object {
-    @JvmStatic
-    fun fromMap(map: Map<String, Any>): ProviderState {
-      if (map.containsKey("params") && map["params"] is Map<*, *>) {
-        return ProviderState(map["name"].toString(), map["params"] as Map<String, Any>)
-      } else {
-        return ProviderState(map["name"].toString())
-      }
+    fun matches(state: String) = name.matches(Regex(state))
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is ProviderState) {
+            return false
+        }
+        return other.name == this.name
     }
-  }
-
-  fun matches(state: String) = name.matches(Regex(state))
-
-  override fun equals(other: Any?): Boolean {
-    if(other !is ProviderState) {
-      return false
-    }
-    return other.name == this.name
-  }
 }

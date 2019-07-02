@@ -21,7 +21,7 @@ abstract class HttpPart {
 
     private fun detectContentType(): String {
         return if (body.isPresent()) {
-            val s = body.value!!.substring(0,Math.min(body.value!!.length, 32)).filter { it != '\n' }
+            val s = body.value!!.substring(0, Math.min(body.value!!.length, 32)).filter { it != '\n' }
             if (XMLREGEXP.matches(s)) {
                 ContentType.APPLICATION_XML.mimeType
             } else if (HTMLREGEXP.matches(s.toUpperCase())) {

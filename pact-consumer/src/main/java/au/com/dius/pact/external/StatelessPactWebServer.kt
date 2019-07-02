@@ -4,7 +4,7 @@ import au.com.dius.pact.model.RequestResponseInteraction
 import au.com.dius.pact.model.RequestResponsePact
 import okhttp3.mockwebserver.MockWebServer
 import java.io.IOException
-import java.util.*
+import java.util.LinkedList
 
 open class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int) {
 

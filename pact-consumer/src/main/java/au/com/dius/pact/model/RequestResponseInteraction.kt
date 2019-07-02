@@ -25,18 +25,17 @@ class RequestResponseInteraction(
 
     override val providerState: String
         get() {
-            return if(providerStates.isEmpty()) "" else  providerStates.first().name
+            return if (providerStates.isEmpty()) "" else providerStates.first().name
         }
 
     override fun conflictsWith(other: Interaction): Boolean {
-        if(providerStates.containsAll(other.providerStates) && other.providerStates.containsAll(providerStates)) {
-            if(other !is RequestResponseInteraction) {
+        if (providerStates.containsAll(other.providerStates) && other.providerStates.containsAll(providerStates)) {
+            if (other !is RequestResponseInteraction) {
                 return false
             }
             return request == other.request
         }
         return false
-
     }
 
     override fun toMap(pactSpecVersion: PactSpecVersion): Map<*, *> {
@@ -71,7 +70,7 @@ class RequestResponseInteraction(
                 map.set("headers", request.headers)
             }
             if (request.query.isNotEmpty()) {
-                map.set("query", if(pactSpecVersion >= PactSpecVersion.V3) request.query else mapToQueryStr(request.query))
+                map.set("query", if (pactSpecVersion >= PactSpecVersion.V3) request.query else mapToQueryStr(request.query))
             }
             if (!request.body.isMissing()) {
                 map.set("body", parseBody(request))

@@ -2,7 +2,7 @@ package au.com.dius.pact.model
 
 import org.apache.commons.collections4.Predicate
 
-class RequestResponsePact(override val provider: Provider, override val consumer: Consumer, var requestResponseInteractions: List<RequestResponseInteraction>): BasePact() {
+class RequestResponsePact(override val provider: Provider, override val consumer: Consumer, var requestResponseInteractions: List<RequestResponseInteraction>) : BasePact() {
 
     override val interactions: List<Interaction>
     get() = requestResponseInteractions
@@ -16,10 +16,10 @@ class RequestResponsePact(override val provider: Provider, override val consumer
 
     override fun toMap(pactSpecVersion: PactSpecVersion): Map<String, *> {
         return mapOf<String, Any?>(
-            Pair("provider",provider.toMap()),
+            Pair("provider", provider.toMap()),
             Pair("consumer", consumer.toMap()),
             Pair("interactions", interactions.map { it.toMap(pactSpecVersion) }),
-            Pair("metadata", getMetaData(if(pactSpecVersion >= PactSpecVersion.V3) "3.0.0" else "2.0.0"))
+            Pair("metadata", getMetaData(if (pactSpecVersion >= PactSpecVersion.V3) "3.0.0" else "2.0.0"))
         )
     }
 
@@ -43,7 +43,7 @@ class RequestResponsePact(override val provider: Provider, override val consumer
             .filter { it.first !== it.second && it.first.conflictsWith(it.second) }
     }
 
-    fun <S, T> List<S>.multiply(other: List<T>): List<Pair<S,T>> {
+    fun <S, T> List<S>.multiply(other: List<T>): List<Pair<S, T>> {
         return flatMap { first ->
             other.map { second -> Pair(first, second) }
         }

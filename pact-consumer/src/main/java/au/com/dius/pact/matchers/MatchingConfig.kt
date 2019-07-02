@@ -15,10 +15,10 @@ object MatchingConfig {
         Pair(Regex(ContentType.TEXT_PLAIN.mimeType), PlainTextBodyMatcher()))
 
     fun lookupBodyMatcher(mimeType: String): BodyMatcher {
-        return bodyMatchers.entries.firstOrNull{ entry -> mimeType.matches(entry.key)}?.value ?: PlainTextBodyMatcher()
+        return bodyMatchers.entries.firstOrNull { entry -> mimeType.matches(entry.key) }?.value ?: PlainTextBodyMatcher()
     }
 
-    fun isJson(contentType: String) : Boolean {
+    fun isJson(contentType: String): Boolean {
         return jsonRegex.matches(contentType)
     }
 

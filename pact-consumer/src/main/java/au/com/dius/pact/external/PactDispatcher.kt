@@ -11,7 +11,7 @@ import org.apache.http.Consts
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
-internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErrorCode: Int): Dispatcher() {
+internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErrorCode: Int) : Dispatcher() {
 
     private var pactMatcher = OkHttpRequestMatcher(allowUnexpectedKeys)
     private var interactionList = emptyList<RequestResponseInteraction>()
@@ -32,13 +32,13 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
     }
 
     override fun dispatch(request: RecordedRequest?): MockResponse {
-        if(request == null) {
+        if (request == null) {
             return notFoundMockResponse()
         }
         try {
             val requestMatch = pactMatcher.findInteraction(interactionList, request)
             return when (requestMatch) {
-                is OkHttpRequestMatcher.RequestMatch.FullRequestMatch ->  {
+                is OkHttpRequestMatcher.RequestMatch.FullRequestMatch -> {
                     matchedRequestCount++
                     requestMatch.interaction.response.generateResponse().mapToMockResponse()
                 }
@@ -50,9 +50,9 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
                         "${requestMatch.problems?.joinToString("\n")}")
                 }
             }
-        } catch(e: PactMergeException) {
+        } catch (e: PactMergeException) {
             return notFoundMockResponse().setBody(e.message)
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             ByteArrayOutputStream().use { outputStream ->
                 PrintStream(outputStream, true, Consts.UTF_8.name()).use { printStream ->
                     e.printStackTrace(printStream)
@@ -70,13 +70,13 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
     }
 
     private fun Map<String, String>?.mapToMockHeaders(): Headers {
-        if(this == null) {
+        if (this == null) {
             return Headers.of()
         }
         return Headers.of(this)
     }
 
-    private fun notFoundMockResponse() : MockResponse {
+    private fun notFoundMockResponse(): MockResponse {
         unmatchedRequestsCount++
         return MockResponse().setResponseCode(pactErrorCode)
     }

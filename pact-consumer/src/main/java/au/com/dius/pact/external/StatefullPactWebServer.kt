@@ -2,9 +2,9 @@ package au.com.dius.pact.external
 
 import au.com.dius.pact.model.ProviderState
 import au.com.dius.pact.model.RequestResponsePact
-import java.util.*
+import java.util.LinkedList
 
-class StatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int): StatelessPactWebServer(allowUnexpectedKeys, pactErrorCode) {
+class StatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int) : StatelessPactWebServer(allowUnexpectedKeys, pactErrorCode) {
 
     private val definedPactList = LinkedList<RequestResponsePact>()
     private var currentProviderStates: List<ProviderState> = emptyList()

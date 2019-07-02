@@ -28,8 +28,11 @@ fun valueOf(value: Any?): String {
     }
 }
 
-fun matchInclude(includedValue: String, expected: Any?, actual: Any?,
-                            mismatchFactory: MismatchFactory<RequestMatchProblem>
+fun matchInclude(
+    includedValue: String,
+    expected: Any?,
+    actual: Any?,
+    mismatchFactory: MismatchFactory<RequestMatchProblem>
 ): List<RequestMatchProblem> {
     val matches = actual.toString().contains(includedValue)
     return if (matches) {
@@ -45,8 +48,11 @@ fun matchInclude(includedValue: String, expected: Any?, actual: Any?,
 /**
  * Executor for matchers
  */
-fun domatch(matchers: MatchingRuleGroup, expected: Any?, actual: Any?,
-                       mismatchFn: MismatchFactory<RequestMatchProblem>
+fun domatch(
+    matchers: MatchingRuleGroup,
+    expected: Any?,
+    actual: Any?,
+    mismatchFn: MismatchFactory<RequestMatchProblem>
 ): List<RequestMatchProblem> {
     val result = matchers.rules.map { matchingRule ->
         domatch(matchingRule, expected, actual, mismatchFn)
@@ -63,8 +69,11 @@ fun domatch(matchers: MatchingRuleGroup, expected: Any?, actual: Any?,
     }
 }
 
-fun domatch(matcher: MatchingRule, expected: Any?, actual: Any?,
-                       mismatchFn: MismatchFactory<RequestMatchProblem>
+fun domatch(
+    matcher: MatchingRule,
+    expected: Any?,
+    actual: Any?,
+    mismatchFn: MismatchFactory<RequestMatchProblem>
 ): List<RequestMatchProblem> {
     return when (matcher) {
         is RegexMatcher -> matchRegex(matcher.regex, expected, actual, mismatchFn)
@@ -81,8 +90,10 @@ fun domatch(matcher: MatchingRule, expected: Any?, actual: Any?,
     }
 }
 
-fun matchEquality(expected: Any?, actual: Any?,
-                             mismatchFactory: MismatchFactory<RequestMatchProblem>
+fun matchEquality(
+    expected: Any?,
+    actual: Any?,
+    mismatchFactory: MismatchFactory<RequestMatchProblem>
 ): List<RequestMatchProblem> {
     val matches = actual == null && expected == null || actual != null && actual == expected
     return if (matches) {
@@ -94,27 +105,32 @@ fun matchEquality(expected: Any?, actual: Any?,
     }
 }
 
-fun matchRegex(regex: Regex, expected: Any?, actual: Any?,
-                          mismatchFactory: MismatchFactory<RequestMatchProblem>
+fun matchRegex(
+    regex: Regex,
+    expected: Any?,
+    actual: Any?,
+    mismatchFactory: MismatchFactory<RequestMatchProblem>
 ): List<RequestMatchProblem> {
     val matches = actual.toString().matches(regex)
-    return if (matches
-        || expected is List<*> && actual is List<*>
-        || expected is Map<*, *> && actual is Map<*, *>) {
+    return if (matches ||
+        expected is List<*> && actual is List<*> ||
+        expected is Map<*, *> && actual is Map<*, *>) {
         listOf(RequestMatchProblem.None)
     } else {
         listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to match '$regex'"))
     }
 }
 
-fun matchType(expected: Any?, actual: Any?,
-                         mismatchFactory: MismatchFactory<RequestMatchProblem>
+fun matchType(
+    expected: Any?,
+    actual: Any?,
+    mismatchFactory: MismatchFactory<RequestMatchProblem>
 ): List<RequestMatchProblem> {
-    return if (expected is String && actual is String
-        || expected is Number && actual is Number
-        || expected is Boolean && actual is Boolean
-        || expected is List<*> && actual is List<*>
-        || expected is Map<*, *> && actual is Map<*, *>) {
+    return if (expected is String && actual is String ||
+        expected is Number && actual is Number ||
+        expected is Boolean && actual is Boolean ||
+        expected is List<*> && actual is List<*> ||
+        expected is Map<*, *> && actual is Map<*, *>) {
         listOf(RequestMatchProblem.None)
     } else if (expected == null) {
         if (actual == null) {
@@ -130,13 +146,16 @@ fun matchType(expected: Any?, actual: Any?,
     }
 }
 
-fun matchNumber(numberType: NumberTypeMatcher.NumberType,  expected: Any?, actual: Any?,
-                           mismatchFactory: MismatchFactory<RequestMatchProblem>
+fun matchNumber(
+    numberType: NumberTypeMatcher.NumberType,
+    expected: Any?,
+    actual: Any?,
+    mismatchFactory: MismatchFactory<RequestMatchProblem>
 ): List<RequestMatchProblem> {
     if (expected == null && actual != null) {
         return listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to be null"))
     }
-    if(actual is LazilyParsedNumber) {
+    if (actual is LazilyParsedNumber) {
         when (numberType) {
             NumberTypeMatcher.NumberType.NUMBER -> {
                 if (!actual.isNumber()) {
@@ -206,8 +225,11 @@ fun matchNumber(numberType: NumberTypeMatcher.NumberType,  expected: Any?, actua
     return listOf(RequestMatchProblem.None)
 }
 
-fun matchDate(pattern: String, expected: Any?, actual: Any?,
-                         mismatchFactory: MismatchFactory<RequestMatchProblem>
+fun matchDate(
+    pattern: String,
+    expected: Any?,
+    actual: Any?,
+    mismatchFactory: MismatchFactory<RequestMatchProblem>
 ): List<RequestMatchProblem> {
     return try {
         DateUtils.parseDate(actual.toString(), pattern)
@@ -219,8 +241,11 @@ fun matchDate(pattern: String, expected: Any?, actual: Any?,
     }
 }
 
-fun matchTime(pattern: String, expected: Any?, actual: Any?,
-                         mismatchFactory: MismatchFactory<RequestMatchProblem>
+fun matchTime(
+    pattern: String,
+    expected: Any?,
+    actual: Any?,
+    mismatchFactory: MismatchFactory<RequestMatchProblem>
 ): List<RequestMatchProblem> {
     return try {
         DateUtils.parseDate(actual.toString(), pattern)
@@ -232,8 +257,11 @@ fun matchTime(pattern: String, expected: Any?, actual: Any?,
     }
 }
 
-fun matchTimestamp(pattern: String, expected: Any?, actual: Any?,
-                              mismatchFactory: MismatchFactory<RequestMatchProblem>
+fun matchTimestamp(
+    pattern: String,
+    expected: Any?,
+    actual: Any?,
+    mismatchFactory: MismatchFactory<RequestMatchProblem>
 ): List<RequestMatchProblem> {
     return try {
         DateUtils.parseDate(actual.toString(), pattern)
@@ -245,8 +273,11 @@ fun matchTimestamp(pattern: String, expected: Any?, actual: Any?,
     }
 }
 
-fun matchMinType(min: Int, expected: Any?, actual: Any?,
-                            mismatchFactory: MismatchFactory<RequestMatchProblem>
+fun matchMinType(
+    min: Int,
+    expected: Any?,
+    actual: Any?,
+    mismatchFactory: MismatchFactory<RequestMatchProblem>
 ): List<RequestMatchProblem> {
     return if (actual is List<*>) {
         if (actual.size < min) {
@@ -271,8 +302,11 @@ fun matchMinType(min: Int, expected: Any?, actual: Any?,
     }
 }
 
-fun matchMaxType(max: Int, expected: Any?, actual: Any?,
-                            mismatchFactory: MismatchFactory<RequestMatchProblem>
+fun matchMaxType(
+    max: Int,
+    expected: Any?,
+    actual: Any?,
+    mismatchFactory: MismatchFactory<RequestMatchProblem>
 ): List<RequestMatchProblem> {
     return if (actual is List<*>) {
         if (actual.size > max) {

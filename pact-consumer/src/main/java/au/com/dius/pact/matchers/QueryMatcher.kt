@@ -1,7 +1,7 @@
 package au.com.dius.pact.matchers
 
 import au.com.dius.pact.model.matchingrules.MatchingRules
-import java.util.*
+import java.util.LinkedList
 
 object QueryMatcher {
 

@@ -8,7 +8,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonPrimitive
 import okhttp3.mockwebserver.RecordedRequest
 import java.lang.UnsupportedOperationException
-import java.util.*
+import java.util.LinkedList
 
 class JsonBodyMatcher : BodyMatcher() {
 
@@ -34,15 +34,15 @@ class JsonBodyMatcher : BodyMatcher() {
         allowUnexpectedKeys: Boolean,
         matchers: MatchingRules
     ): List<RequestMatchProblem> {
-        return if(expectedJson?.isJsonArray == true && actualJson?.isJsonArray == true) {
+        return if (expectedJson?.isJsonArray == true && actualJson?.isJsonArray == true) {
             matchJsonArray(path, expectedJson, actualJson, allowUnexpectedKeys, matchers)
-        } else if(expectedJson?.isJsonObject == true && actualJson?.isJsonObject == true) {
+        } else if (expectedJson?.isJsonObject == true && actualJson?.isJsonObject == true) {
             matchJsonObject(path, expectedJson, actualJson, allowUnexpectedKeys, matchers)
-        } else if(expectedJson?.isJsonPrimitive == true && actualJson?.isJsonPrimitive == true) {
+        } else if (expectedJson?.isJsonPrimitive == true && actualJson?.isJsonPrimitive == true) {
             matchJsonPrimitive(path, expectedJson, actualJson, matchers)
-        } else if(expectedJson?.isJsonNull == true && actualJson?.isJsonNull != false) {
+        } else if (expectedJson?.isJsonNull == true && actualJson?.isJsonNull != false) {
             matchJsonNull()
-        } else if(expectedJson == null && actualJson != null && !allowUnexpectedKeys) {
+        } else if (expectedJson == null && actualJson != null && !allowUnexpectedKeys) {
             listOf(RequestMatchProblem.BodyMismatch("Received unexpected element $actualJson"))
         } else {
             listOf(RequestMatchProblem.BodyMismatch("Expected element '$expectedJson' but received '$actualJson'"))
@@ -60,14 +60,14 @@ class JsonBodyMatcher : BodyMatcher() {
         val actualValues = actualJson.asJsonArray
         val category = Matchers.definedMatchers("body", path, matchers)
         return if (category?.isNotEmpty() == true) {
-            val problems = if(Matchers.definedWildcardMatchers( "body", path.plus("any"), matchers)) {
+            val problems = if (Matchers.definedWildcardMatchers( "body", path.plus("any"), matchers)) {
                 Matchers.doMatch(category, path, expectedValues, actualValues, MismatchFactory.BodyMismatchFactory)
             } else {
                 emptyList<RequestMatchProblem>()
             }
             if (expectedValues.size() != 0) {
                 val paddedExpectedValues = Array(Math.min(actualValues.size() - expectedValues.size(), 0)) { expectedValues.first() }
-                problems.plus(matchJsonArrayContent(expectedValues.plus(elements=paddedExpectedValues), actualValues, path, allowUnexpectedKeys, matchers))
+                problems.plus(matchJsonArrayContent(expectedValues.plus(elements = paddedExpectedValues), actualValues, path, allowUnexpectedKeys, matchers))
             } else {
                 problems
             }
@@ -137,11 +137,11 @@ class JsonBodyMatcher : BodyMatcher() {
                 actualEntrySet.forEach { entry ->
                     val expectedValue = expectedObject.get(entry.key)
                     if (expectedValue != null || !allowUnexpectedKeys) {
-                        problems.addAll(matchJsonElement(path.plus(entry.key), expectedValue,  entry.value, allowUnexpectedKeys, matchers))
+                        problems.addAll(matchJsonElement(path.plus(entry.key), expectedValue, entry.value, allowUnexpectedKeys, matchers))
                     }
                 }
             } else {
-                expectedEntrySet.forEach{ entry ->
+                expectedEntrySet.forEach { entry ->
                     val actualValue = actualObject.get(entry.key)
                     if (actualValue != null) {
                         problems.addAll(matchJsonElement(path.plus(entry.key), entry.value, actualValue, allowUnexpectedKeys, matchers))
@@ -190,6 +190,4 @@ class JsonBodyMatcher : BodyMatcher() {
     private fun matchJsonNull(): List<RequestMatchProblem> {
         return listOf(RequestMatchProblem.None)
     }
-
-
 }

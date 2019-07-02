@@ -3,7 +3,7 @@ package au.com.dius.pact.model
 import au.com.dius.pact.BuildConfig
 import com.google.gson.JsonParser
 
-abstract class BasePact: Pact {
+abstract class BasePact : Pact {
 
     override val source: PactSource
         get() = UnknownPactSource

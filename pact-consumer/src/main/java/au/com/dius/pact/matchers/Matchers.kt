@@ -6,8 +6,8 @@ import au.com.dius.pact.model.matchingrules.MatchingRules
 import io.gatling.jsonpath.AST
 import io.gatling.jsonpath.Parser
 import org.apache.commons.collections4.Predicate
-import java.lang.IndexOutOfBoundsException
-import java.util.*
+import java.util.LinkedList
+import java.util.WeakHashMap
 
 object Matchers {
 
@@ -16,10 +16,10 @@ object Matchers {
 
     private fun getCompiledPath(pathExp: String?): ArrayList<AST.PathToken>? {
         return compiledPaths.getOrPut(pathExp) { Parser().compile(pathExp).let {
-            if(it.successful() && !it.isEmpty) {
+            if (it.successful() && !it.isEmpty) {
                 val parseList = it.get()
                 val result = ArrayList<AST.PathToken>(parseList?.size() ?: 0)
-                for(i in 0 until parseList.size()) {
+                for (i in 0 until parseList.size()) {
                     result.add(i, parseList.apply(i))
                 }
                 result
@@ -30,12 +30,12 @@ object Matchers {
     }
 
     private fun matchesToken(pathElement: String?, token: AST.PathToken): Int {
-        if(pathElement == null) {
+        if (pathElement == null) {
             return 0
         }
-        return when(token) {
+        return when (token) {
             is AST.`RootNode$` -> if (pathElement == "$") 2 else 0
-            is AST.Field ->  if (pathElement == token.name()) 2 else 0
+            is AST.Field -> if (pathElement == token.name()) 2 else 0
             is AST.ArrayRandomAccess -> if (pathElement.matches(arrayRegex) && token.indices().contains(pathElement.toInt())) 2 else 0
             is AST.ArraySlice -> if (pathElement.matches(arrayRegex)) 1 else 0
             is AST.`AnyField$` -> 1
@@ -45,7 +45,7 @@ object Matchers {
 
     private fun matchPathExact(pathExp: String?, actualItems: List<String>): Int {
         val compiledPath = getCompiledPath(pathExp)
-        return if(compiledPath != null) {
+        return if (compiledPath != null) {
             val filter = actualItems.tailsFilter { list ->
                 list.allIndexed { index, element ->
                     matchesToken(element, compiledPath.elementAt(index)) != 0
@@ -63,10 +63,10 @@ object Matchers {
 
     private fun matchPath(pathExp: String?, actualItems: List<String>): Int {
         val compiledPath = getCompiledPath(pathExp)?.toList()
-        return if(compiledPath != null) {
+        return if (compiledPath != null) {
             val filter = actualItems.tailsFilter { list ->
                 list.allIndexed { index, element ->
-                    if(compiledPath.size <= index) {
+                    if (compiledPath.size <= index) {
                         false
                     } else {
                         matchesToken(element, compiledPath.elementAt(index)) != 0
@@ -85,9 +85,9 @@ object Matchers {
 
     private fun <T> List<T>.tailsFilter(lambda: (List<T>) -> Boolean): List<List<T>> {
         val result = LinkedList<List<T>>()
-        for(i in size downTo 1) {
+        for (i in size downTo 1) {
             val currentList = this.subList(0, i)
-            if(lambda.invoke(currentList)) {
+            if (lambda.invoke(currentList)) {
                 result.add(currentList)
             }
         }
@@ -116,7 +116,7 @@ object Matchers {
 //  }
     private fun calculatePathWeight(pathExp: String?, actualItems: List<String>): Int {
         val compiledPath = getCompiledPath(pathExp)
-        return if(compiledPath != null) {
+        return if (compiledPath != null) {
             actualItems.zipFirstNullable(compiledPath).asSequence().map { entry -> matchesToken(entry.first, entry.second) }.fold(1) { result, element -> result * element }
         } else {
             0
@@ -128,7 +128,7 @@ object Matchers {
             pathExp,
             path
         ) == path.size })
-        return resolvedMatchers?.matchingRules?.keys?.any{ key -> key.endsWith(".*") } ?: false
+        return resolvedMatchers?.matchingRules?.keys?.any { key -> key.endsWith(".*") } ?: false
     }
 
     fun definedMatchers(category: String, path: List<String>, matchers: MatchingRules): Category? {

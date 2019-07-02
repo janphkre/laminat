@@ -10,7 +10,7 @@ class Response(
     override var body: OptionalBody = OptionalBody.missing(),
     override val matchingRules: MatchingRules = MatchingRules(),
     val generators: Generators = Generators()
-): HttpPart() {
+) : HttpPart() {
 
     override fun toString(): String {
         return "\tstatus: $status\n\theaders: $headers\n\tmatchers: $matchingRules\n\tgenerators: $generators\n\tbody: $body"
@@ -40,15 +40,5 @@ class Response(
 
     companion object {
         const val DEFAULT_STATUS = 200
-
-        fun fromMap(map: Map<*,*>): Response {
-            return Response(
-                status = (map["status"] ?: DEFAULT_STATUS) as Int,
-                headers = map["headers"] as? Map<String, String> ?: emptyMap(),
-                body = if(map.containsKey("body")) OptionalBody.body(map["body"] as String?) else OptionalBody.missing(),
-                matchingRules = MatchingRules(),//TODO: MatchingRules.fromMap(map["matchingRules"]),
-                generators = Generators.fromMap(map["generators"] as? Map<String, Map<String, Any>>)
-            )
-        }
     }
 }

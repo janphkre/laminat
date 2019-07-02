@@ -15,7 +15,7 @@ class Request(
 ) : HttpPart(), Comparable<Request> {
 
     override fun compareTo(other: Request): Int {
-        return if(equals(other)) 0 else 1
+        return if (equals(other)) 0 else 1
     }
 
     fun copy(): Request {
@@ -42,7 +42,7 @@ class Request(
     }
 
     override fun equals(other: Any?): Boolean {
-        if(other !is Request) {
+        if (other !is Request) {
             return false
         }
         return this. method == other.method &&
@@ -55,15 +55,15 @@ class Request(
     }
 
     private fun matchesBody(other: Request): Boolean {
-        if(mimeType() != other.mimeType()) {
+        if (mimeType() != other.mimeType()) {
             return false
         }
-        if(jsonBody() && other.jsonBody()) {
+        if (jsonBody() && other.jsonBody()) {
             try {
                 val jsonModel = jsonParser.parse(body.value)
                 val otherJsonModel = jsonParser.parse(other.body.value)
                 return jsonModel == otherJsonModel
-            } catch(e: Exception) { }
+            } catch (e: Exception) { }
         }
         return body == other.body
     }
@@ -72,17 +72,5 @@ class Request(
         const val COOKIE_KEY = "cookie"
         const val DEFAULT_METHOD = "GET"
         const val DEFAULT_PATH = "/"
-
-        fun fromMap(map: Map<*, *>): Request {
-            return Request(
-            method = map["method"] as? String? ?: DEFAULT_METHOD,
-            path = map["path"] as? String? ?: DEFAULT_PATH,
-            query = map["query"] as? Map<String, List<String>> ?: emptyMap(),
-            headers = map["headers"] as? Map<String, String> ?: emptyMap(),
-            body = if(map.containsKey("body")) OptionalBody.body(map["body"] as String?) else OptionalBody.missing(),
-            matchingRules = MatchingRules(),//TODO: MatchingRules.fromMap(map["matchingRules"]),
-            generators = Generators.fromMap(map["generators"] as? Map<String, Map<String, Any>>)
-            )
-        }
     }
 }

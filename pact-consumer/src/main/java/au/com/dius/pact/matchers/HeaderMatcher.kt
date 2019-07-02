@@ -10,7 +10,7 @@ object HeaderMatcher {
     }
 
     fun compareHeader(headerKey: String, expected: String, actualValue: List<String>?, matchingRules: MatchingRules): List<RequestMatchProblem> {
-        if(actualValue?.size ?: 0 > 1) {
+        if (actualValue?.size ?: 0 > 1) {
             return listOf(RequestMatchProblem.HeaderMismatch(headerKey, "Expected header '$headerKey' to have only a single value but received ${actualValue?.size} values"))
         }
         val path = listOf(headerKey)
@@ -45,11 +45,11 @@ object HeaderMatcher {
                     headerMismatch
                 }
             }.firstOrNull { it == headerMismatch }
-        } else  {
+        } else {
             headerMismatch
         }
 
-        return if(problem != null) {
+        return if (problem != null) {
             listOf(problem)
         } else {
             listOf(RequestMatchProblem.None)

@@ -43,7 +43,7 @@ dependencies {
 
     // The Android vm does not like the library "org.apache.httpcomponents:httpcore:4.4.4"
     // because it already contains parts from it that are final for example but a super class in the lib.
-    // The java classes are added manually into org.apache.http...
+    // The required java classes are added manually into org.apache.http...
 }
 
 apply plugin: 'maven-publish'

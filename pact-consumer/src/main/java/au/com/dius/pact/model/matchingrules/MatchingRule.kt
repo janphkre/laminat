@@ -6,213 +6,119 @@ import au.com.dius.pact.model.PactSpecVersion
  * Logic to use to combine rules
  */
 enum class RuleLogic {
-  AND, OR
+    AND, OR
 }
 
 /**
  * Matching rule
  */
 interface MatchingRule {
-  fun toMap(): Map<String, Any?>
+    fun toMap(): Map<String, Any?>
 }
 
 /**
  * Matching Rule for dates
  */
 data class DateMatcher @JvmOverloads constructor(val format: String = "yyyy-MM-dd") : MatchingRule {
-  override fun toMap() = mapOf("match" to "date", "date" to format)
+    override fun toMap() = mapOf("match" to "date", "date" to format)
 }
 
 /**
  * Matching rule for equality
  */
 object EqualsMatcher : MatchingRule {
-  override fun toMap() = mapOf("match" to "equality")
+    override fun toMap() = mapOf("match" to "equality")
 }
 
 /**
  * Matcher for a substring in a string
  */
 data class IncludeMatcher(val value: String) : MatchingRule {
-  override fun toMap() = mapOf("match" to "include", "value" to value)
+    override fun toMap() = mapOf("match" to "include", "value" to value)
 }
 
 /**
  * Type matching with a maximum size
  */
 data class MaxTypeMatcher(val max: Int) : MatchingRule {
-  override fun toMap() = mapOf("match" to "type", "max" to max)
+    override fun toMap() = mapOf("match" to "type", "max" to max)
 }
 
 /**
  * Type matcher with a minimum size and maximum size
  */
 data class MinMaxTypeMatcher(val min: Int, val max: Int) : MatchingRule {
-  override fun toMap() = mapOf("match" to "type", "min" to min, "max" to max)
+    override fun toMap() = mapOf("match" to "type", "min" to min, "max" to max)
 }
 
 /**
  * Type matcher with a minimum size
  */
 data class MinTypeMatcher(val min: Int) : MatchingRule {
-  override fun toMap() = mapOf("match" to "type", "min" to min)
+    override fun toMap() = mapOf("match" to "type", "min" to min)
 }
 
 /**
  * Type matching for numbers
  */
 data class NumberTypeMatcher(val numberType: NumberType) : MatchingRule {
-  enum class NumberType {
-    NUMBER,
-    INTEGER,
-    DECIMAL
-  }
+    enum class NumberType {
+        NUMBER,
+        INTEGER,
+        DECIMAL
+    }
 
-  override fun toMap() = mapOf("match" to numberType.name.toLowerCase())
+    override fun toMap() = mapOf("match" to numberType.name.toLowerCase())
 }
 
 /**
  * Regular Expression Matcher
  */
-data class RegexMatcher @JvmOverloads constructor (val regex: Regex, val example: String? = null) : MatchingRule {
+data class RegexMatcher @JvmOverloads constructor(val regex: Regex, val example: String? = null) : MatchingRule {
 
-  @JvmOverloads
-  constructor(regex: String, example: String? = null): this(Regex(regex), example)
+    @JvmOverloads
+    constructor(regex: String, example: String? = null) : this(Regex(regex), example)
 
-  override fun toMap() = mapOf("match" to "regex", "regex" to regex.toString())
+    override fun toMap() = mapOf("match" to "regex", "regex" to regex.toString())
 }
 
 /**
  * Matcher for time values
  */
 data class TimeMatcher @JvmOverloads constructor(val format: String = "HH:mm:ss") : MatchingRule {
-  override fun toMap() = mapOf("match" to "time", "time" to format)
+    override fun toMap() = mapOf("match" to "time", "time" to format)
 }
 
 /**
  * Matcher for time values
  */
 data class TimestampMatcher @JvmOverloads constructor(val format: String = "yyyy-MM-dd HH:mm:ssZZZ") : MatchingRule {
-  override fun toMap() = mapOf("match" to "timestamp", "timestamp" to format)
+    override fun toMap() = mapOf("match" to "timestamp", "timestamp" to format)
 }
 
 /**
  * Matcher for types
  */
 object TypeMatcher : MatchingRule {
-  override fun toMap() = mapOf("match" to "type")
+    override fun toMap() = mapOf("match" to "type")
 }
 
 /**
  * Matcher for null values
  */
 object NullMatcher : MatchingRule {
-  override fun toMap() = mapOf("match" to "null")
+    override fun toMap() = mapOf("match" to "null")
 }
 
-data class MatchingRuleGroup @JvmOverloads constructor(val rules: MutableList<MatchingRule> = mutableListOf(),
-                                                       val ruleLogic: RuleLogic = RuleLogic.AND) {
-  fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any?> {
-    if (pactSpecVersion < PactSpecVersion.V3) {
-      return rules.first().toMap()
-    } else {
-      return mapOf("matchers" to rules.map { it.toMap() }, "combine" to ruleLogic.name)
-    }
-  }
-
-  companion object {
-    fun fromMap(map: Map<String, Any?>): MatchingRuleGroup {
-      var ruleLogic = RuleLogic.AND
-      if (map.containsKey("combine")) {
-        try {
-          ruleLogic = RuleLogic.valueOf(map["combine"] as String)
-        } catch (e: IllegalArgumentException) {
-        }
-      }
-
-      val rules = mutableListOf<MatchingRule>()
-      if (map.containsKey("matchers")) {
-        val matchers = map["matchers"]
-        if (matchers is List<*>) {
-          matchers.forEach {
-            if (it is Map<*, *>) {
-              rules.add(ruleFromMap(it as Map<String, Any?>))
-            }
-          }
+data class MatchingRuleGroup @JvmOverloads constructor(
+    val rules: MutableList<MatchingRule> = mutableListOf(),
+    val ruleLogic: RuleLogic = RuleLogic.AND
+) {
+    fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any?> {
+        if (pactSpecVersion < PactSpecVersion.V3) {
+            return rules.first().toMap()
         } else {
+            return mapOf("matchers" to rules.map { it.toMap() }, "combine" to ruleLogic.name)
         }
-      }
-
-      return MatchingRuleGroup(rules, ruleLogic)
     }
-
-    private const val MATCH = "match"
-    private const val MIN = "min"
-    private const val MAX = "max"
-    private const val REGEX = "regex"
-    private const val TIMESTAMP = "timestamp"
-    private const val TIME = "time"
-    private const val DATE = "date"
-
-    private fun mapEntryToInt(map: Map<String, Any?>, field: String) =
-      if (map[field] is Int) map[field] as Int
-      else Integer.parseInt(map[field]!!.toString())
-
-    @JvmStatic
-    fun ruleFromMap(map: Map<String, Any?>): MatchingRule {
-      if (map.containsKey(MATCH)) {
-        return when (map[MATCH]) {
-          REGEX -> RegexMatcher(Regex(map[REGEX] as String))
-          "equality" -> EqualsMatcher
-          "null" -> NullMatcher
-          "include" -> IncludeMatcher(map["value"].toString())
-          "type" -> {
-            if (map.containsKey(MIN) && map.containsKey(MAX)) {
-              MinMaxTypeMatcher(mapEntryToInt(map, MIN), mapEntryToInt(map, MAX))
-            } else if (map.containsKey(MIN)) {
-              MinTypeMatcher(mapEntryToInt(map, MIN))
-            } else if (map.containsKey(MAX)) {
-              MaxTypeMatcher(mapEntryToInt(map, MAX))
-            } else {
-              TypeMatcher
-            }
-          }
-          "number" -> NumberTypeMatcher(NumberTypeMatcher.NumberType.NUMBER)
-          "integer" -> NumberTypeMatcher(NumberTypeMatcher.NumberType.INTEGER)
-          "decimal" -> NumberTypeMatcher(NumberTypeMatcher.NumberType.DECIMAL)
-          "real" -> {
-            NumberTypeMatcher (NumberTypeMatcher.NumberType.DECIMAL)
-          }
-          MIN -> MinTypeMatcher(mapEntryToInt(map, MIN))
-          MAX -> MaxTypeMatcher(mapEntryToInt(map, MAX))
-          TIMESTAMP ->
-            if (map.containsKey(TIMESTAMP)) TimestampMatcher(map[TIMESTAMP].toString())
-            else TimestampMatcher()
-          TIME ->
-            if (map.containsKey(TIME)) TimeMatcher(map[TIME].toString())
-            else TimeMatcher()
-          DATE ->
-            if (map.containsKey(DATE)) DateMatcher(map[DATE].toString())
-            else DateMatcher()
-          else -> {
-            EqualsMatcher
-          }
-        }
-      } else if (map.containsKey(REGEX)) {
-        return RegexMatcher(Regex(map[REGEX] as String))
-      } else if (map.containsKey(MIN)) {
-        return MinTypeMatcher(mapEntryToInt(map, MIN))
-      } else if (map.containsKey(MAX)) {
-        return MaxTypeMatcher(mapEntryToInt(map, MAX))
-      } else if (map.containsKey(TIMESTAMP)) {
-        return TimestampMatcher(map[TIMESTAMP] as String)
-      } else if (map.containsKey(TIME)) {
-        return TimeMatcher(map[TIME] as String)
-      } else if (map.containsKey(DATE)) {
-        return DateMatcher(map[DATE] as String)
-      }
-
-      return EqualsMatcher
-    }
-  }
 }

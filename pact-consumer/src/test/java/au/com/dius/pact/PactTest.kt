@@ -69,7 +69,7 @@ class PactTest {
 
             while (true) {
                 line = br.readLine()
-                if(line == null) {
+                if (line == null) {
                     break
                 }
                 text.append(line)
@@ -87,15 +87,15 @@ class PactTest {
     @Test
     fun pact_buildJson_correctlyBuilt() {
         PactJsonifier.generateJson(getInitialPacts(), File("pacts"))
-        val outputPactFile = File("pacts/${expectedPact}")
-        Assert.assertTrue("Pact was not generated!",outputPactFile.exists())
+        val outputPactFile = File("pacts/$expectedPact")
+        Assert.assertTrue("Pact was not generated!", outputPactFile.exists())
 
         val outputPact = readFile(outputPactFile)
         val expectedPact = readFile(File("src/test/assets/$expectedPact"))
         Assert.assertEquals("Generated pact does not match expectations!", expectedPact, outputPact)
     }
 
-    @Test(expected=PactMergeException::class)
+    @Test(expected = PactMergeException::class)
     fun pact_buildJson_failsMerge() {
         PactJsonifier.generateJson(getInitialPacts().plus(getConflictPacts()), File("pacts"))
     }
@@ -103,9 +103,9 @@ class PactTest {
     @Test
     fun pact_pactsList_noConflicts() {
         val pacts = getInitialPacts().plus(getAdditionalPacts())
-        for(first in pacts) {
-            for(second in pacts) {
-                if(first === second) {
+        for (first in pacts) {
+            for (second in pacts) {
+                if (first === second) {
                     continue
                 }
                 Assert.assertTrue("Pacts are not compatible: $first; $second", first.compatibleTo(second))
@@ -119,9 +119,9 @@ class PactTest {
     @Test
     fun pact_conflictingPactList_showConflicts() {
         val pacts = getInitialPacts().plus(getConflictPacts())
-        for(first in pacts) {
-            for(second in pacts) {
-                if(first === second) {
+        for (first in pacts) {
+            for (second in pacts) {
+                if (first === second) {
                     continue
                 }
                 Assert.assertTrue("Pacts are not compatible: $first; $second", first.compatibleTo(second))

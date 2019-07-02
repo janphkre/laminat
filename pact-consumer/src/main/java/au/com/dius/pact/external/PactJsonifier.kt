@@ -1,6 +1,10 @@
 package au.com.dius.pact.external
 
-import au.com.dius.pact.model.*
+import au.com.dius.pact.model.Pact
+import au.com.dius.pact.model.PactMerge
+import au.com.dius.pact.model.PactMergeException
+import au.com.dius.pact.model.PactWriter
+import au.com.dius.pact.model.RequestResponsePact
 import java.io.File
 import java.io.PrintWriter
 
@@ -9,7 +13,7 @@ object PactJsonifier {
         baseDir.mkdir()
         pacts.forEach {
             val conflicts = it.conflictsWithSelf()
-            if(conflicts.isNotEmpty()) {
+            if (conflicts.isNotEmpty()) {
                 throw PactMergeException(
                     "Cannot merge pacts as there were ${conflicts.size} conflict(s) " +
                     "between the interactions - ${conflicts.joinToString("\n")}"
@@ -19,7 +23,7 @@ object PactJsonifier {
         val firstPact = pacts.first()
         val mergedPact = (pacts.fold(RequestResponsePact(firstPact.provider, firstPact.consumer, emptyList())) { left, current ->
             val result = PactMerge.merge(current, left)
-            if(!result.ok) {
+            if (!result.ok) {
                 throw PactMergeException(result.message)
             }
             left
