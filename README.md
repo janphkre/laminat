@@ -1,5 +1,7 @@
 #laminat
 
+[![](https://jitpack.io/v/janphkre/laminat.svg)](https://jitpack.io/#janphkre/laminat)
+
 Lightweight Android version of Pact. Enables consumer driven contract testing, providing DSL for the consumer project.
 
 The pact library is meant for consumer driven contracts. This means that you, as a consumer, define the content and form of a request or message towards a provider.
