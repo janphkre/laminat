@@ -46,9 +46,6 @@ val examplePact = ConsumerPactBuilder("exampleConsumer")
                 .closeObject()
             )
 .toPact()
-
-mockServer.addPact(examplePact)
-mockServer.setStates(listOf("ExampleState"))
 ```
 
 More examples of the pact dsl can be found in the [pact jvm repository][2].
@@ -64,6 +61,46 @@ fun PactDslJsonBody.obj(name: String, initializer: PactDslJsonBody.() -> DslPart
 ```
 
 Which then can be used in the dsl using it instead of `object` with a lambda.
+
+### Pact server
+
+A server which will respond to incoming requests as specified in a pact / multiple pacts can be specified as follows:
+
+```
+val mockServer = StatefullPactWebServer(allowUnexpectedKeys = false, pactErrorCode = 998)
+
+mockServer.addPact(examplePact)
+mockServer.setStates(listOf("ExampleState"))
+
+/* ... Do your requests ... */
+
+mockServer.teardown()
+
+// Validate that all pact interactions have been called:
+Assert.assertTrue(mockServer.validatePactsCompleted())
+```
+
+The creation of the web server requires only two variables.
+First, you can specify if unexpected keys in incoming requests should be ignored. This should usually be set to false as you are a consumer
+and should specify your interactions as complete as possible, since an interaction in a pact should always be contracting by example.
+Second, you can specify the code that the server should return as an HTTP error code in the response that it gives.
+It should be outside of the expected error code range in your consumer so you can easily distinguish an pact error from an expected server error.
+When adding an interceptor to the async response chain you can crash the app / test by this for example, as you do not want to have your implementation deviate from the pact.
+
+Also if you do not care about state, you can also use it state less:
+
+```
+val mockServer = StatelessPactWebServer(allowUnexpectedKeys = false, pactErrorCode = 998)
+
+mockServer.addPact(examplePact)
+
+/* ... Do your requests ... */
+
+mockServer.teardown()
+
+// Validate that all pact interactions have been called:
+Assert.assertTrue(mockServer.validatePactsCompleted())
+```
 
 ### Serialization
 A single object au.com.dius.pact.external.PactJsonifier has been added which allows easy serialization of a list of pacts by merging them first and writing them into a file afterwards.

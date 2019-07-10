@@ -6,6 +6,10 @@ import okhttp3.mockwebserver.MockWebServer
 import java.io.IOException
 import java.util.LinkedList
 
+/**
+ * This is a web server which ignores any state specified in pacts and
+ * matches the incoming request to any interaction that is specified at the moment.
+ */
 open class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int) {
 
     private val mockWebServer = MockWebServer()

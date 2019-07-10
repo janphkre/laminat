@@ -4,6 +4,10 @@ import au.com.dius.pact.model.ProviderState
 import au.com.dius.pact.model.RequestResponsePact
 import java.util.LinkedList
 
+/**
+ * This is a web server which handles states specified in pacts and set as Providerstates.
+ * it matches the incoming request to any interaction that is specified as part of the current provider state.
+ */
 class StatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int) : StatelessPactWebServer(allowUnexpectedKeys, pactErrorCode) {
 
     private val definedPactList = LinkedList<RequestResponsePact>()
