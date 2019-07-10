@@ -16,6 +16,33 @@ import java.net.Socket
 
 class OkHttpRequestMatcherTest {
 
+    private val unusedPOST by lazy {
+        ConsumerPactBuilder("TestConsumer").hasPactWith("TestProducer")
+            .uponReceiving("POST unusedRequest")
+            .method("POST")
+            .path("/unused/path")
+            .headers(
+                hashMapOf(
+                    Pair("Content-Type", "application/json")
+                )
+            )
+            .body(
+                PactDslJsonBody()
+                    .stringMatcher("regex1", "\\d{8,9}", "123456789")
+                    .stringMatcher("regex2", ".{4}", "abcd")
+                    .decimalType("decimal1", 50.99234)
+            )
+            .willRespondWith()
+            .status(200)
+            .headers(hashMapOf(Pair("Content-Type", "application/json; charset=UTF-8")))
+            .body(
+                PactDslJsonBody()
+                    .stringMatcher("regex3", "\\d{5,6}", "12345")
+                    .stringMatcher("regex4", ".{3}", "abc")
+            )
+            .toPact()
+    }
+
     private val testPost by lazy {
         ConsumerPactBuilder("TestConsumer").hasPactWith("TestProducer")
             .uponReceiving("POST testRequest")
@@ -137,6 +164,27 @@ class OkHttpRequestMatcherTest {
         val recordedRequest = getRecordedRequest(request)
 
         val interactions = testPost.interactions.map { it as RequestResponseInteraction }
+        val match = matcher.findInteraction(interactions, recordedRequest)
+
+        when (match) {
+            is OkHttpRequestMatcher.RequestMatch.FullRequestMatch -> return
+            is OkHttpRequestMatcher.RequestMatch.PartialRequestMatch -> {
+                Assert.fail("Match is only a Partial Request Match: \n${match.problems.joinToString("\n")}")
+            }
+            is OkHttpRequestMatcher.RequestMatch.RequestMismatch -> {
+                Assert.fail("Match is only a Request Mismatch: \n${match.problems?.joinToString("\n")}")
+            }
+        }
+    }
+
+    @Test
+    fun pactDispatcher_PostRequestMultipleInteractions_MatchingCorrectly() {
+        val request = "{ \"regex1\": \"123456789\", \"regex2\": \"abcd\", \"decimal1\": 50.99234}".toByteArray()
+
+        val matcher = OkHttpRequestMatcher(false)
+        val recordedRequest = getRecordedRequest(request)
+
+        val interactions = testPost.interactions.plus(unusedPOST.interactions).map { it as RequestResponseInteraction }
         val match = matcher.findInteraction(interactions, recordedRequest)
 
         when (match) {
