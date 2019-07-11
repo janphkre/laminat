@@ -14,9 +14,9 @@ therefore it only contains pact creation, serialization and consumer matching. T
 Also, this lightweight adaption requires neither groovy, scala nor ruby anymore.
 
 Get the library through jitpack:
-```
+```groovy
 repositories {
-    ...
+    //...
     maven { url 'https://jitpack.io' }
 }
 dependencies {
@@ -27,9 +27,9 @@ dependencies {
 ### Pact creation
 Just like the normal [pact-jvm project][2], the PactDSL can be used in this implementation.
 
-```
+```kotlin
 val examplePact = ConsumerPactBuilder("exampleConsumer")
-.hasPactWith("exampleProvider)
+.hasPactWith("exampleProvider")
 .given("ExampleState")
     .uponReceiving("GET firstExample")
         .path("/example/first")
@@ -51,7 +51,7 @@ val examplePact = ConsumerPactBuilder("exampleConsumer")
 More examples of the pact dsl can be found in the [pact jvm repository][2].
 Also custom extensions could be written like such:
 
-```
+```kotlin
 fun PactDslJsonBody.obj(name: String, initializer: PactDslJsonBody.() -> DslPart?): PactDslJsonBody {
     val result = this.`object`(name)
     initializer.invoke(result)
@@ -66,7 +66,7 @@ Which then can be used in the dsl using it instead of `object` with a lambda.
 
 A server which will respond to incoming requests as specified in a pact / multiple pacts can be specified as follows:
 
-```
+```kotlin
 val mockServer = StatefullPactWebServer(allowUnexpectedKeys = false, pactErrorCode = 998)
 
 mockServer.addPact(examplePact)
@@ -89,7 +89,7 @@ When adding an interceptor to the async response chain you can crash the app / t
 
 Also if you do not care about state, you can also use it state less:
 
-```
+```kotlin
 val mockServer = StatelessPactWebServer(allowUnexpectedKeys = false, pactErrorCode = 998)
 
 mockServer.addPact(examplePact)
@@ -107,7 +107,7 @@ A single object au.com.dius.pact.external.PactJsonifier has been added which all
 This step could be wrapped into a unit test instead of an instrumented test so the pact files are available on the host machine directly.
 Also you a unit test should be added to check for conflicts between the interactions in one pact.
 
-```
+```kotlin
 @Test
 fun pact_merged_ToJson() {
     val pacts = Pacts.getAllPacts()
