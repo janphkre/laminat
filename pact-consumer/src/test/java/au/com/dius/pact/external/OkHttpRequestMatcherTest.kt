@@ -126,6 +126,29 @@ class OkHttpRequestMatcherTest {
             .toPact()
     }
 
+    private val hugeAuthorization = String(CharArray(200000) { 'C' })
+
+    private val testGet by lazy {
+        ConsumerPactBuilder("TestConsumer").hasPactWith("TestProducer")
+            .uponReceiving("GET huge authorization header")
+            .method("GET")
+            .path("/test/path")
+            .headers(
+                hashMapOf(
+                    Pair("Authorization", hugeAuthorization)
+                )
+            )
+            .willRespondWith()
+            .status(200)
+            .headers(hashMapOf(Pair("Content-Type", "application/json; charset=UTF-8")))
+            .body(
+                PactDslJsonBody()
+                    .stringMatcher("regex3", "\\d{5,6}", "12345")
+                    .stringMatcher("regex4", ".{3}", "abc")
+            )
+            .toPact()
+    }
+
     private fun getMockSocket(): Socket {
         val mockInetAddress = mock(InetAddress::class.java)
         doReturn("mockhost").`when`(mockInetAddress).getHostName()
@@ -137,10 +160,10 @@ class OkHttpRequestMatcherTest {
         return mockSocket
     }
 
-    private fun getRecordedRequest(requestBody: ByteArray): RecordedRequest {
+    private fun getRecordedRequest(requestBody: ByteArray, method: String = "POST", authorization: String = ""): RecordedRequest {
         val mockSocket = getMockSocket()
         val headers = Headers.Builder()
-            .add("Authorization: ")
+            .add("Authorization: $authorization")
             .add("Content-Type: application/json")
             .add("Content-Length: ${requestBody.size}")
             .add("Host: localhost:41163")
@@ -153,7 +176,7 @@ class OkHttpRequestMatcherTest {
         body.outputStream().use {
             it.write(requestBody)
         }
-        return RecordedRequest("POST /test/path HTTP/1.1", headers, ArrayList(), body.size(), body, 0, mockSocket)
+        return RecordedRequest("$method /test/path HTTP/1.1", headers, ArrayList(), body.size(), body, 0, mockSocket)
     }
 
     @Test
@@ -239,6 +262,27 @@ class OkHttpRequestMatcherTest {
                 val response = match.interaction.response.generateResponse()
                 Assert.assertNotNull(response)
             }
+            is OkHttpRequestMatcher.RequestMatch.PartialRequestMatch -> {
+                Assert.fail("Match is only a Partial Request Match: \n${match.problems.joinToString("\n")}")
+            }
+            is OkHttpRequestMatcher.RequestMatch.RequestMismatch -> {
+                Assert.fail("Match is only a Request Mismatch: \n${match.problems?.joinToString("\n")}")
+            }
+        }
+    }
+
+    @Test
+    fun pactDispatcher_LongGetRequest_MatchingCorrectly() {
+
+        val matcher = OkHttpRequestMatcher(false)
+
+        val recordedRequest = getRecordedRequest(ByteArray(0), "GET", hugeAuthorization)
+
+        val interactions = testGet.interactions.map { it as RequestResponseInteraction }
+        val match = matcher.findInteraction(interactions, recordedRequest)
+
+        when (match) {
+            is OkHttpRequestMatcher.RequestMatch.FullRequestMatch -> return
             is OkHttpRequestMatcher.RequestMatch.PartialRequestMatch -> {
                 Assert.fail("Match is only a Partial Request Match: \n${match.problems.joinToString("\n")}")
             }

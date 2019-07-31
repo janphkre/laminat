@@ -12,8 +12,8 @@ import java.util.LinkedList
  */
 open class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int) {
 
-    private val mockWebServer = MockWebServer()
-    private val dispatcher = PactDispatcher(allowUnexpectedKeys, pactErrorCode)
+    internal val mockWebServer = MockWebServer()
+    internal val dispatcher = PactDispatcher(allowUnexpectedKeys, pactErrorCode)
     private val currentInteractionList = LinkedList<RequestResponseInteraction>()
 
     init {
