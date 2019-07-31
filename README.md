@@ -20,7 +20,7 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 dependencies {
-    implementation 'com.github.janphkre:laminat:3.5.7'
+    implementation "com.github.janphkre:laminat:$laminat_version"
 }
 ```
 
