@@ -204,13 +204,17 @@ public class PactDslResponse {
         return this;
     }
 
+    public Response toResponse() {
+        return new Response(responseStatus, responseHeaders, responseBody, responseMatchers, responseGenerators);
+    }
+
     private void addInteraction() {
         consumerPactBuilder.getInteractions().add(new RequestResponseInteraction(
           request.description,
           request.state,
           new Request(request.requestMethod, request.path, request.query,
             request.requestHeaders, request.requestBody, request.requestMatchers, request.requestGenerators),
-          new Response(responseStatus, responseHeaders, responseBody, responseMatchers, responseGenerators)
+          toResponse()
         ));
     }
 

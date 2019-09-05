@@ -4,12 +4,9 @@ import au.com.dius.pact.consumer.ConsumerPactBuilder
 import au.com.dius.pact.external.PactJsonifier
 import au.com.dius.pact.model.PactMergeException
 import au.com.dius.pact.model.RequestResponsePact
-import org.apache.http.Consts
 import org.junit.Assert
 import org.junit.Test
-import java.io.BufferedReader
 import java.io.File
-import java.io.InputStreamReader
 
 class PactTest {
 
@@ -61,28 +58,7 @@ class PactTest {
             .toPact())
     }
 
-    private fun readFile(file: File): String {
-        val text = StringBuilder()
-        try {
-            val br = BufferedReader(InputStreamReader(file.inputStream(), Consts.UTF_8.name()))
-            var line: String?
-
-            while (true) {
-                line = br.readLine()
-                if (line == null) {
-                    break
-                }
-                text.append(line)
-                text.append('\n')
-            }
-            br.close()
-        } catch (e: Exception) {
-            System.err.println("readMockFile: failed to read ${file.name}")
-            e.printStackTrace()
-        }
-
-        return text.toString()
-    }
+    private
 
     @Test
     fun pact_buildJson_correctlyBuilt() {
