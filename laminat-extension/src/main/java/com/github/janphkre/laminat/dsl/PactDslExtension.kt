@@ -7,6 +7,7 @@ import au.com.dius.pact.consumer.dsl.PactDslJsonBody
 import au.com.dius.pact.consumer.dsl.PactDslRequestWithPath
 import au.com.dius.pact.consumer.dsl.PactDslResponse
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider
+import au.com.dius.pact.external.PactBuildException
 import au.com.dius.pact.model.ProviderState
 import au.com.dius.pact.model.RequestResponseInteraction
 import au.com.dius.pact.model.RequestResponsePact
@@ -81,7 +82,7 @@ fun PactDslJsonBody.stringMatcher(name: String, regex: String, value: String?): 
     if (value != null) {
         return stringMatcher(name, regex, value)
     } else {
-        throw au.com.dius.pact.external.PactBuildException("Expected field $name to be set!")
+        throw PactBuildException("Expected field $name to be set!")
     }
 }
 
@@ -89,7 +90,7 @@ fun PactDslJsonBody.stringType(name: String, value: String?): PactDslJsonBody {
     if (value != null) {
         return stringType(name, value)
     } else {
-        throw au.com.dius.pact.external.PactBuildException("Expected field $name to be set!")
+        throw PactBuildException("Expected field $name to be set!")
     }
 }
 

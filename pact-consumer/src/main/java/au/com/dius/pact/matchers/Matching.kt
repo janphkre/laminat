@@ -3,7 +3,7 @@ package au.com.dius.pact.matchers
 import au.com.dius.pact.model.Request
 import okhttp3.mockwebserver.RecordedRequest
 import org.apache.http.entity.ContentType
-import java.util.*
+import java.util.LinkedList
 
 internal object Matching {
 

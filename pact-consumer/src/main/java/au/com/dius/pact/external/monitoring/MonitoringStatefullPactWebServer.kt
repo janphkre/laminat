@@ -6,7 +6,8 @@ import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 
-class MonitoringStatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int): StatefullPactWebServer(allowUnexpectedKeys, pactErrorCode) {
+class MonitoringStatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int)
+    : StatefullPactWebServer(allowUnexpectedKeys, pactErrorCode) {
 
     init {
         mockWebServer.setDispatcher(MonitoringDispatcher(dispatcher))
@@ -14,7 +15,7 @@ class MonitoringStatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCo
 
     private class MonitoringDispatcher(
         private val wrapped: Dispatcher
-    ): Dispatcher() {
+    ) : Dispatcher() {
 
         private val tag = "PactWebServer"
 
@@ -25,6 +26,5 @@ class MonitoringStatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCo
             Log.d(tag, "Generated result in ${System.currentTimeMillis() - startMs} ms.")
             return result
         }
-
     }
 }

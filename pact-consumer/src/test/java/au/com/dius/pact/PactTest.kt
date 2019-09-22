@@ -58,9 +58,9 @@ class PactTest {
             .toPact())
     }
 
-    private
-
     @Test
+
+    private
     fun pact_buildJson_correctlyBuilt() {
         PactJsonifier.generateJson(getInitialPacts(), File("pacts"))
         val outputPactFile = File("pacts/$expectedPact")

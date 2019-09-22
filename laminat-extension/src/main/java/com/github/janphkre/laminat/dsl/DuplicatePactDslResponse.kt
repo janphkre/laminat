@@ -5,7 +5,7 @@ import au.com.dius.pact.consumer.dsl.PactDslResponse
 import au.com.dius.pact.consumer.dsl.PactDslWithState
 import au.com.dius.pact.model.RequestResponsePact
 
-internal class DuplicatePactDslResponse: PactDslResponse(null, null) {
+internal class DuplicatePactDslResponse : PactDslResponse(null, null) {
 
     override fun given(state: String?): PactDslWithState {
         throw UnsupportedOperationException("Chaining interactions is not supported for duplicates.")
