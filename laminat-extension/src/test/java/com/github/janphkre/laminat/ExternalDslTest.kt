@@ -1,18 +1,18 @@
-package au.com.dius.pact.external
+package com.github.janphkre.laminat
 
 import au.com.dius.pact.consumer.dsl.PactDslRequestWithPath
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider
-import au.com.dius.pact.external.dsl.array
-import au.com.dius.pact.external.dsl.duplicate
-import au.com.dius.pact.external.dsl.getAllPacts
-import au.com.dius.pact.external.dsl.obj
-import au.com.dius.pact.external.dsl.pact
-import au.com.dius.pact.external.dsl.request
-import au.com.dius.pact.external.dsl.response
-import au.com.dius.pact.external.dsl.stringMatcher
-import au.com.dius.pact.external.dsl.stringType
+import au.com.dius.pact.external.PactJsonifier
 import au.com.dius.pact.model.ProviderState
-import au.com.dius.pact.readFile
+import com.github.janphkre.laminat.dsl.array
+import com.github.janphkre.laminat.dsl.duplicate
+import com.github.janphkre.laminat.dsl.getAllPacts
+import com.github.janphkre.laminat.dsl.obj
+import com.github.janphkre.laminat.dsl.pact
+import com.github.janphkre.laminat.dsl.request
+import com.github.janphkre.laminat.dsl.response
+import com.github.janphkre.laminat.dsl.stringMatcher
+import com.github.janphkre.laminat.dsl.stringType
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
@@ -23,9 +23,9 @@ class ExternalDslTest {
 
         val initialRequest get() = request {
             uponReceiving("GET testRequest")
-            .method("GET")
-            .path("test/path")
-            .headers(defaultRequestHeaders)
+                .method("GET")
+                .path("test/path")
+                .headers(defaultRequestHeaders)
         }
 
         private val defaultRequestHeaders = hashMapOf(
@@ -45,20 +45,24 @@ class ExternalDslTest {
         val initialResponse by response { this }
 
         val errorResponse by response {
-            stringMatcher("errorType", ".*", nullableErrorType)
-            .array("messages") {
-                obj {
-                    decimalType("opacity",0.9)
-                    stringType("message","Error messsage.")
+            stringMatcher("errorType", ".*",
+                nullableErrorType
+            )
+                .array("messages") {
+                    obj {
+                        decimalType("opacity", 0.9)
+                        stringType("message", "Error messsage.")
+                    }
+                        .obj {
+                            decimalType("opacity", 0.3)
+                            stringType("message", "Info messsage.")
+                        }
                 }
-                .obj {
-                    decimalType("opacity",0.3)
-                    stringType("message","Info messsage.")
+                .obj("exampleObj") {
+                    stringType("exampleString",
+                        nullableExampleString
+                    )
                 }
-            }
-            .obj("exampleObj") {
-                stringType("exampleString", nullableExampleString)
-            }
         }
     }
 
@@ -72,7 +76,9 @@ class ExternalDslTest {
                 .body(TestResponses.initialResponse)
         }
 
-        val errorPact by duplicate(ProviderState("ERROR"), { initialPact }) {
+        val errorPact by duplicate(
+            ProviderState("ERROR"),
+            { initialPact }) {
             status(500)
                 .headers(defaultResponseHeaders)
                 .body(TestResponses.errorResponse)
@@ -99,6 +105,7 @@ class ExternalDslTest {
     @Test
     fun externalPact_collectAllJson_AllItemsReturned() {
         val pactList = TestPacts.getAllPacts()
+        Assert.assertEquals("The reflective collect did not grab all pacts!", 2, pactList.size)
         TODO()
     }
 }

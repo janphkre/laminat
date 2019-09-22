@@ -2,10 +2,10 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion rootProject.ext.target_sdk_version
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 28
+        minSdkVersion rootProject.ext.min_sdk_version
+        targetSdkVersion rootProject.ext.target_sdk_version
         versionCode rootProject.ext.pact_version_code
         versionName rootProject.ext.pact_version
     }
@@ -24,8 +24,7 @@ repositories {
 }
 
 dependencies {
-    
-    api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
     api "com.squareup.okhttp3:mockwebserver:$mockserver_version"
     api "org.apache.commons:commons-collections4:$apache_collections_version"
     api "io.gatling:jsonpath_2.11:$jsonpath_version"

@@ -1,1 +1,1 @@
-include ':pact-consumer'
+include ':pact-consumer', ':retrofit-extension', ':laminat-extension'

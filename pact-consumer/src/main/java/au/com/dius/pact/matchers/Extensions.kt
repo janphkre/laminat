@@ -1,11 +1,10 @@
 package au.com.dius.pact.matchers
 
 import com.google.gson.internal.LazilyParsedNumber
-import kotlin.reflect.KFunction
 
-private fun isNumeric(method: KFunction<*>): Boolean {
+private fun <T> isNumeric(method: () -> T): Boolean {
     return try {
-        method.call()
+        method.invoke()
         true
     } catch (e: NumberFormatException) {
         false

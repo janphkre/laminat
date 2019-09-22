@@ -8,7 +8,7 @@ class RequestResponsePact(override val provider: Provider, override val consumer
     get() = requestResponseInteractions
 
     override fun sortInteractions(): Pact {
-        requestResponseInteractions = ArrayList<RequestResponseInteraction>(requestResponseInteractions).sortedBy {
+        requestResponseInteractions = ArrayList(requestResponseInteractions).sortedBy {
             it.providerState + it.description
         }
         return this
@@ -24,7 +24,7 @@ class RequestResponsePact(override val provider: Provider, override val consumer
     }
 
     override fun mergeInteractions(interactions: List<Interaction>) {
-        requestResponseInteractions = ArrayList<RequestResponseInteraction>(requestResponseInteractions).apply {
+        requestResponseInteractions = ArrayList(requestResponseInteractions).apply {
             addAll(interactions as List<RequestResponseInteraction>)
         }.distinctBy { it.uniqueKey() }
     }
@@ -43,7 +43,11 @@ class RequestResponsePact(override val provider: Provider, override val consumer
             .filter { it.first !== it.second && it.first.conflictsWith(it.second) }
     }
 
-    fun <S, T> List<S>.multiply(other: List<T>): List<Pair<S, T>> {
+    override fun compatibleTo(other: Pact): Boolean {
+        return provider == other.provider && other is RequestResponsePact
+    }
+
+    private fun <S, T> List<S>.multiply(other: List<T>): List<Pair<S, T>> {
         return flatMap { first ->
             other.map { second -> Pair(first, second) }
         }

@@ -1,18 +1,5 @@
 package au.com.dius.pact.consumer.dsl
 
-import com.mifmif.common.regex.Generex
-
-import org.apache.commons.lang3.StringUtils
-import org.apache.commons.lang3.time.DateFormatUtils
-import org.apache.commons.lang3.time.FastDateFormat
-import org.json.JSONObject
-
-import java.math.BigDecimal
-import java.util.Arrays
-import java.util.Calendar
-import java.util.UUID
-import java.util.regex.Pattern
-
 import au.com.dius.pact.consumer.InvalidMatcherException
 import au.com.dius.pact.model.generators.Category
 import au.com.dius.pact.model.generators.DateGenerator
@@ -30,7 +17,17 @@ import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
 import au.com.dius.pact.model.matchingrules.NumberTypeMatcher
 import au.com.dius.pact.model.matchingrules.RuleLogic
 import au.com.dius.pact.model.matchingrules.TypeMatcher
+import com.mifmif.common.regex.Generex
 import io.gatling.jsonpath.`Parser$`
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.time.DateFormatUtils
+import org.apache.commons.lang3.time.FastDateFormat
+import org.json.JSONObject
+import java.math.BigDecimal
+import java.util.Arrays
+import java.util.Calendar
+import java.util.UUID
+import java.util.regex.Pattern
 
 /**
  * DSL to define a JSON Object
@@ -946,7 +943,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
     }
 
     override fun eachArrayWithMinLike(name: String, size: Int): PactDslJsonArray {
-        return eachArrayWithMinLike(name, size!!, size)
+        return eachArrayWithMinLike(name, size, size)
     }
 
     override fun eachArrayWithMinLike(size: Int): PactDslJsonArray {

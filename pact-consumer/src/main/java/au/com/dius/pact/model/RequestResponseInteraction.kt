@@ -3,6 +3,7 @@ package au.com.dius.pact.model
 import com.google.gson.JsonParser
 import org.apache.http.Consts
 import java.net.URLEncoder
+import java.util.Locale
 
 class RequestResponseInteraction(
     override val description: String,
@@ -63,7 +64,7 @@ class RequestResponseInteraction(
     companion object {
         fun requestToMap(request: Request, pactSpecVersion: PactSpecVersion): Map<*, *> {
             val map = mutableMapOf<String, Any?>(
-                Pair("method", request.method.toUpperCase()),
+                Pair("method", request.method.toUpperCase(Locale.ROOT)),
                 Pair("path", request.path)
             )
             if (request.headers.isNotEmpty()) {

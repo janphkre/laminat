@@ -8,10 +8,6 @@ abstract class BasePact : Pact {
     override val source: PactSource
         get() = UnknownPactSource
 
-    override fun compatibleTo(other: Pact): Boolean {
-        return provider == other.provider && this::class.isInstance(other)
-    }
-
     companion object {
 
         val jsonParser = JsonParser()

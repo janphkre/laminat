@@ -1,4 +1,4 @@
-package au.com.dius.pact.external.dsl
+package com.github.janphkre.laminat.dsl
 
 import au.com.dius.pact.consumer.dsl.PactDslRequestWithPath
 import au.com.dius.pact.consumer.dsl.PactDslResponse

@@ -1,4 +1,4 @@
-package au.com.dius.pact.external.dsl
+package com.github.janphkre.laminat.dsl
 
 import au.com.dius.pact.consumer.ConsumerPactBuilder
 import au.com.dius.pact.consumer.dsl.DslPart
@@ -21,7 +21,13 @@ fun duplicate(
     baseInitializer: () -> RequestResponsePact,
     responseInitializer: PactDslResponse.() -> PactDslResponse
 ): Lazy<RequestResponsePact> {
-    return lazy { internalDuplicate(state, baseInitializer(), responseInitializer) }
+    return lazy {
+        internalDuplicate(
+            state,
+            baseInitializer(),
+            responseInitializer
+        )
+    }
 }
 
 fun duplicateFromRequest(
@@ -29,7 +35,13 @@ fun duplicateFromRequest(
     baseInitializer: () -> PactDslRequestWithPath,
     responseInitializer: PactDslResponse.() -> PactDslResponse
 ): Lazy<RequestResponsePact> {
-    return lazy { internalDuplicate(state, baseInitializer().willRespondWith().toPact(), responseInitializer) }
+    return lazy {
+        internalDuplicate(
+            state,
+            baseInitializer().willRespondWith().toPact(),
+            responseInitializer
+        )
+    }
 }
 
 fun Any.getAllPacts(): List<RequestResponsePact> {
@@ -69,7 +81,7 @@ fun PactDslJsonBody.stringMatcher(name: String, regex: String, value: String?): 
     if (value != null) {
         return stringMatcher(name, regex, value)
     } else {
-        throw PactBuildException("Expected field $name to be set!")
+        throw au.com.dius.pact.external.PactBuildException("Expected field $name to be set!")
     }
 }
 
@@ -77,7 +89,7 @@ fun PactDslJsonBody.stringType(name: String, value: String?): PactDslJsonBody {
     if (value != null) {
         return stringType(name, value)
     } else {
-        throw PactBuildException("Expected field $name to be set!")
+        throw au.com.dius.pact.external.PactBuildException("Expected field $name to be set!")
     }
 }
 

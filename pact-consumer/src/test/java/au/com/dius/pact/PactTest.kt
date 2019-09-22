@@ -67,7 +67,8 @@ class PactTest {
         Assert.assertTrue("Pact was not generated!", outputPactFile.exists())
 
         val outputPact = readFile(outputPactFile)
-        val expectedPact = readFile(File("src/test/assets/$expectedPact"))
+        val expectedPact =
+            readFile(File("src/test/assets/$expectedPact"))
         Assert.assertEquals("Generated pact does not match expectations!", expectedPact, outputPact)
     }
 

@@ -28,7 +28,7 @@ class Response(
 
     fun generateResponse(): Response {
         val r = copy()
-        generators.applyGenerator(Category.STATUS) { key, g -> r.status = g?.generate(r.status) as? Int ?: DEFAULT_STATUS }
+        generators.applyGenerator(Category.STATUS) { _, g -> r.status = g?.generate(r.status) as? Int ?: DEFAULT_STATUS }
         val generatedHeaders = HashMap(headers)
         generators.applyGenerator(Category.HEADER) { key, g ->
             generatedHeaders[key] = g?.generate(r.headers[key]) as? String ?: ""
