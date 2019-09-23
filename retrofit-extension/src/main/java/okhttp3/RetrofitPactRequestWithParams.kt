@@ -7,6 +7,5 @@ class RetrofitPactRequestWithParams(
     val relativePath: String = requestBuilder.url!!.encodedPath()
     val query: List<Pair<String, String>> = requestBuilder.url!!.let { it.queryParameterNames().mapIndexed { index, name -> Pair(name, it.queryParameterValue(index)) } }
     val headers: List<Pair<String, String>> = requestBuilder.headers.namesAndValues.zipWithNext { a, b -> Pair(a, b) }
-    val bodyType: MediaType? = requestBuilder.body?.contentType()
     val body: RequestBody? = requestBuilder.body //TODO WRITE BODY TO STRINGBUFFER
 }

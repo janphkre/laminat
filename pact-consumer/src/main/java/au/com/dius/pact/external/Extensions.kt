@@ -5,6 +5,7 @@ import com.google.gson.JsonElement
 import okhttp3.mockwebserver.RecordedRequest
 import java.util.WeakHashMap
 
+//TODO: RECORDEDREQUEST IS ONLY ONCE THE SAME INSTANCE(CACHING IS USELESS MOSTLY)
 val jsonCache = WeakHashMap<RecordedRequest, JsonElement>()
 
 @Synchronized

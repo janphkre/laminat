@@ -1,6 +1,7 @@
 package com.janphkre.laminat.retrofit
 
 import au.com.dius.pact.consumer.ConsumerPactBuilder
+import com.janphkre.laminat.retrofit.dsl.on
 import org.junit.Assert
 import org.junit.Test
 import retrofit2.Retrofit

@@ -1,4 +1,4 @@
-package com.janphkre.laminat.retrofit
+package com.janphkre.laminat.retrofit.dsl
 
 import au.com.dius.pact.consumer.dsl.PactDslRequestWithoutPath
 import au.com.dius.pact.external.PactBuildException
@@ -14,10 +14,18 @@ class RetrofitPactDslWithoutMethod(
 
     fun <T> match(retrofitMethod: KFunction<T>): RetrofitPactDsl {
         val javaRetrofitMethod = retrofitMethod.javaMethod ?: throw PactBuildException("The given method $retrofitMethod can not be represented by a java method!")
-        return RetrofitPactDsl(pactDslRequestWithoutPath, javaRetrofitMethod, retrofit)
+        return RetrofitPactDsl(
+            pactDslRequestWithoutPath,
+            javaRetrofitMethod,
+            retrofit
+        )
     }
 
     fun match(retrofitMethod: Method): RetrofitPactDsl {
-        return RetrofitPactDsl(pactDslRequestWithoutPath, retrofitMethod, retrofit)
+        return RetrofitPactDsl(
+            pactDslRequestWithoutPath,
+            retrofitMethod,
+            retrofit
+        )
     }
 }

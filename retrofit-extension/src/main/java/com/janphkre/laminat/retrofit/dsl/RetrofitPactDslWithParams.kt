@@ -1,4 +1,4 @@
-package com.janphkre.laminat.retrofit
+package com.janphkre.laminat.retrofit.dsl
 
 import au.com.dius.pact.consumer.dsl.PactDslRequestWithPath
 import au.com.dius.pact.consumer.dsl.PactDslRequestWithoutPath
@@ -6,7 +6,9 @@ import au.com.dius.pact.external.PactBuildException
 import com.janphkre.laminat.retrofit.annotations.MatchHeader
 import com.janphkre.laminat.retrofit.annotations.MatchPath
 import com.janphkre.laminat.retrofit.annotations.MatchQuery
+import com.janphkre.laminat.retrofit.body.RetrofitPactDslBodyCreator
 import okhttp3.RetrofitPactRequestWithParams
+import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.Query
 import java.lang.reflect.Method
@@ -14,13 +16,16 @@ import java.lang.reflect.Method
 class RetrofitPactDslWithParams(
     private val pactDslRequestWithoutPath: PactDslRequestWithoutPath,
     private val retrofitMethod: Method,
-    private val retrofitRequest: RetrofitPactRequestWithParams
+    private val retrofitRequest: RetrofitPactRequestWithParams,
+    parameterValues: Array<out Any?>
 ) {
 
     private val anyMatchRegex = ".*"
     private val headerRegexes = getRegexes<MatchHeader, Header>({ Pair(key, regex) }, { value })
     private val queryRegexes = getRegexes<MatchQuery, Query>({ Pair(key, regex) }, { value })
     private val pathRegex = getPathRegex()
+    private val bodyValue = parameterValues.getOrNull(getBodyParameterIndex())
+
     /**
      * Grabs all regexes from the given annotation type T
      * and converts them through transformAnnotation into pairs of strings.
@@ -69,6 +74,10 @@ class RetrofitPactDslWithParams(
         return foundAnnotations.firstOrNull()?.regex
     }
 
+    private fun getBodyParameterIndex(): Int {
+        return retrofitMethod.parameterAnnotations.indexOfFirst { annotations -> annotations.any { it is Body } }
+    }
+
     /**
      * Converts the retrofit pact dsl back to a pact dsl.
      * matchPath is unsupported at the moment.
@@ -96,13 +105,19 @@ class RetrofitPactDslWithParams(
                     matchQuery(parameter.first, regex, parameter.second)
                 }
             }
-        if (retrofitRequest.body == null) {
+        //TODO not accounting for MultiPart or FormUrlEncoded at the moment
+        if (bodyValue == null) {
             return intermediatePact
         }
-//        //TODO: WHAT IS THE DEFAULT CONTENT-TYPE FOR RETROFIT?
-//        //TODO: ENFORCE THE CONTENT-TYPE SET BY RETROFIT ON THE PACT
-        return intermediatePact
-        //return intermediatePact.body(TODO())
+        //TODO: WHAT IS THE DEFAULT CONTENT-TYPE FOR RETROFIT?
+        //TODO: ENFORCE THE CONTENT-TYPE SET BY RETROFIT ON THE PACT
+        val dslBody = RetrofitPactDslBodyCreator(
+            retrofitMethod,
+            bodyValue,
+            retrofitRequest.body ?: raiseException("Retrofit did not serialize the specified body")
+        ).create()
+        return intermediatePact.body(dslBody)
+
     }
 
     private fun raiseException(message: String, cause: Exception? = null): Nothing {

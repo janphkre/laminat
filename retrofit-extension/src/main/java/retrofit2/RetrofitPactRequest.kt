@@ -11,14 +11,6 @@ class RetrofitPactRequest(
     method: Method
 ) {
 
-//    private val gotField: Boolean
-//    private val gotPart: Boolean
-//    private val gotBody: Boolean
-//    private val gotPath: Boolean
-//    private val gotQuery: Boolean
-//    private val gotQueryName: Boolean
-//    private val gotQueryMap: Boolean
-//    private val gotUrl: Boolean
     private val httpMethod: String
     private val hasBody: Boolean
     private val isFormEncoded: Boolean
@@ -26,7 +18,6 @@ class RetrofitPactRequest(
     private val relativeUrl: String
     private val headers: Headers
     private val contentType: MediaType?
-//    private val relativeUrlParamNames: Set<String>
     private val parameterHandlers: Array<ParameterHandler<Any?>>
     private val isKotlinSuspendFunction: Boolean
 
@@ -36,14 +27,6 @@ class RetrofitPactRequest(
         } catch (e: Exception) {
             throw PactBuildException("Failed to build request from $method with retrofit", e)
         }
-//        gotField = requestFactoryBuilder.gotField
-//        gotPart = requestFactoryBuilder.gotPart
-//        gotBody = requestFactoryBuilder.gotBody
-//        gotPath = requestFactoryBuilder.gotPath
-//        gotQuery = requestFactoryBuilder.gotQuery
-//        gotQueryName = requestFactoryBuilder.gotQueryName
-//        gotQueryMap = requestFactoryBuilder.gotQueryMap
-//        gotUrl = requestFactoryBuilder.gotUrl
         httpMethod = requestFactoryBuilder.httpMethod!!
         hasBody = requestFactoryBuilder.hasBody
         isFormEncoded = requestFactoryBuilder.isFormEncoded
@@ -51,7 +34,6 @@ class RetrofitPactRequest(
         relativeUrl = requestFactoryBuilder.relativeUrl!!
         headers = requestFactoryBuilder.headers!!
         contentType = requestFactoryBuilder.contentType
-//        relativeUrlParamNames = requestFactoryBuilder.relativeUrlParamNames ?: emptySet()
         parameterHandlers = requestFactoryBuilder.parameterHandlers as Array<ParameterHandler<Any?>>
         isKotlinSuspendFunction = requestFactoryBuilder.isKotlinSuspendFunction
     }

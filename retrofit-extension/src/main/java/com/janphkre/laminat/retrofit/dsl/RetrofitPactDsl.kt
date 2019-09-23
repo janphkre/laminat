@@ -1,4 +1,4 @@
-package com.janphkre.laminat.retrofit
+package com.janphkre.laminat.retrofit.dsl
 
 import au.com.dius.pact.consumer.dsl.PactDslRequestWithPath
 import au.com.dius.pact.consumer.dsl.PactDslRequestWithoutPath
@@ -30,7 +30,12 @@ class RetrofitPactDsl(
             raiseException("The parameters could not be processed by retrofit", e)
         }
 
-        return RetrofitPactDslWithParams(pactDslRequestWithoutPath, retrofitMethod, paramsRetrofitRequest)
+        return RetrofitPactDslWithParams(
+            pactDslRequestWithoutPath,
+            retrofitMethod,
+            paramsRetrofitRequest,
+            parameterValues
+        )
     }
 
     fun willRespondWith(): PactDslRequestWithPath {
