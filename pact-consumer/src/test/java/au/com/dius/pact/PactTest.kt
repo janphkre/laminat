@@ -1,6 +1,8 @@
 package au.com.dius.pact
 
 import au.com.dius.pact.consumer.ConsumerPactBuilder
+import au.com.dius.pact.consumer.dsl.PactDslJsonBody
+import au.com.dius.pact.consumer.dsl.PactDslJsonRootValue
 import au.com.dius.pact.external.PactJsonifier
 import au.com.dius.pact.model.PactMergeException
 import au.com.dius.pact.model.RequestResponsePact
@@ -28,7 +30,16 @@ class PactTest {
             .willRespondWith()
             .status(200)
             .headers(defaultResponseHeaders)
-            .body("{}")
+            .body(PactDslJsonBody().stringType("abc","def"))
+            .uponReceiving("POST nullTestRequest")
+            .method("POST")
+            .path("test/path")
+            .headers(defaultRequestHeaders)
+            .body(PactDslJsonRootValue.matchNull())
+            .willRespondWith()
+            .status(200)
+            .headers(defaultResponseHeaders)
+            .body(PactDslJsonRootValue.matchNull())
             .toPact())
     }
 
@@ -59,8 +70,6 @@ class PactTest {
     }
 
     @Test
-
-    private
     fun pact_buildJson_correctlyBuilt() {
         PactJsonifier.generateJson(getInitialPacts(), File("pacts"))
         val outputPactFile = File("pacts/$expectedPact")

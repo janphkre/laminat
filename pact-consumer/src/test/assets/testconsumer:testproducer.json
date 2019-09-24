@@ -18,9 +18,66 @@
       "response": {
         "status": 200,
         "headers": {
-          "We": "will have to see about this as well."
+          "We": "will have to see about this as well.",
+          "Content-Type": "application/json; charset\u003dUTF-8"
         },
-        "body": {}
+        "body": {
+          "abc": "def"
+        },
+        "matchingRules": {
+          "body": {
+            "$.abc": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            }
+          }
+        }
+      }
+    },
+    {
+      "description": "POST nullTestRequest",
+      "request": {
+        "method": "POST",
+        "path": "test/path",
+        "headers": {
+          "We": "will have to see about this!",
+          "Content-Type": "application/json; charset\u003dUTF-8"
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "matchers": [
+                {
+                  "match": "null"
+                }
+              ],
+              "combine": "AND"
+            }
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "We": "will have to see about this as well.",
+          "Content-Type": "application/json; charset\u003dUTF-8"
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "matchers": [
+                {
+                  "match": "null"
+                }
+              ],
+              "combine": "AND"
+            }
+          }
+        }
       }
     }
   ],
@@ -29,7 +86,7 @@
       "version": "3.0.0"
     },
     "pact-laminat-android": {
-      "version": "3.5.7"
+      "version": "3.5.9"
     }
   }
 }

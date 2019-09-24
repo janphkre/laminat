@@ -1,11 +1,8 @@
 package au.com.dius.pact.consumer.dsl;
 
-import au.com.dius.pact.consumer.InvalidMatcherException;
-import au.com.dius.pact.model.generators.Category;
-import au.com.dius.pact.model.generators.*;
-import au.com.dius.pact.model.matchingrules.*;
 import com.google.gson.Gson;
 import com.mifmif.common.regex.Generex;
+
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.json.JSONObject;
@@ -14,6 +11,24 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.UUID;
+
+import au.com.dius.pact.consumer.InvalidMatcherException;
+import au.com.dius.pact.model.generators.Category;
+import au.com.dius.pact.model.generators.DateGenerator;
+import au.com.dius.pact.model.generators.DateTimeGenerator;
+import au.com.dius.pact.model.generators.RandomDecimalGenerator;
+import au.com.dius.pact.model.generators.RandomHexadecimalGenerator;
+import au.com.dius.pact.model.generators.RandomIntGenerator;
+import au.com.dius.pact.model.generators.RandomStringGenerator;
+import au.com.dius.pact.model.generators.RegexGenerator;
+import au.com.dius.pact.model.generators.TimeGenerator;
+import au.com.dius.pact.model.generators.UuidGenerator;
+import au.com.dius.pact.model.matchingrules.MatchingRule;
+import au.com.dius.pact.model.matchingrules.MatchingRuleGroup;
+import au.com.dius.pact.model.matchingrules.NullMatcher;
+import au.com.dius.pact.model.matchingrules.NumberTypeMatcher;
+import au.com.dius.pact.model.matchingrules.RuleLogic;
+import au.com.dius.pact.model.matchingrules.TypeMatcher;
 
 public class PactDslJsonRootValue extends DslPart {
 
@@ -712,6 +727,19 @@ public class PactDslJsonRootValue extends DslPart {
   }
 
   /**
+   * Matches Json-Null as the root value of a body.
+   * This does not match no body at all!
+   * However, you should consider just omitting null values.
+   */
+  public static PactDslJsonRootValue matchNull() {
+    PactDslJsonRootValue value = new PactDslJsonRootValue();
+    value.setEncodeJson(true);
+    value.setValue(null);
+    value.setMatcher(NullMatcher.INSTANCE);
+    return value;
+  }
+
+    /**
    * Matches a URL that is composed of a base path and a sequence of path expressions
    * @param basePath The base path for the URL (like "http://localhost:8080/") which will be excluded from the matching
    * @param pathFragments Series of path fragments to match on. These can be strings or regular expressions.

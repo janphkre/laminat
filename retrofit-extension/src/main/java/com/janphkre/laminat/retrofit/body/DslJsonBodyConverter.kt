@@ -8,6 +8,7 @@ import au.com.dius.pact.external.PactBuildException
 import au.com.dius.pact.model.BasePact
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
+import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import okio.Buffer
@@ -24,7 +25,7 @@ object DslJsonBodyConverter: DslBodyConverter {
             jsonElement.isJsonObject -> jsonObjectToDsl("", jsonElement.asJsonObject, null, bodyMatches?.asObject())
             jsonElement.isJsonArray -> jsonArrayToDsl("", jsonElement.asJsonArray, null, bodyMatches?.asArray())
             jsonElement.isJsonPrimitive -> jsonPrimitiveToDslRoot(jsonElement.asJsonPrimitive, bodyMatches?.asString())
-            jsonElement.isJsonNull -> throw PactBuildException("A json null value as the root of a request body is unsupported.")
+            jsonElement.isJsonNull -> PactDslJsonRootValue.matchNull()
             else -> raiseException(jsonElement)
         }
     }
@@ -34,8 +35,7 @@ object DslJsonBodyConverter: DslBodyConverter {
             jsonElement.isJsonObject -> jsonObjectToDsl(keyInParent, jsonElement.asJsonObject, parent, bodyMatches?.asObject())
             jsonElement.isJsonArray -> jsonArrayToDsl(keyInParent, jsonElement.asJsonArray, parent, bodyMatches?.asArray())
             jsonElement.isJsonPrimitive -> jsonPrimitiveToDsl(keyInParent, jsonElement.asJsonPrimitive, parent, bodyMatches?.asString())
-            jsonElement.isJsonNull -> null//TODO: NullMatcher
-            //TODO: DON'T RETURN NULL HERE SINCE THERE IS STILL A LOGICAL TYPE. Also, null values should be omitted in the pact imo.
+            jsonElement.isJsonNull -> jsonNullToDsl(keyInParent, parent)
             else -> raiseException(jsonElement)
         }
     }
@@ -102,6 +102,14 @@ object DslJsonBodyConverter: DslBodyConverter {
             jsonPrimitive.isString && bodyMatches == null -> PactDslJsonRootValue.stringType(jsonPrimitive.asString)
             jsonPrimitive.isString && bodyMatches != null -> PactDslJsonRootValue.stringMatcher(bodyMatches.regex, jsonPrimitive.asString)
             else -> raiseException(jsonPrimitive)
+        }
+    }
+
+    private fun jsonNullToDsl(keyInParent: String?, parent: DslPart): DslPart {
+        return when(parent) {
+            is PactDslJsonBody -> parent.nullValue(keyInParent ?: raiseException(JsonNull.INSTANCE))
+            is PactDslJsonArray -> parent.nullValue()
+            else -> raiseException(JsonNull.INSTANCE)
         }
     }
 
