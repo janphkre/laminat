@@ -33,8 +33,7 @@ class RetrofitPactDsl(
         return RetrofitPactDslWithParams(
             pactDslRequestWithoutPath,
             retrofitMethod,
-            paramsRetrofitRequest,
-            parameterValues
+            paramsRetrofitRequest
         )
     }
 

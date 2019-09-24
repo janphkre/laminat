@@ -3,12 +3,15 @@ package com.janphkre.laminat.retrofit.dsl
 import au.com.dius.pact.consumer.dsl.PactDslRequestWithPath
 import au.com.dius.pact.consumer.dsl.PactDslRequestWithoutPath
 import au.com.dius.pact.external.PactBuildException
+import com.janphkre.laminat.retrofit.annotations.MatchBody
 import com.janphkre.laminat.retrofit.annotations.MatchHeader
 import com.janphkre.laminat.retrofit.annotations.MatchPath
 import com.janphkre.laminat.retrofit.annotations.MatchQuery
+import com.janphkre.laminat.retrofit.body.BodyMatchElement
 import com.janphkre.laminat.retrofit.body.RetrofitPactDslBodyCreator
 import okhttp3.RetrofitPactRequestWithParams
 import retrofit2.http.Body
+import retrofit2.http.Field
 import retrofit2.http.Header
 import retrofit2.http.Query
 import java.lang.reflect.Method
@@ -16,15 +19,14 @@ import java.lang.reflect.Method
 class RetrofitPactDslWithParams(
     private val pactDslRequestWithoutPath: PactDslRequestWithoutPath,
     private val retrofitMethod: Method,
-    private val retrofitRequest: RetrofitPactRequestWithParams,
-    parameterValues: Array<out Any?>
+    private val retrofitRequest: RetrofitPactRequestWithParams
 ) {
 
     private val anyMatchRegex = ".*"
     private val headerRegexes = getRegexes<MatchHeader, Header>({ Pair(key, regex) }, { value })
     private val queryRegexes = getRegexes<MatchQuery, Query>({ Pair(key, regex) }, { value })
+    private val bodyRegexes = getRegexes<MatchBody, Field>({ Pair(path, regex) }, { "$.value" })
     private val pathRegex = getPathRegex()
-    private val bodyValue = parameterValues.getOrNull(getBodyParameterIndex())
 
     /**
      * Grabs all regexes from the given annotation type T
@@ -105,16 +107,16 @@ class RetrofitPactDslWithParams(
                     matchQuery(parameter.first, regex, parameter.second)
                 }
             }
-        //TODO not accounting for MultiPart or FormUrlEncoded at the moment
-        if (bodyValue == null) {
+        //TODO not accounting for MultiPart or FormUrlEncoded at the moment?
+        if (retrofitRequest.body == null) {
             return intermediatePact
         }
         //TODO: WHAT IS THE DEFAULT CONTENT-TYPE FOR RETROFIT?
         //TODO: ENFORCE THE CONTENT-TYPE SET BY RETROFIT ON THE PACT
         val dslBody = RetrofitPactDslBodyCreator(
             retrofitMethod,
-            bodyValue,
-            retrofitRequest.body ?: raiseException("Retrofit did not serialize the specified body")
+            retrofitRequest.body,
+            BodyMatchElement.from(bodyRegexes)
         ).create()
         return intermediatePact.body(dslBody)
 

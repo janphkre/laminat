@@ -9,8 +9,8 @@ import java.lang.reflect.Method
 
 class RetrofitPactDslBodyCreator(
     private val retrofitMethod: Method,
-    private val bodyObject: Any,
-    private val retrofitBody: RequestBody
+    private val retrofitBody: RequestBody,
+    private val bodyMatches: BodyMatchElement?
 ) {
 
     fun create(): DslPart {
@@ -18,8 +18,8 @@ class RetrofitPactDslBodyCreator(
         val contentTypeString = "${contentType.type()}/${contentType.subtype()}"
         return Buffer().use { retrofitBodyBuffer ->
             retrofitBody.writeTo(retrofitBodyBuffer)
-            val dslBody: DslBodyConverter = dslBodies[contentTypeString] ?: DslPlainTextBodyConverter
-            dslBody.toPactDsl(retrofitBodyBuffer)
+            val dslBodyConverter: DslBodyConverter = dslBodies[contentTypeString] ?: DslPlainTextBodyConverter
+            dslBodyConverter.toPactDsl(retrofitBodyBuffer, bodyMatches)
         }
 
     }
