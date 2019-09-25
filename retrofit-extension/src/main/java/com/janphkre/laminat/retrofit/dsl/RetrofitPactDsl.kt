@@ -25,7 +25,7 @@ class RetrofitPactDsl(
 
     fun withParameters(vararg parameterValues: Any?): RetrofitPactDslWithParams {
         val paramsRetrofitRequest = try {
-            retrofitRequest.applyParameterValues(parameterValues)
+            retrofitRequest.applyParameterValues(*parameterValues)
         } catch (e: Exception) {
             raiseException("The parameters could not be processed by retrofit", e)
         }
