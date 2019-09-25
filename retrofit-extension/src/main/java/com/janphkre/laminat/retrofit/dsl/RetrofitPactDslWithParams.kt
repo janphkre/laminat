@@ -111,8 +111,6 @@ class RetrofitPactDslWithParams(
         if (retrofitRequest.body == null) {
             return intermediatePact
         }
-        //TODO: WHAT IS THE DEFAULT CONTENT-TYPE FOR RETROFIT?
-        //TODO: ENFORCE THE CONTENT-TYPE SET BY RETROFIT ON THE PACT
         val dslBody = RetrofitPactDslBodyCreator(
             retrofitMethod,
             retrofitRequest.body,
