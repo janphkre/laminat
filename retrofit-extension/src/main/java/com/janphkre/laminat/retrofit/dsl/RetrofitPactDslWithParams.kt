@@ -1,7 +1,7 @@
 package com.janphkre.laminat.retrofit.dsl
 
-import au.com.dius.pact.consumer.dsl.PactDslRequestWithPath
 import au.com.dius.pact.consumer.dsl.PactDslRequestWithoutPath
+import au.com.dius.pact.consumer.dsl.PactDslResponse
 import au.com.dius.pact.external.PactBuildException
 import com.janphkre.laminat.retrofit.annotations.MatchBody
 import com.janphkre.laminat.retrofit.annotations.MatchHeader
@@ -84,7 +84,7 @@ class RetrofitPactDslWithParams(
      * Converts the retrofit pact dsl back to a pact dsl.
      * matchPath is unsupported at the moment.
      */
-    fun willRespondWith(): PactDslRequestWithPath {
+    fun willRespondWith(): PactDslResponse {
         val intermediatePact = pactDslRequestWithoutPath.method(retrofitRequest.method)
             .let { pactDsl ->
                 if (pathRegex == null) {
@@ -109,14 +109,16 @@ class RetrofitPactDslWithParams(
             }
         //TODO not accounting for MultiPart or FormUrlEncoded at the moment?
         if (retrofitRequest.body == null) {
-            return intermediatePact
+            return intermediatePact.willRespondWith()
         }
         val dslBody = RetrofitPactDslBodyCreator(
             retrofitMethod,
             retrofitRequest.body,
             BodyMatchElement.from(bodyRegexes)
         ).create()
-        return intermediatePact.body(dslBody)
+        return intermediatePact
+            .body(dslBody)
+            .willRespondWith()
     }
 
     private fun raiseException(message: String, cause: Exception? = null): Nothing {

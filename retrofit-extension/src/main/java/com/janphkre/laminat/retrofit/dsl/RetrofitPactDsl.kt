@@ -1,7 +1,7 @@
 package com.janphkre.laminat.retrofit.dsl
 
-import au.com.dius.pact.consumer.dsl.PactDslRequestWithPath
 import au.com.dius.pact.consumer.dsl.PactDslRequestWithoutPath
+import au.com.dius.pact.consumer.dsl.PactDslResponse
 import au.com.dius.pact.external.PactBuildException
 import retrofit2.Retrofit
 import retrofit2.RetrofitPactRequest
@@ -37,7 +37,7 @@ class RetrofitPactDsl(
         )
     }
 
-    fun willRespondWith(): PactDslRequestWithPath {
+    fun willRespondWith(): PactDslResponse {
         return withParameters().willRespondWith()
     }
 

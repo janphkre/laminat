@@ -28,4 +28,6 @@ dependencies {
     //api "com.github.janphkre:laminat:${rootProject.ext.pact_version}"
     api "com.squareup.retrofit2:retrofit:$retrofit_version"
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+    testImplementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
 }

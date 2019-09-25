@@ -32,7 +32,7 @@ class RetrofitPactRequest(
         isFormEncoded = requestFactoryBuilder.isFormEncoded
         isMultipart = requestFactoryBuilder.isMultipart
         relativeUrl = requestFactoryBuilder.relativeUrl!!
-        headers = requestFactoryBuilder.headers!!
+        headers = requestFactoryBuilder.headers ?: Headers.of()
         contentType = requestFactoryBuilder.contentType
         parameterHandlers = requestFactoryBuilder.parameterHandlers as Array<ParameterHandler<Any?>>
         isKotlinSuspendFunction = requestFactoryBuilder.isKotlinSuspendFunction
@@ -52,6 +52,7 @@ class RetrofitPactRequest(
 
         for (argumentIndex in 0 until argumentCount) {
             parameterHandlers[argumentIndex].apply(requestBuilder, args[argumentIndex])
+            //TODO: java.lang.IllegalArgumentException: Can not set final java.lang.String field com.janphkre.laminat.retrofit.RetrofitDslTest$SomeOtherThing.def to [Ljava.lang.Object;
         }
 
         return RetrofitPactRequestWithParams(requestBuilder.get())
