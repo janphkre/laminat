@@ -21,7 +21,6 @@ class RetrofitPactDslBodyCreator(
             val dslBodyConverter: DslBodyConverter = dslBodies[contentTypeString] ?: DslPlainTextBodyConverter
             dslBodyConverter.toPactDsl(retrofitBodyBuffer, bodyMatches)
         }
-
     }
 
     companion object {
@@ -29,6 +28,7 @@ class RetrofitPactDslBodyCreator(
             this[ContentType.APPLICATION_JSON.mimeType] = DslJsonBodyConverter
             this[ContentType.APPLICATION_JSONREQUEST.mimeType] = DslJsonBodyConverter
             this[ContentType.APPLICATION_JSON_RPC.mimeType] = DslJsonBodyConverter
+            this[ContentType.APPLICATION_FORM_URLENCODED.mimeType] = DslFormUrlBodyConverter
             this[ContentType.TEXT_PLAIN.mimeType] = DslPlainTextBodyConverter
         }
 

@@ -22,7 +22,7 @@ sealed class BodyMatchElement {
 
     class BodyMatchObject(
         val entries: HashMap<String, BodyMatchElement> = HashMap()
-    ): BodyMatchElement() {
+    ) : BodyMatchElement() {
 
         fun entry(key: String): BodyMatchElement? {
             return entries[key]
@@ -33,7 +33,7 @@ sealed class BodyMatchElement {
         }
 
         override fun mergeFrom(other: BodyMatchElement) {
-            if(other is BodyMatchObject) {
+            if (other is BodyMatchObject) {
                 other.entries.forEach { keyValuePair ->
                     entries[keyValuePair.key]
                         ?.mergeFrom(keyValuePair.value)
@@ -53,9 +53,10 @@ sealed class BodyMatchElement {
 
     class BodyMatchArray(
         val element: BodyMatchElement
-    ): BodyMatchElement() {
+    ) : BodyMatchElement() {
 
-        //TODO: WE MAY STILL NEED INDEX BASED ARRAY ACCESSING FOR REGEXES?
+        //We may decide to change out the array matching to index based elements later.
+        @Suppress("UNUSED_PARAMETER")
         fun at(index: Int): BodyMatchElement? {
             return element
         }
@@ -65,7 +66,7 @@ sealed class BodyMatchElement {
         }
 
         override fun mergeFrom(other: BodyMatchElement) {
-            if(other is BodyMatchArray) {
+            if (other is BodyMatchArray) {
                 element.mergeFrom(other.element)
             } else {
                 throw PactBuildException("Found conflicting types while merging $other into the array $this.")
@@ -79,14 +80,14 @@ sealed class BodyMatchElement {
 
     class BodyMatchString(
         val regex: String
-    ): BodyMatchElement() {
+    ) : BodyMatchElement() {
 
         override fun equalsType(other: BodyMatchElement): Boolean {
             return other is BodyMatchString
         }
 
         override fun mergeFrom(other: BodyMatchElement) {
-            if(other is BodyMatchString) {
+            if (other is BodyMatchString) {
                 throw PactBuildException("Merging of regexes is unsupported. Tried to merge \"$regex\" and \"${other.regex}\"")
             } else {
                 throw PactBuildException("Found conflicting types while merging $other into the regex \"$regex\".")
@@ -94,7 +95,7 @@ sealed class BodyMatchElement {
         }
 
         override fun toString(): String {
-            if(regex.length < MAX_ITEM_STRING_LENGTH) {
+            if (regex.length < MAX_ITEM_STRING_LENGTH) {
                 return regex
             }
             return "${regex.take(MAX_ITEM_STRING_LENGTH - 1)}…"
@@ -110,14 +111,14 @@ sealed class BodyMatchElement {
             val startingPoints = LinkedList<BodyMatchElement>()
             matchRegexes.forEach { matchRegexPair ->
                 val pathElements = matchRegexPair.key.split('.')
-                if(pathElements.isEmpty()) {
+                if (pathElements.isEmpty()) {
                     throw PactBuildException("The path on a @MatchBody may not be empty. It must be separated by '.' characters.")
                 }
-                if(pathElements.first() != "$") {
+                if (pathElements.first() != "$") {
                     throw PactBuildException("The path on a @MatchBody must start with the root specified by the '$' character. It must be separated by '.' characters.")
                 }
                 val resultMatch = pathElements.reversed().fold(BodyMatchString(matchRegexPair.value) as BodyMatchElement) { lastMatch, pathElement ->
-                    when(pathElement) {
+                    when (pathElement) {
                         "[]" -> BodyMatchArray(lastMatch)
                         "$" -> lastMatch
                         else -> BodyMatchObject(hashMapOf(Pair(pathElement, lastMatch)))
@@ -125,7 +126,7 @@ sealed class BodyMatchElement {
                 }
                 startingPoints.firstOrNull { it.equalsType(resultMatch) }?.mergeFrom(resultMatch) ?: startingPoints.add(resultMatch)
             }
-            if(startingPoints.size > 1) {
+            if (startingPoints.size > 1) {
                 throw PactBuildException("There was more than one root defined by @MatchBody annotations:\n${startingPoints.joinToString(separator = "\n")}")
             }
             return startingPoints.firstOrNull()

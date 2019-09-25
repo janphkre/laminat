@@ -13,7 +13,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import okio.Buffer
 
-object DslJsonBodyConverter: DslBodyConverter {
+object DslJsonBodyConverter : DslBodyConverter {
 
     override fun toPactDsl(retrofitBody: Buffer, bodyMatches: BodyMatchElement?): DslPart {
         val jsonBody = retrofitBody.inputStream().use { BasePact.jsonParser.parse(it.reader()) }
@@ -42,7 +42,7 @@ object DslJsonBodyConverter: DslBodyConverter {
 
     private fun jsonObjectToDsl(keyInParent: String?, jsonObject: JsonObject, parent: DslPart?, bodyMatches: BodyMatchElement.BodyMatchObject?): DslPart {
         //TODO USE EACH KEY LIKE?
-        val dslObject = if(keyInParent != null) {
+        val dslObject = if (keyInParent != null) {
             parent?.`object`(keyInParent)
         } else {
             parent?.`object`()
@@ -56,7 +56,8 @@ object DslJsonBodyConverter: DslBodyConverter {
     private fun jsonArrayToDsl(keyInParent: String?, jsonArray: JsonArray, parent: DslPart?, bodyMatches: BodyMatchElement.BodyMatchArray?): DslPart {
         //TODO: USE MIN ARRAY LIKE
         //TODO: USE MAX ARRAY LIKE
-        val dslArray = if(keyInParent != null) {
+        //TODO: THIS IS ONLY WORKING FOR ARRAY OF OBJECTS ATM
+        val dslArray = if (keyInParent != null) {
             parent?.array(keyInParent)
         } else {
             parent?.array()
@@ -68,7 +69,7 @@ object DslJsonBodyConverter: DslBodyConverter {
     }
 
     private fun jsonPrimitiveToDsl(keyInParent: String?, jsonPrimitive: JsonPrimitive, parent: DslPart, bodyMatches: BodyMatchElement.BodyMatchString?): DslPart {
-        return when(parent) {
+        return when (parent) {
             is PactDslJsonBody -> jsonPrimitiveToDslObject(keyInParent ?: raiseException(jsonPrimitive), jsonPrimitive, parent, bodyMatches)
             is PactDslJsonArray -> jsonPrimitiveToDslArray(jsonPrimitive, parent, bodyMatches)
             else -> raiseException(jsonPrimitive)
@@ -106,14 +107,14 @@ object DslJsonBodyConverter: DslBodyConverter {
     }
 
     private fun jsonNullToDsl(keyInParent: String?, parent: DslPart): DslPart {
-        return when(parent) {
+        return when (parent) {
             is PactDslJsonBody -> parent.nullValue(keyInParent ?: raiseException(JsonNull.INSTANCE))
             is PactDslJsonArray -> parent.nullValue()
             else -> raiseException(JsonNull.INSTANCE)
         }
     }
 
-    private fun raiseException(jsonElement: JsonElement) : Nothing {
+    private fun raiseException(jsonElement: JsonElement): Nothing {
         throw PactBuildException("Unsupported json found in $jsonElement")
     }
 }

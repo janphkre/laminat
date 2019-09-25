@@ -117,7 +117,6 @@ class RetrofitPactDslWithParams(
             BodyMatchElement.from(bodyRegexes)
         ).create()
         return intermediatePact.body(dslBody)
-
     }
 
     private fun raiseException(message: String, cause: Exception? = null): Nothing {
