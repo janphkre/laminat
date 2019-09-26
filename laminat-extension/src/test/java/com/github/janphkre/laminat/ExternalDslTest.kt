@@ -22,7 +22,8 @@ class ExternalDslTest {
     object TestRequests {
 
         val initialRequest get() = request {
-            uponReceiving("GET testRequest")
+            given("SUCCESS")
+                .uponReceiving("GET testRequest")
                 .method("GET")
                 .path("test/path")
                 .headers(defaultRequestHeaders)
@@ -106,6 +107,11 @@ class ExternalDslTest {
     fun externalPact_collectAllJson_AllItemsReturned() {
         val pactList = TestPacts.getAllPacts()
         Assert.assertEquals("The reflective collect did not grab all pacts!", 2, pactList.size)
-        TODO()
+        Assert.assertTrue("", pactList.any {
+            it.requestResponseInteractions.first().displayState() == "ERROR"
+        })
+        Assert.assertTrue("", pactList.any {
+            it.requestResponseInteractions.first().displayState() == "SUCCESS"
+        })
     }
 }

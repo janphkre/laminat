@@ -22,7 +22,12 @@
           "Content-Type": "application/json; charset\u003dUTF-8"
         },
         "body": {}
-      }
+      },
+      "providerStates": [
+        {
+          "name": "SUCCESS"
+        }
+      ]
     }
   ],
   "metadata": {

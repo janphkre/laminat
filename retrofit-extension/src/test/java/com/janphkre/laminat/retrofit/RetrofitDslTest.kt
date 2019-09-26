@@ -20,7 +20,7 @@ class RetrofitDslTest {
 
     interface TestApi {
         @POST("api/v1/example")
-        @MatchBody("$.def", "{0-9}[2]\\.{0-9}[2]\\.{0-9}[4]")
+        @MatchBody("$.def", "[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}")
         fun getExample(@Body body: SomeOtherThing): Something
     }
 

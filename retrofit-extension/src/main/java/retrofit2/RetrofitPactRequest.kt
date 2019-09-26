@@ -52,7 +52,6 @@ class RetrofitPactRequest(
 
         for (argumentIndex in 0 until argumentCount) {
             parameterHandlers[argumentIndex].apply(requestBuilder, args[argumentIndex])
-            //TODO: java.lang.IllegalArgumentException: Can not set final java.lang.String field com.janphkre.laminat.retrofit.RetrofitDslTest$SomeOtherThing.def to [Ljava.lang.Object;
         }
 
         return RetrofitPactRequestWithParams(requestBuilder.get())
