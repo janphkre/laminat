@@ -1,5 +1,16 @@
 package au.com.dius.pact.consumer.dsl;
 
+import com.mifmif.common.regex.Generex;
+
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Calendar;
+
 import au.com.dius.pact.consumer.InvalidMatcherException;
 import au.com.dius.pact.model.generators.Category;
 import au.com.dius.pact.model.generators.DateGenerator;
@@ -17,15 +28,6 @@ import au.com.dius.pact.model.matchingrules.MatchingRuleGroup;
 import au.com.dius.pact.model.matchingrules.NumberTypeMatcher;
 import au.com.dius.pact.model.matchingrules.RuleLogic;
 import au.com.dius.pact.model.matchingrules.TypeMatcher;
-import com.mifmif.common.regex.Generex;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Calendar;
 
 /**
  * DSL to define a JSON array

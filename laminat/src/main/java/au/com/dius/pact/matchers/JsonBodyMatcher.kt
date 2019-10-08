@@ -7,7 +7,6 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonPrimitive
 import okhttp3.mockwebserver.RecordedRequest
-import java.lang.UnsupportedOperationException
 import java.util.LinkedList
 
 class JsonBodyMatcher : BodyMatcher() {

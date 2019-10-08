@@ -1,5 +1,18 @@
 package au.com.dius.pact.consumer.dsl;
 
+import com.mifmif.common.regex.Generex;
+
+import org.apache.http.entity.ContentType;
+import org.json.JSONObject;
+import org.w3c.dom.Document;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.transform.TransformerException;
+
 import au.com.dius.pact.consumer.ConsumerPactBuilder;
 import au.com.dius.pact.model.Consumer;
 import au.com.dius.pact.model.OptionalBody;
@@ -9,16 +22,6 @@ import au.com.dius.pact.model.ProviderState;
 import au.com.dius.pact.model.generators.Generators;
 import au.com.dius.pact.model.matchingrules.MatchingRules;
 import au.com.dius.pact.model.matchingrules.RegexMatcher;
-import com.mifmif.common.regex.Generex;
-import org.apache.http.entity.ContentType;
-import org.json.JSONObject;
-import org.w3c.dom.Document;
-
-import javax.xml.transform.TransformerException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class PactDslRequestWithPath {
     private final ConsumerPactBuilder consumerPactBuilder;

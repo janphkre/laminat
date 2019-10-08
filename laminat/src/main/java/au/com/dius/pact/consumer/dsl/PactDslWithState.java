@@ -1,11 +1,11 @@
 package au.com.dius.pact.consumer.dsl;
 
-import au.com.dius.pact.consumer.ConsumerPactBuilder;
-import au.com.dius.pact.model.ProviderState;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import au.com.dius.pact.consumer.ConsumerPactBuilder;
+import au.com.dius.pact.model.ProviderState;
 
 public class PactDslWithState {
     private final ConsumerPactBuilder consumerPactBuilder;

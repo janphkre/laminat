@@ -1,5 +1,8 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group='com.github.janphkre'
 
 android {
     compileSdkVersion rootProject.ext.target_sdk_version
@@ -17,6 +20,8 @@ android {
             minifyEnabled false
         }
     }
+
+
 }
 
 repositories {

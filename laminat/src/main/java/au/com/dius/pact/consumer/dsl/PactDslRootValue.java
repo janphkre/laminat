@@ -1,15 +1,16 @@
 package au.com.dius.pact.consumer.dsl;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.UUID;
+import com.mifmif.common.regex.Generex;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.json.JSONObject;
 
-import com.mifmif.common.regex.Generex;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.UUID;
+
 import au.com.dius.pact.consumer.InvalidMatcherException;
 import au.com.dius.pact.model.generators.Category;
 import au.com.dius.pact.model.generators.DateGenerator;

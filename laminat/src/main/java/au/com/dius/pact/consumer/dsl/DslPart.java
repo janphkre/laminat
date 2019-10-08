@@ -1,11 +1,8 @@
 package au.com.dius.pact.consumer.dsl;
 
-import org.json.JSONException;
-
 import au.com.dius.pact.model.generators.Generators;
 import au.com.dius.pact.model.matchingrules.Category;
 import au.com.dius.pact.model.matchingrules.DateMatcher;
-import au.com.dius.pact.model.matchingrules.EqualsMatcher;
 import au.com.dius.pact.model.matchingrules.IncludeMatcher;
 import au.com.dius.pact.model.matchingrules.MaxTypeMatcher;
 import au.com.dius.pact.model.matchingrules.MinTypeMatcher;
