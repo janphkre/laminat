@@ -6,6 +6,8 @@ import au.com.dius.pact.consumer.dsl.PactDslJsonBody
 import au.com.dius.pact.consumer.dsl.PactDslJsonRootValue
 import au.com.dius.pact.external.PactBuildException
 import au.com.dius.pact.model.BasePact
+import au.com.dius.pact.model.matchingrules.MaxTypeMatcher
+import au.com.dius.pact.model.matchingrules.MinTypeMatcher
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonNull
@@ -47,25 +49,70 @@ object DslJsonBodyConverter : DslBodyConverter {
         } else {
             parent?.`object`()
         } ?: PactDslJsonBody()
-        jsonObject.entrySet().forEach {
-            jsonElementToDsl(it.key, it.value, dslObject, bodyMatches?.entry(it.key))
-        }
+        jsonObjectToDirectDsl(jsonObject, dslObject, bodyMatches)
         return dslObject.closeObject() ?: dslObject
     }
 
     private fun jsonArrayToDsl(keyInParent: String?, jsonArray: JsonArray, parent: DslPart?, bodyMatches: BodyMatchElement.BodyMatchArray?): DslPart {
-        //TODO: USE MIN ARRAY LIKE
-        //TODO: USE MAX ARRAY LIKE
-        //TODO: THIS IS ONLY WORKING FOR ARRAY OF OBJECTS ATM
-        val dslArray = if (keyInParent != null) {
-            parent?.array(keyInParent)
-        } else {
-            parent?.array()
-        } ?: PactDslJsonArray()
-        jsonArray.forEachIndexed { index, jsonElement ->
-            jsonElementToDsl(null, jsonElement, dslArray, bodyMatches?.at(index))
+        //TODO: THIS IS ONLY WORKING FOR ARRAYS OF OBJECTS ATM
+        val dslArray = when (bodyMatches) {
+            is BodyMatchElement.BodyMatchMinArray -> {
+                val dslArrayElement = if (keyInParent != null) {
+                    parent?.minArrayLike(keyInParent, bodyMatches.minCount)
+                } else {
+                    parent?.minArrayLike(bodyMatches.minCount)
+                } ?: PactDslJsonArray("", "", null, true).let {
+                    it.matchers.addRule("", MinTypeMatcher(bodyMatches.minCount))
+                    it.numberExamples = bodyMatches.minCount
+                    PactDslJsonBody(".", "", it)
+                }
+
+                jsonArrayToDirectDsl(jsonArray.first(), dslArrayElement, bodyMatches.at(0))
+            }
+            is BodyMatchElement.BodyMatchMaxArray -> {
+                val dslArrayElement = if (keyInParent != null) {
+                    parent?.maxArrayLike(keyInParent, bodyMatches.maxCount)
+                } else {
+                    parent?.maxArrayLike(bodyMatches.maxCount)
+                } ?: PactDslJsonArray("", "", null, true).let {
+                    it.matchers.addRule("", MaxTypeMatcher(bodyMatches.maxCount))
+                    it.numberExamples = bodyMatches.maxCount
+                    PactDslJsonBody(".", "", it)
+                }
+
+                jsonArrayToDirectDsl(jsonArray.first(), dslArrayElement, bodyMatches.at(0))
+            }
+            else -> {
+                val dslArray = if (keyInParent != null) {
+                    parent?.array(keyInParent)
+                } else {
+                    parent?.array()
+                } ?: PactDslJsonArray()
+
+                jsonArray.forEachIndexed { index, jsonElement ->
+                    jsonElementToDsl(null, jsonElement, dslArray, bodyMatches?.at(index))
+                }
+                dslArray
+            }
         }
         return dslArray.closeArray() ?: dslArray
+    }
+
+    private fun jsonArrayToDirectDsl(jsonArrayElement: JsonElement, dslArrayElement: PactDslJsonBody, arrayElementMatches: BodyMatchElement?): DslPart {
+        if (!jsonArrayElement.isJsonObject) {
+            throw PactBuildException("Arrays of ${jsonArrayElement.javaClass.name} are not supported by pact dsl with arrayLike!")
+        }
+        if (arrayElementMatches !is BodyMatchElement.BodyMatchObject?) {
+            throw PactBuildException("Arrays of ${arrayElementMatches?.javaClass?.name} are not supported by pact dsl with arrayLike!")
+        }
+        jsonObjectToDirectDsl(jsonArrayElement.asJsonObject, dslArrayElement, arrayElementMatches)
+        return dslArrayElement.closeObject() ?: throw PactBuildException("Closing the inner object of an JsonArray returned null!")
+    }
+
+    private fun jsonObjectToDirectDsl(jsonObject: JsonObject, dslObject: PactDslJsonBody, bodyMatches: BodyMatchElement.BodyMatchObject?) {
+        jsonObject.entrySet().forEach {
+            jsonElementToDsl(it.key, it.value, dslObject, bodyMatches?.entry(it.key))
+        }
     }
 
     private fun jsonPrimitiveToDsl(keyInParent: String?, jsonPrimitive: JsonPrimitive, parent: DslPart, bodyMatches: BodyMatchElement.BodyMatchString?): DslPart {

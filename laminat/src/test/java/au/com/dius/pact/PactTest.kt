@@ -30,7 +30,7 @@ class PactTest {
             .willRespondWith()
             .status(200)
             .headers(defaultResponseHeaders)
-            .body(PactDslJsonBody().stringType("abc","def"))
+            .body(PactDslJsonBody().stringType("abc", "def"))
             .uponReceiving("POST nullTestRequest")
             .method("POST")
             .path("test/path")

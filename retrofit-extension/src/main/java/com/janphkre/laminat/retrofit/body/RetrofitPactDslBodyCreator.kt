@@ -13,8 +13,11 @@ class RetrofitPactDslBodyCreator(
     private val bodyMatches: BodyMatchElement?
 ) {
 
-    fun create(): DslPart {
+    fun create(): DslPart? {
         val contentType = retrofitBody.contentType() ?: throw PactBuildException("No content type specified on request body in $retrofitMethod")
+        if (retrofitBody.contentLength() == 0L) {
+            return null
+        }
         val contentTypeString = "${contentType.type()}/${contentType.subtype()}"
         return Buffer().use { retrofitBodyBuffer ->
             retrofitBody.writeTo(retrofitBodyBuffer)

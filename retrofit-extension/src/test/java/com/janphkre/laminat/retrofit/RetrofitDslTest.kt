@@ -2,8 +2,10 @@ package com.janphkre.laminat.retrofit
 
 import au.com.dius.pact.consumer.ConsumerPactBuilder
 import au.com.dius.pact.external.PactJsonifier
-import com.janphkre.laminat.retrofit.annotations.MatchBody
-import com.janphkre.laminat.retrofit.dsl.on
+import com.janphkre.laminat.retrofit.annotations.MatchBodyMinArrays
+import com.janphkre.laminat.retrofit.annotations.MatchBodyRegexes
+import com.janphkre.laminat.retrofit.annotations.data.MatchRegex
+import com.janphkre.laminat.retrofit.annotations.data.MinArray
 import org.junit.Assert
 import org.junit.Test
 import retrofit2.Retrofit
@@ -16,11 +18,21 @@ class RetrofitDslTest {
 
     data class Something(val abc: String)
 
-    data class SomeOtherThing(val def: String)
+    data class SomeOtherThing(
+        val def: String,
+        val ghi: Array<SomeThirdThing>,
+        val jkl: Array<String>
+    )
+
+    data class SomeThirdThing(val thirdString: String)
 
     interface TestApi {
         @POST("api/v1/example")
-        @MatchBody("$.def", "[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}")
+        @MatchBodyRegexes([
+            MatchRegex("$.def", "[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}"),
+            MatchRegex("$.jkl[*]", "Hello.*")
+        ])
+        @MatchBodyMinArrays([MinArray("$.ghi", 1)])
         fun getExample(@Body body: SomeOtherThing): Something
     }
 
@@ -37,7 +49,7 @@ class RetrofitDslTest {
             .uponReceiving("POST example")
             .on(retrofitInstance)
             .match(TestApi::getExample)
-            .withParameters(SomeOtherThing("01.01.2000"))
+            .withParameters(SomeOtherThing("01.01.2000", arrayOf(SomeThirdThing("String1")), arrayOf("Hello1", "Hello2")))
             .willRespondWith()
             .status(200)
             .body("{}")

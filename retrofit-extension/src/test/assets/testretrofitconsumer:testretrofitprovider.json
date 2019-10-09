@@ -15,7 +15,16 @@
           "Content-Type": "application/json; charset\u003dUTF-8"
         },
         "body": {
-          "def": "01.01.2000"
+          "def": "01.01.2000",
+          "ghi": [
+            {
+              "thirdString": "String1"
+            }
+          ],
+          "jkl": [
+            "Hello1",
+            "Hello2"
+          ]
         },
         "matchingRules": {
           "body": {
@@ -24,6 +33,39 @@
                 {
                   "match": "regex",
                   "regex": "[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.ghi": {
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 1
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.ghi[*].thirdString": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.jkl[0]": {
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.jkl[1]": {
+              "matchers": [
+                {
+                  "match": "type"
                 }
               ],
               "combine": "AND"
@@ -42,7 +84,7 @@
       "version": "3.0.0"
     },
     "pact-laminat-android": {
-      "version": "3.5.9"
+      "version": "3.5.10"
     }
   }
 }

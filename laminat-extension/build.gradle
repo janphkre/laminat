@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-//    implementation project(':pact-consumer')
+//    implementation project(':laminat')
     api "com.github.janphkre:laminat:${rootProject.ext.pact_version}"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }
