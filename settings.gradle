@@ -1,1 +1,1 @@
-include ':laminat', ':retrofit-extension', ':laminat-extension'
+include ':laminat'
