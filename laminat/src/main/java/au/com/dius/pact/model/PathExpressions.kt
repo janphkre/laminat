@@ -1,6 +1,6 @@
 package au.com.dius.pact.model
 
-import org.apache.commons.collections4.iterators.PushbackIterator
+import au.com.dius.pact.external.util.PushbackIterator
 
 sealed class PathToken {
     object Root : PathToken()

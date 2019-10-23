@@ -5,7 +5,6 @@ import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
 import au.com.dius.pact.model.matchingrules.MatchingRules
 import io.gatling.jsonpath.AST
 import io.gatling.jsonpath.Parser
-import org.apache.commons.collections4.Predicate
 import java.util.LinkedList
 import java.util.WeakHashMap
 
@@ -124,21 +123,21 @@ object Matchers {
     }
 
     fun definedWildcardMatchers(category: String, path: List<String>, matchers: MatchingRules): Boolean {
-        val resolvedMatchers = matchers.getCategory(category)?.filter(Predicate { pathExp -> matchPath(
+        val resolvedMatchers = matchers.getCategory(category)?.filter { pathExp -> matchPath(
             pathExp,
             path
-        ) == path.size })
+        ) == path.size }
         return resolvedMatchers?.matchingRules?.keys?.any { key -> key.endsWith(".*") } ?: false
     }
 
     fun definedMatchers(category: String, path: List<String>, matchers: MatchingRules): Category? {
         return if (category == "body") {
-            matchers.getCategory(category)?.filter(Predicate { pathExp -> matchPath(
+            matchers.getCategory(category)?.filter { pathExp -> matchPath(
                 pathExp,
                 path
-            ) > 0 })
+            ) > 0 }
         } else if (category == "header" || category == "query") {
-            matchers.getCategory(category)?.filter(Predicate { pathExp -> path.size == 1 && path.first() == pathExp })
+            matchers.getCategory(category)?.filter { pathExp -> path.size == 1 && path.first() == pathExp }
         } else {
             matchers.getCategory(category)
         }

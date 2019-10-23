@@ -30,11 +30,10 @@ repositories {
 
 dependencies {
 //TODO: CHECKOUT if we can replace api with implementation & remove some dependencies?
-    api "com.squareup.okhttp3:mockwebserver:$mockserver_version"
-    api "org.apache.commons:commons-collections4:$apache_collections_version"
-    api "io.gatling:jsonpath_2.11:$jsonpath_version"
+    implementation "com.squareup.okhttp3:mockwebserver:$mockserver_version"
+    implementation "io.gatling:jsonpath_2.11:$jsonpath_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     api "com.google.code.gson:gson:$gson_version"
     api "org.apache.commons:commons-lang3:$apache_commons_version"
     api "joda-time:joda-time:$jodatime_version"

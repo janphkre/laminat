@@ -1,7 +1,5 @@
 package au.com.dius.pact.model
 
-import org.apache.commons.collections4.Predicate
-
 class RequestResponsePact(override val provider: Provider, override val consumer: Consumer, var requestResponseInteractions: List<RequestResponseInteraction>) : BasePact() {
 
     override val interactions: List<Interaction>
@@ -29,7 +27,7 @@ class RequestResponsePact(override val provider: Provider, override val consumer
         }.distinctBy { it.uniqueKey() }
     }
 
-    override fun filterInteractions(predicate: Predicate<Interaction>): Pact {
+    override fun filterInteractions(predicate: (Interaction) -> Boolean): Pact {
         return FilteredPact(this, predicate)
     }
 

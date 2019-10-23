@@ -1,6 +1,5 @@
 package au.com.dius.pact.model
 
-import org.apache.commons.collections4.Factory
 import java.io.File
 
 /**
@@ -61,4 +60,4 @@ data class S3PactSource(override val url: String) : UrlPactSource() {
     override fun description() = "S3 Bucket $url"
 }
 
-data class ClosurePactSource(val closure: Factory<Any>) : PactSource()
+data class ClosurePactSource(val closure: () -> Any) : PactSource()

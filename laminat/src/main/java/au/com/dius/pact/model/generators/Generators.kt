@@ -1,5 +1,6 @@
 package au.com.dius.pact.model.generators
 
+import au.com.dius.pact.external.util.toList
 import au.com.dius.pact.matchers.MatchingConfig
 import au.com.dius.pact.model.InvalidPactException
 import au.com.dius.pact.model.OptionalBody
@@ -7,7 +8,6 @@ import au.com.dius.pact.model.PactSpecVersion
 import au.com.dius.pact.model.PathToken
 import au.com.dius.pact.model.parsePath
 import com.google.gson.JsonParser
-import org.apache.commons.collections4.IteratorUtils
 import org.apache.http.entity.ContentType
 
 enum class Category {
@@ -71,7 +71,7 @@ object JsonContentTypeHandler : ContentTypeHandler {
                 }
                 is PathToken.Star -> if (bodyCursor.value is MutableMap<*, *>) {
                     val map = bodyCursor.value as MutableMap<*, *>
-                    val pathIterator = IteratorUtils.toList(pathExp)
+                    val pathIterator = pathExp.iterator()
                     HashMap(map).forEach { (key, value) ->
                         queryObjectGraph(pathIterator.iterator(), QueryResult(value!!, key, map), fn)
                     }
@@ -81,7 +81,7 @@ object JsonContentTypeHandler : ContentTypeHandler {
                 }
                 is PathToken.StarIndex -> if (bodyCursor.value is List<*>) {
                     val list = bodyCursor.value as List<*>
-                    val pathIterator = IteratorUtils.toList(pathExp)
+                    val pathIterator = pathExp.toList()
                     list.forEachIndexed { index, item ->
                         queryObjectGraph(pathIterator.iterator(), QueryResult(item!!, index, list), fn)
                     }

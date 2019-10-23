@@ -1,7 +1,5 @@
 package au.com.dius.pact.model
 
-import org.apache.commons.collections4.Predicate
-
 /**
  * Pact Provider
  */
@@ -116,5 +114,5 @@ interface Pact {
      * @deprecated Wrap the au.com.dius.pact in a FilteredPact instead
      */
     @Deprecated("Wrap the au.com.dius.pact in a FilteredPact instead")
-    fun filterInteractions(predicate: Predicate<Interaction>): Pact
+    fun filterInteractions(predicate: (Interaction) -> Boolean): Pact
 }
