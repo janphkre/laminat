@@ -31,14 +31,12 @@ repositories {
 dependencies {
 //TODO: CHECKOUT if we can replace api with implementation & remove some dependencies?
     implementation "com.squareup.okhttp3:mockwebserver:$mockserver_version"
-    implementation "io.gatling:jsonpath_2.11:$jsonpath_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    api "com.google.code.gson:gson:$gson_version"
-    api "org.apache.commons:commons-lang3:$apache_commons_version"
-    api "joda-time:joda-time:$jodatime_version"
-    api "com.github.mifmif:generex:$generex_version"
-    api "com.github.zafarkhaja:java-semver:$semver_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "com.google.code.gson:gson:$gson_version"
+    implementation "org.apache.commons:commons-lang3:$apache_commons_version"
+    implementation "com.github.mifmif:generex:$generex_version"
+    implementation "io.gatling:jsonpath_2.11:$jsonpath_version"
 
     testImplementation "junit:junit:$test_junit_version"
     testImplementation "org.json:json:$test_json_version"

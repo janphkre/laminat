@@ -5,9 +5,10 @@ import au.com.dius.pact.model.PactSpecVersion
 import com.mifmif.common.regex.Generex
 import org.apache.commons.lang3.RandomStringUtils
 import org.apache.commons.lang3.RandomUtils
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormatterBuilder
+import org.apache.commons.lang3.time.DateFormatUtils
+import org.apache.commons.lang3.time.FastDateFormat
 import java.math.BigDecimal
+import java.util.Calendar
 import java.util.Random
 import java.util.UUID
 import java.util.concurrent.ThreadLocalRandom
@@ -86,10 +87,11 @@ data class DateGenerator(val format: String? = null) : Generator {
     }
 
     override fun generate(base: Any?): Any {
+        val calendar = Calendar.getInstance()
         return if (format != null) {
-            DateTime.now().toString(DateTimeFormatterBuilder().appendPattern(format).toFormatter())
+            FastDateFormat.getInstance(format).format(calendar)
         } else {
-            DateTime.now().toString()
+            DateFormatUtils.ISO_TIME_FORMAT.format(calendar)
         }
     }
 }
@@ -103,10 +105,11 @@ data class TimeGenerator(val format: String? = null) : Generator {
     }
 
     override fun generate(base: Any?): Any {
+        val calendar = Calendar.getInstance()
         return if (format != null) {
-            DateTime.now().toString(DateTimeFormatterBuilder().appendPattern(format).toFormatter())
+            FastDateFormat.getInstance(format).format(calendar)
         } else {
-            DateTime.now().toString()
+            DateFormatUtils.ISO_TIME_FORMAT.format(calendar)
         }
     }
 }
@@ -120,10 +123,11 @@ data class DateTimeGenerator(val format: String? = null) : Generator {
     }
 
     override fun generate(base: Any?): Any {
+        val calendar = Calendar.getInstance()
         return if (format != null) {
-            DateTime.now().toString(DateTimeFormatterBuilder().appendPattern(format).toFormatter())
+            FastDateFormat.getInstance(format).format(calendar)
         } else {
-            DateTime.now().toString()
+            DateFormatUtils.ISO_TIME_FORMAT.format(calendar)
         }
     }
 }
