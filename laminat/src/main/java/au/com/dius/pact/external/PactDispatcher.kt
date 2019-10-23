@@ -17,9 +17,9 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
     private var interactionList = emptyList<RequestResponseInteraction>()
     private var matchedRequestCount: Long = 0L
     private var unmatchedRequestsCount: Long = 0L
-    private var matchObserver: ((RequestMatch) -> Unit)? = null
+    private var matchObserver: ((IncomingRequest, RequestMatch) -> Unit)? = null
 
-    fun setMatchObserver(observer: ((RequestMatch) -> Unit)?) {
+    fun setMatchObserver(observer: ((IncomingRequest, RequestMatch) -> Unit)?) {
         matchObserver = observer
     }
 
@@ -41,8 +41,9 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
             return notFoundMockResponse()
         }
         try {
-            val requestMatch = pactMatcher.findInteraction(interactionList, request)
-            matchObserver?.invoke(requestMatch)
+            val incomingRequest = IncomingRequest(request)
+            val requestMatch = pactMatcher.findInteraction(interactionList, incomingRequest)
+            matchObserver?.invoke(incomingRequest, requestMatch)
             return when (requestMatch) {
                 is RequestMatch.FullRequestMatch -> {
                     matchedRequestCount++

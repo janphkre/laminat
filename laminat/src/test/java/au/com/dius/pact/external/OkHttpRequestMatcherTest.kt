@@ -160,7 +160,7 @@ class OkHttpRequestMatcherTest {
         return mockSocket
     }
 
-    private fun getRecordedRequest(requestBody: ByteArray, method: String = "POST", authorization: String = ""): RecordedRequest {
+    private fun getIncomingRequest(requestBody: ByteArray, method: String = "POST", authorization: String = ""): IncomingRequest {
         val mockSocket = getMockSocket()
         val headers = Headers.Builder()
             .add("Authorization: $authorization")
@@ -176,7 +176,8 @@ class OkHttpRequestMatcherTest {
         body.outputStream().use {
             it.write(requestBody)
         }
-        return RecordedRequest("$method /test/path HTTP/1.1", headers, ArrayList(), body.size(), body, 0, mockSocket)
+        val recordedRequest = RecordedRequest("$method /test/path HTTP/1.1", headers, ArrayList(), body.size(), body, 0, mockSocket)
+        return IncomingRequest(recordedRequest)
     }
 
     @Test
@@ -184,11 +185,11 @@ class OkHttpRequestMatcherTest {
         val request = "{ \"regex1\": \"123456789\", \"regex2\": \"abcd\", \"decimal1\": 50.99234}".toByteArray()
 
         val matcher = OkHttpRequestMatcher(false)
-        val recordedRequest = getRecordedRequest(request)
+        val incomingRequest = getIncomingRequest(request)
 
         val interactions = testPost.interactions.map { it as RequestResponseInteraction }
 
-        when (val match = matcher.findInteraction(interactions, recordedRequest)) {
+        when (val match = matcher.findInteraction(interactions, incomingRequest)) {
             is RequestMatch.FullRequestMatch -> return
             is RequestMatch.PartialRequestMatch -> {
                 Assert.fail("Match is only a Partial Request Match: \n${match.problems.joinToString("\n")}")
@@ -204,7 +205,7 @@ class OkHttpRequestMatcherTest {
         val request = "{ \"regex1\": \"123456789\", \"regex2\": \"abcd\", \"decimal1\": 50.99234}".toByteArray()
 
         val matcher = OkHttpRequestMatcher(false)
-        val recordedRequest = getRecordedRequest(request)
+        val recordedRequest = getIncomingRequest(request)
 
         val interactions = testPost.interactions.plus(unusedPOST.interactions).map { it as RequestResponseInteraction }
 
@@ -224,7 +225,7 @@ class OkHttpRequestMatcherTest {
         val request = "{ \"regex1\": \"1\", \"decimal1\": 50.999234, \"unexpected\":\"skdfskjdf\"}".toByteArray()
 
         val matcher = OkHttpRequestMatcher(false)
-        val recordedRequest = getRecordedRequest(request)
+        val recordedRequest = getIncomingRequest(request)
 
         val interactions = testPost.interactions.map { it as RequestResponseInteraction }
 
@@ -249,7 +250,7 @@ class OkHttpRequestMatcherTest {
         val request = "{ \"array\": [$arrayObject,$arrayObject,$nestedArrayObject]}".toByteArray()
 
         val matcher = OkHttpRequestMatcher(false)
-        val recordedRequest = getRecordedRequest(request)
+        val recordedRequest = getIncomingRequest(request)
 
         val interactions = testPostArray.interactions.map { it as RequestResponseInteraction }
 
@@ -272,7 +273,7 @@ class OkHttpRequestMatcherTest {
 
         val matcher = OkHttpRequestMatcher(false)
 
-        val recordedRequest = getRecordedRequest(ByteArray(0), "GET", hugeAuthorization)
+        val recordedRequest = getIncomingRequest(ByteArray(0), "GET", hugeAuthorization)
 
         val interactions = testGet.interactions.map { it as RequestResponseInteraction }
 

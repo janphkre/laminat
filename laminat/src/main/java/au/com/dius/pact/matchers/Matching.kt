@@ -1,23 +1,22 @@
 package au.com.dius.pact.matchers
 
+import au.com.dius.pact.external.IncomingRequest
 import au.com.dius.pact.model.Request
-import okhttp3.mockwebserver.RecordedRequest
-import org.apache.http.entity.ContentType
 import java.util.LinkedList
 
 internal object Matching {
 
     fun matchMethod(expectedMethod: String, actualMethod: String?): List<RequestMatchProblem> {
-        return if (expectedMethod.equals(actualMethod, true) != false) {
+        return if (expectedMethod.equals(actualMethod, true)) {
             listOf(RequestMatchProblem.None)
         } else {
             listOf(RequestMatchProblem.MethodMismatch(expectedMethod, actualMethod))
         }
     }
 
-    fun matchPath(expected: Request, actual: RecordedRequest): List<RequestMatchProblem> {
+    fun matchPath(expected: Request, actual: IncomingRequest): List<RequestMatchProblem> {
         val matchers = Matchers.definedMatchers("path", emptyList(), expected.matchingRules)
-        val actualPath = actual.requestUrl.encodedPath().split('?').firstOrNull()
+        val actualPath = actual.getEncodedPath().split('?').firstOrNull()
         return if (matchers?.isNotEmpty() == true) {
             Matchers.doMatch(
                 matchers,
@@ -32,11 +31,11 @@ internal object Matching {
         }
     }
 
-    fun matchQuery(expected: Request, actual: RecordedRequest): List<RequestMatchProblem> {
+    fun matchQuery(expected: Request, actual: IncomingRequest): List<RequestMatchProblem> {
         val problems = LinkedList<RequestMatchProblem>()
         expected.query.entries.forEach { expectedEntry ->
-            val actualValues = actual.requestUrl.queryParameterValues(expectedEntry.key)
-            if (actualValues == null) {
+            val actualValues = actual.queryParameterValues(expectedEntry.key)
+            if (actualValues.isEmpty()) {
                 problems.add(RequestMatchProblem.QueryMismatch(
                     "Expected query parameter '${expectedEntry.key}' but was missing",
                     "$.query.${expectedEntry.key}"))
@@ -45,7 +44,7 @@ internal object Matching {
             }
         }
         //DO WE REALLY WANT TO FAIL ON UNMATCHED QUERY PARAMETERS? Apparently if we want to meet pact-spec.
-        actual.requestUrl.queryParameterNames().forEach { actualName ->
+        actual.queryParameterNames().forEach { actualName ->
             if (expected.query[actualName] == null) {
                 problems.add(
                     RequestMatchProblem.QueryMismatch("Unexpected query parameter  '$actualName' received", "$.query.$actualName"))
@@ -54,10 +53,10 @@ internal object Matching {
         return problems
     }
 
-    fun matchRequestHeaders(expected: Request, actual: RecordedRequest): List<RequestMatchProblem> {
+    fun matchRequestHeaders(expected: Request, actual: IncomingRequest): List<RequestMatchProblem> {
         val problems = LinkedList<RequestMatchProblem>()
         val expectedWithoutCookies = expected.headersWithoutCookie()
-        val actualWithoutCookies = actual.headers.toMultimap().filterKeys { it.toLowerCase() != "cookie" }
+        val actualWithoutCookies = actual.getHeaders().filterKeys { it.toLowerCase() != "cookie" }
         expectedWithoutCookies.forEach { expectedEntry ->
             val actualValue = actualWithoutCookies[expectedEntry.key.toLowerCase()]
             if (actualValue == null) {
@@ -84,9 +83,9 @@ internal object Matching {
         }
     }
 
-    fun matchBody(expected: Request, actual: RecordedRequest, allowUnexpectedKeys: Boolean): List<RequestMatchProblem> {
+    fun matchBody(expected: Request, actual: IncomingRequest, allowUnexpectedKeys: Boolean): List<RequestMatchProblem> {
         val expectedMimeType = expected.mimeType()
-        val actualMimeType = actual.getHeader(ContentType.CONTENT_TYPE) ?: ""
+        val actualMimeType = actual.getContentType()
         return if (actualMimeType.split(';').contains(expectedMimeType)) {
             MatchingConfig.lookupBodyMatcher(expectedMimeType).matchBody(expected, actual, allowUnexpectedKeys)
         } else {

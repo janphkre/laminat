@@ -67,7 +67,7 @@ open class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: I
         addCurrentInteractions(pact.requestResponseInteractions)
     }
 
-    fun observeMatches(observer: ((RequestMatch) -> Unit)?) {
+    fun observeMatches(observer: ((IncomingRequest, RequestMatch) -> Unit)?) {
         dispatcher.setMatchObserver(observer)
     }
 }

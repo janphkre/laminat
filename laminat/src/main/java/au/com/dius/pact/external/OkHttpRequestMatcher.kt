@@ -5,14 +5,13 @@ import au.com.dius.pact.matchers.RequestMatchProblem
 import au.com.dius.pact.model.PactMergeException
 import au.com.dius.pact.model.Request
 import au.com.dius.pact.model.RequestResponseInteraction
-import okhttp3.mockwebserver.RecordedRequest
 import java.util.LinkedList
 
 class OkHttpRequestMatcher(private val allowUnexpectedKeys: Boolean) {
 
     fun findInteraction(
         interactions: List<RequestResponseInteraction>,
-        request: RecordedRequest
+        request: IncomingRequest
     ): RequestMatch {
         val matches = interactions.map { compareRequest(it, request) }
         val bestMatch = matches.fold(RequestMatch.RequestMismatch() as RequestMatch) { bestResult, current ->
@@ -52,17 +51,17 @@ class OkHttpRequestMatcher(private val allowUnexpectedKeys: Boolean) {
         return bestMatch
     }
 
-    private fun compareRequest(expected: RequestResponseInteraction, actual: RecordedRequest): RequestMatch {
+    private fun compareRequest(expected: RequestResponseInteraction, actual: IncomingRequest): RequestMatch {
         val mismatches = requestMismatches(expected.request, actual)
         return decideRequestMatch(expected, mismatches)
     }
 
-    private fun requestMismatches(expected: Request, actual: RecordedRequest): List<RequestMatchProblem> {
+    private fun requestMismatches(expected: Request, actual: IncomingRequest): List<RequestMatchProblem> {
         return LinkedList<RequestMatchProblem>().apply {
-            addAll(Matching.matchMethod(expected.method, actual.method))
+            addAll(Matching.matchMethod(expected.method, actual.getMethod()))
             addAll(Matching.matchPath(expected, actual))
             addAll(Matching.matchQuery(expected, actual))
-            addAll(Matching.matchCookie(expected.cookie(), actual.headers.values("cookie")))
+            addAll(Matching.matchCookie(expected.cookie(), actual.getCookie()))
             addAll(Matching.matchRequestHeaders(expected, actual))
             addAll(Matching.matchBody(expected, actual, allowUnexpectedKeys))
         }

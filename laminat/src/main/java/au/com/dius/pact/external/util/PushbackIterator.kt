@@ -7,7 +7,7 @@ import java.util.Stack
  */
 class PushbackIterator<T>(
     private val wrappedIterator: Iterator<T>
-): Iterator<T> {
+) : Iterator<T> {
     private val pushedBackElements = Stack<T>()
 
     override fun hasNext(): Boolean {
@@ -15,7 +15,7 @@ class PushbackIterator<T>(
     }
 
     override fun next(): T {
-        return if(pushedBackElements.isNotEmpty()) {
+        return if (pushedBackElements.isNotEmpty()) {
             pushedBackElements.pop()
         } else {
             wrappedIterator.next()

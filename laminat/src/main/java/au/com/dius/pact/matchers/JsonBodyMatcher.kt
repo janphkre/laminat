@@ -1,26 +1,25 @@
 package au.com.dius.pact.matchers
 
-import au.com.dius.pact.external.parseBodyToJson
+import au.com.dius.pact.external.IncomingRequest
 import au.com.dius.pact.model.OptionalBody
 import au.com.dius.pact.model.matchingrules.MatchingRules
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonPrimitive
-import okhttp3.mockwebserver.RecordedRequest
 import java.util.LinkedList
 
 class JsonBodyMatcher : BodyMatcher() {
 
     override fun matchContent(
         expected: OptionalBody,
-        actual: RecordedRequest,
+        actual: IncomingRequest,
         matchers: MatchingRules,
         allowUnexpectedKeys: Boolean
     ): List<RequestMatchProblem> {
 
         val path = listOf("$")
 
-        val actualJson = actual.parseBodyToJson()
+        val actualJson = actual.getBodyAsJson()
         val expectedJson = expected.parsedBodyAsJson
 
         return matchJsonElement(path, expectedJson, actualJson, allowUnexpectedKeys, matchers)
