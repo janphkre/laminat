@@ -66,4 +66,8 @@ open class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: I
     protected open fun updateInteractions(pact: RequestResponsePact) {
         addCurrentInteractions(pact.requestResponseInteractions)
     }
+
+    fun observeMatches(observer: ((RequestMatch) -> Unit)?) {
+        dispatcher.setMatchObserver(observer)
+    }
 }

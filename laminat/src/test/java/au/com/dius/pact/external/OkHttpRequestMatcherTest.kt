@@ -151,11 +151,11 @@ class OkHttpRequestMatcherTest {
 
     private fun getMockSocket(): Socket {
         val mockInetAddress = mock(InetAddress::class.java)
-        doReturn("mockhost").`when`(mockInetAddress).getHostName()
+        doReturn("mockhost").`when`(mockInetAddress).hostName
 
         val mockSocket = mock(Socket::class.java)
-        doReturn(mockInetAddress).`when`(mockSocket).getInetAddress()
-        doReturn(1234).`when`(mockSocket).getLocalPort()
+        doReturn(mockInetAddress).`when`(mockSocket).inetAddress
+        doReturn(1234).`when`(mockSocket).localPort
 
         return mockSocket
     }
@@ -187,14 +187,13 @@ class OkHttpRequestMatcherTest {
         val recordedRequest = getRecordedRequest(request)
 
         val interactions = testPost.interactions.map { it as RequestResponseInteraction }
-        val match = matcher.findInteraction(interactions, recordedRequest)
 
-        when (match) {
-            is OkHttpRequestMatcher.RequestMatch.FullRequestMatch -> return
-            is OkHttpRequestMatcher.RequestMatch.PartialRequestMatch -> {
+        when (val match = matcher.findInteraction(interactions, recordedRequest)) {
+            is RequestMatch.FullRequestMatch -> return
+            is RequestMatch.PartialRequestMatch -> {
                 Assert.fail("Match is only a Partial Request Match: \n${match.problems.joinToString("\n")}")
             }
-            is OkHttpRequestMatcher.RequestMatch.RequestMismatch -> {
+            is RequestMatch.RequestMismatch -> {
                 Assert.fail("Match is only a Request Mismatch: \n${match.problems?.joinToString("\n")}")
             }
         }
@@ -208,14 +207,13 @@ class OkHttpRequestMatcherTest {
         val recordedRequest = getRecordedRequest(request)
 
         val interactions = testPost.interactions.plus(unusedPOST.interactions).map { it as RequestResponseInteraction }
-        val match = matcher.findInteraction(interactions, recordedRequest)
 
-        when (match) {
-            is OkHttpRequestMatcher.RequestMatch.FullRequestMatch -> return
-            is OkHttpRequestMatcher.RequestMatch.PartialRequestMatch -> {
+        when (val match = matcher.findInteraction(interactions, recordedRequest)) {
+            is RequestMatch.FullRequestMatch -> return
+            is RequestMatch.PartialRequestMatch -> {
                 Assert.fail("Match is only a Partial Request Match: \n${match.problems.joinToString("\n")}")
             }
-            is OkHttpRequestMatcher.RequestMatch.RequestMismatch -> {
+            is RequestMatch.RequestMismatch -> {
                 Assert.fail("Match is only a Request Mismatch: \n${match.problems?.joinToString("\n")}")
             }
         }
@@ -229,17 +227,16 @@ class OkHttpRequestMatcherTest {
         val recordedRequest = getRecordedRequest(request)
 
         val interactions = testPost.interactions.map { it as RequestResponseInteraction }
-        val match = matcher.findInteraction(interactions, recordedRequest)
 
-        when (match) {
-            is OkHttpRequestMatcher.RequestMatch.FullRequestMatch -> {
+        when (val match = matcher.findInteraction(interactions, recordedRequest)) {
+            is RequestMatch.FullRequestMatch -> {
                 Assert.fail("Match was a Full Request Match!")
             }
-            is OkHttpRequestMatcher.RequestMatch.PartialRequestMatch -> {
+            is RequestMatch.PartialRequestMatch -> {
                 Assert.assertEquals("MismatchedBody on null:\nExpected '1' to match '\\d{8,9}'", match.problems[0].message)
                 Assert.assertEquals("MismatchedBody on \$:\nExpected regex2=\"abcd\" but was missing", match.problems[1].message)
             }
-            is OkHttpRequestMatcher.RequestMatch.RequestMismatch -> {
+            is RequestMatch.RequestMismatch -> {
                 Assert.fail("Match is only a Request Mismatch: \n${match.problems?.joinToString("\n")}")
             }
         }
@@ -255,17 +252,16 @@ class OkHttpRequestMatcherTest {
         val recordedRequest = getRecordedRequest(request)
 
         val interactions = testPostArray.interactions.map { it as RequestResponseInteraction }
-        val match = matcher.findInteraction(interactions, recordedRequest)
 
-        when (match) {
-            is OkHttpRequestMatcher.RequestMatch.FullRequestMatch -> {
+        when (val match = matcher.findInteraction(interactions, recordedRequest)) {
+            is RequestMatch.FullRequestMatch -> {
                 val response = match.interaction.response.generateResponse()
                 Assert.assertNotNull(response)
             }
-            is OkHttpRequestMatcher.RequestMatch.PartialRequestMatch -> {
+            is RequestMatch.PartialRequestMatch -> {
                 Assert.fail("Match is only a Partial Request Match: \n${match.problems.joinToString("\n")}")
             }
-            is OkHttpRequestMatcher.RequestMatch.RequestMismatch -> {
+            is RequestMatch.RequestMismatch -> {
                 Assert.fail("Match is only a Request Mismatch: \n${match.problems?.joinToString("\n")}")
             }
         }
@@ -279,14 +275,13 @@ class OkHttpRequestMatcherTest {
         val recordedRequest = getRecordedRequest(ByteArray(0), "GET", hugeAuthorization)
 
         val interactions = testGet.interactions.map { it as RequestResponseInteraction }
-        val match = matcher.findInteraction(interactions, recordedRequest)
 
-        when (match) {
-            is OkHttpRequestMatcher.RequestMatch.FullRequestMatch -> return
-            is OkHttpRequestMatcher.RequestMatch.PartialRequestMatch -> {
+        when (val match = matcher.findInteraction(interactions, recordedRequest)) {
+            is RequestMatch.FullRequestMatch -> return
+            is RequestMatch.PartialRequestMatch -> {
                 Assert.fail("Match is only a Partial Request Match: \n${match.problems.joinToString("\n")}")
             }
-            is OkHttpRequestMatcher.RequestMatch.RequestMismatch -> {
+            is RequestMatch.RequestMismatch -> {
                 Assert.fail("Match is only a Request Mismatch: \n${match.problems?.joinToString("\n")}")
             }
         }

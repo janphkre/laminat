@@ -17,6 +17,11 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
     private var interactionList = emptyList<RequestResponseInteraction>()
     private var matchedRequestCount: Long = 0L
     private var unmatchedRequestsCount: Long = 0L
+    private var matchObserver: ((RequestMatch) -> Unit)? = null
+
+    fun setMatchObserver(observer: ((RequestMatch) -> Unit)?) {
+        matchObserver = observer
+    }
 
     fun setInteractions(interactions: List<RequestResponseInteraction>) {
         interactionList = interactions
@@ -37,15 +42,16 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
         }
         try {
             val requestMatch = pactMatcher.findInteraction(interactionList, request)
+            matchObserver?.invoke(requestMatch)
             return when (requestMatch) {
-                is OkHttpRequestMatcher.RequestMatch.FullRequestMatch -> {
+                is RequestMatch.FullRequestMatch -> {
                     matchedRequestCount++
                     requestMatch.interaction.response.generateResponse().mapToMockResponse()
                 }
-                is OkHttpRequestMatcher.RequestMatch.PartialRequestMatch -> {
+                is RequestMatch.PartialRequestMatch -> {
                     notFoundMockResponse().setBody("Partially matched ${requestMatch.interaction.uniqueKey()}:\n${requestMatch.problems.joinToString("\n")}")
                 }
-                is OkHttpRequestMatcher.RequestMatch.RequestMismatch -> {
+                is RequestMatch.RequestMismatch -> {
                     notFoundMockResponse().setBody("Failed to match request at all! Best match was with ${requestMatch.interaction?.uniqueKey()}:\n" +
                         "${requestMatch.problems?.joinToString("\n")}")
                 }

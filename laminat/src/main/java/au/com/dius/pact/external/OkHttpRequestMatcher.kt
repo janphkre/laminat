@@ -81,10 +81,4 @@ class OkHttpRequestMatcher(private val allowUnexpectedKeys: Boolean) {
             it is RequestMatchProblem.PathMismatch || it is RequestMatchProblem.MethodMismatch
         }
     }
-
-    sealed class RequestMatch {
-        class RequestMismatch(val interaction: RequestResponseInteraction? = null, val problems: List<RequestMatchProblem>? = null) : RequestMatch()
-        class FullRequestMatch(val interaction: RequestResponseInteraction, val matchedCount: Int) : RequestMatch()
-        class PartialRequestMatch(val interaction: RequestResponseInteraction, val problems: List<RequestMatchProblem>) : RequestMatch()
-    }
 }
