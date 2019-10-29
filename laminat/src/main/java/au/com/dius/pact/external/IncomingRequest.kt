@@ -5,6 +5,13 @@ import com.google.gson.JsonElement
 import okhttp3.mockwebserver.RecordedRequest
 import org.apache.http.entity.ContentType
 
+/**
+ * An incoming request is created by the server and passed into the {@see PactDispatcher} / {@see RequestMatcher}.
+ * It provides methods to access all data of the (HTTP) request.
+ * Internally it is represented by a {@see RecordedRequest} (okhttp3 Mockserver).
+ *
+ * @author Jan Phillip Kretzschmar
+ */
 class IncomingRequest(
     private val internalRequest: RecordedRequest
 ) {

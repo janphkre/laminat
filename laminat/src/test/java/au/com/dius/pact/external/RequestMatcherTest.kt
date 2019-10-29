@@ -14,7 +14,13 @@ import java.io.File
 import java.net.InetAddress
 import java.net.Socket
 
-class OkHttpRequestMatcherTest {
+/**
+ * This test is targeting the {@see RequestMatcher}.
+ * It checks that pacts match incoming requests correctly.
+ *
+ * @author Jan Phillip Kretzschmar
+ */
+class RequestMatcherTest {
 
     private val unusedPOST by lazy {
         ConsumerPactBuilder("TestConsumer").hasPactWith("TestProducer")
@@ -184,7 +190,7 @@ class OkHttpRequestMatcherTest {
     fun pactDispatcher_PostRequest_MatchingCorrectly() {
         val request = "{ \"regex1\": \"123456789\", \"regex2\": \"abcd\", \"decimal1\": 50.99234}".toByteArray()
 
-        val matcher = OkHttpRequestMatcher(false)
+        val matcher = RequestMatcher(false)
         val incomingRequest = getIncomingRequest(request)
 
         val interactions = testPost.interactions.map { it as RequestResponseInteraction }
@@ -204,7 +210,7 @@ class OkHttpRequestMatcherTest {
     fun pactDispatcher_PostRequestMultipleInteractions_MatchingCorrectly() {
         val request = "{ \"regex1\": \"123456789\", \"regex2\": \"abcd\", \"decimal1\": 50.99234}".toByteArray()
 
-        val matcher = OkHttpRequestMatcher(false)
+        val matcher = RequestMatcher(false)
         val recordedRequest = getIncomingRequest(request)
 
         val interactions = testPost.interactions.plus(unusedPOST.interactions).map { it as RequestResponseInteraction }
@@ -224,7 +230,7 @@ class OkHttpRequestMatcherTest {
     fun pactDispatcher_PostRequest_NotMatching() {
         val request = "{ \"regex1\": \"1\", \"decimal1\": 50.999234, \"unexpected\":\"skdfskjdf\"}".toByteArray()
 
-        val matcher = OkHttpRequestMatcher(false)
+        val matcher = RequestMatcher(false)
         val recordedRequest = getIncomingRequest(request)
 
         val interactions = testPost.interactions.map { it as RequestResponseInteraction }
@@ -249,7 +255,7 @@ class OkHttpRequestMatcherTest {
         val nestedArrayObject = "{ \"nestedArray\": [ { \"regex5\": \"123456789\" }, { \"regex5\": \"987654321\" } ] }"
         val request = "{ \"array\": [$arrayObject,$arrayObject,$nestedArrayObject]}".toByteArray()
 
-        val matcher = OkHttpRequestMatcher(false)
+        val matcher = RequestMatcher(false)
         val recordedRequest = getIncomingRequest(request)
 
         val interactions = testPostArray.interactions.map { it as RequestResponseInteraction }
@@ -271,7 +277,7 @@ class OkHttpRequestMatcherTest {
     @Test
     fun pactDispatcher_LongGetRequest_MatchingCorrectly() {
 
-        val matcher = OkHttpRequestMatcher(false)
+        val matcher = RequestMatcher(false)
 
         val recordedRequest = getIncomingRequest(ByteArray(0), "GET", hugeAuthorization)
 

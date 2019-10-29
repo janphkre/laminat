@@ -24,7 +24,7 @@ import java.io.PrintStream
  */
 internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErrorCode: Int) : Dispatcher() {
 
-    private var pactMatcher = OkHttpRequestMatcher(allowUnexpectedKeys)
+    private var pactMatcher = RequestMatcher(allowUnexpectedKeys)
     private var interactionList = emptyList<RequestResponseInteraction>()
     private var matchedRequestCount: Long = 0L
     private var unmatchedRequestsCount: Long = 0L

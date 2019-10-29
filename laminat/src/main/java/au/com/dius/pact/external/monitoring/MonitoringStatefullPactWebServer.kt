@@ -6,6 +6,14 @@ import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 
+/**
+ * A monitoring server provides additional functionality over a statefull pact web server
+ * in such a way that incoming request and their response are measured in milliseconds.
+ * You should keep in mind that a very complex regular expression in your pacts may be
+ * one of the main reasons for slow matching.
+ *
+ * @author Jan Phillip Kretzschmar
+ */
 class MonitoringStatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int)
     : StatefullPactWebServer(allowUnexpectedKeys, pactErrorCode) {
 

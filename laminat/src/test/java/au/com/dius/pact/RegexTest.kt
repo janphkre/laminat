@@ -4,6 +4,13 @@ import au.com.dius.pact.model.HttpPart
 import org.junit.Assert
 import org.junit.Test
 
+/**
+ * These tests are used to verify the correct behavior for the
+ * regular expression which determine the content type from a body
+ * when no explicit header or body type is specified.
+ *
+ * @author Jan Phillip Kretzschmar
+ */
 class RegexTest {
 
     @Test

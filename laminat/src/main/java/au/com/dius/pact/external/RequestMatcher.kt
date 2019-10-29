@@ -7,7 +7,13 @@ import au.com.dius.pact.model.Request
 import au.com.dius.pact.model.RequestResponseInteraction
 import java.util.LinkedList
 
-class OkHttpRequestMatcher(private val allowUnexpectedKeys: Boolean) {
+/**
+ * This request matcher is able to match an incoming request with a given list of interactions.
+ * It returns the best possible match between one request response interaction and the request it was able to find.
+ *
+ * @author Jan Phillip Kretzschmar
+ */
+class RequestMatcher(private val allowUnexpectedKeys: Boolean) {
 
     fun findInteraction(
         interactions: List<RequestResponseInteraction>,

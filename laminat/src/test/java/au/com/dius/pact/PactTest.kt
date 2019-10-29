@@ -10,6 +10,13 @@ import org.junit.Assert
 import org.junit.Test
 import java.io.File
 
+
+/**
+ * this is a larger test that completely tests the pact dsl and its json generation
+ * against a fixed pact json in the assets.
+ *
+ * @author Jan Phillip Kretzschmar
+ */
 class PactTest {
 
     private val expectedPact = "testconsumer:testproducer.json"
@@ -75,9 +82,8 @@ class PactTest {
         val outputPactFile = File("pacts/$expectedPact")
         Assert.assertTrue("Pact was not generated!", outputPactFile.exists())
 
-        val outputPact = readFile(outputPactFile)
-        val expectedPact =
-            readFile(File("src/test/assets/$expectedPact"))
+        val outputPact = outputPactFile.readText()
+        val expectedPact = File("src/test/assets/$expectedPact").readText()
         Assert.assertEquals("Generated pact does not match expectations!", expectedPact, outputPact)
     }
 
