@@ -15,9 +15,10 @@ import java.net.InetAddress
 import java.net.Socket
 
 /**
- * This test is targeting the {@see RequestMatcher}.
+ * This test is targeting the RequestMatcher.
  * It checks that pacts match incoming requests correctly.
  *
+ * @see RequestMatcher
  * @author Jan Phillip Kretzschmar
  */
 class RequestMatcherTest {

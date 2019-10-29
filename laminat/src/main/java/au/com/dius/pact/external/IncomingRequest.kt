@@ -6,10 +6,13 @@ import okhttp3.mockwebserver.RecordedRequest
 import org.apache.http.entity.ContentType
 
 /**
- * An incoming request is created by the server and passed into the {@see PactDispatcher} / {@see RequestMatcher}.
+ * An incoming request is created by the server and passed into the PactDispatcher and RequestMatcher.
  * It provides methods to access all data of the (HTTP) request.
- * Internally it is represented by a {@see RecordedRequest} (okhttp3 Mockserver).
+ * Internally it is represented by a RecordedRequest (okhttp3 Mockserver).
  *
+ * @see PactDispatcher
+ * @see RequestMatcher
+ * @see RecordedRequest
  * @author Jan Phillip Kretzschmar
  */
 class IncomingRequest(
