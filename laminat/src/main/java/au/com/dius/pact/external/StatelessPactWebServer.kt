@@ -4,7 +4,6 @@ import au.com.dius.pact.model.RequestResponseInteraction
 import au.com.dius.pact.model.RequestResponsePact
 import okhttp3.mockwebserver.MockWebServer
 import java.io.IOException
-import java.util.LinkedList
 
 /**
  * This is a web server which ignores any state specified in pacts and
@@ -14,11 +13,14 @@ open class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: I
 
     internal val mockWebServer = MockWebServer()
     internal val dispatcher = PactDispatcher(allowUnexpectedKeys, pactErrorCode)
-    private val currentInteractionList = LinkedList<RequestResponseInteraction>()
+    private var currentInteractionList: List<RequestResponseInteraction> = emptyList()
+    set(value) {
+        field = field.plus(value)
+        dispatcher.setInteractions(field)
+    }
 
     init {
         mockWebServer.setDispatcher(dispatcher)
-        dispatcher.setInteractions(currentInteractionList)
     }
 
     open fun teardown() {
@@ -56,11 +58,11 @@ open class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: I
     }
 
     protected fun clearCurrentInteractions() {
-        currentInteractionList.clear()
+        currentInteractionList = emptyList()
     }
 
     protected fun addCurrentInteractions(interactions: Collection<RequestResponseInteraction>) {
-        currentInteractionList.addAll(interactions)
+        currentInteractionList = currentInteractionList.plus(interactions)
     }
 
     protected open fun updateInteractions(pact: RequestResponsePact) {
