@@ -8,7 +8,17 @@ import au.com.dius.pact.model.RequestResponsePact
 import java.io.File
 import java.io.PrintWriter
 
+/**
+ * This PactJsonifier singelton allows the generation of a pact json from
+ * the given pact collection.
+ * Since a pact json may only denote contain a single pact, the pacts in the collection
+ * are folded into a single pact by merging them through PactMerge.
+ * If a pact can not be merged a PactMergeException is thrown.
+ *
+ * @author Jan Phillip Kretzschmar
+ */
 object PactJsonifier {
+
     fun generateJson(pacts: Collection<RequestResponsePact>, baseDir: File) {
         baseDir.mkdir()
         pacts.forEach {
@@ -37,7 +47,6 @@ object PactJsonifier {
 
     private fun getEmptyFileFor(pact: Pact, baseDir: File): File {
         val name = "${pact.consumer.name.toLowerCase().replace(' ','_')}:${pact.provider.name.toLowerCase().replace(' ','_')}.json"
-        val file = File(baseDir, name)
-        return file
+        return File(baseDir, name)
     }
 }

@@ -7,6 +7,8 @@ import java.util.LinkedList
 /**
  * This is a web server which handles states specified in pacts and set as Providerstates.
  * it matches the incoming request to any interaction that is specified as part of the current provider state.
+ *
+ * @author Jan Phillip Kretzschmar
  */
 open class StatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int) : StatelessPactWebServer(allowUnexpectedKeys, pactErrorCode) {
 

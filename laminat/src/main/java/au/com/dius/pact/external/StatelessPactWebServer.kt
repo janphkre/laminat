@@ -8,6 +8,8 @@ import java.io.IOException
 /**
  * This is a web server which ignores any state specified in pacts and
  * matches the incoming request to any interaction that is specified at the moment.
+ *
+ * @author Jan Phillip Kretzschmar
  */
 open class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int) {
 

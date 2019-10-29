@@ -3,7 +3,13 @@ package au.com.dius.pact.external.util
 import java.util.Stack
 
 /**
- * Similar to org.apache.commons.collections4.iterators.PushbackIterator
+ * Iterator which allows to push back elements onto the iterator.
+ * The pushed back elements are returned as a LIFO in next before returning
+ * new elements from the wrapped iterator.
+ * Used to completely replace dependency on
+ * org.apache.commons.collections4.iterators.PushbackIterator
+ *
+ * @author Jan Philip Kretzschmar
  */
 class PushbackIterator<T>(
     private val wrappedIterator: Iterator<T>

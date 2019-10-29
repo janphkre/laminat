@@ -11,6 +11,17 @@ import org.apache.http.Consts
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
+/**
+ * An okhttp dispatcher that creates matches based on the list of interactions through an OkHttpRequestMatcher.
+ * These matches are converted to a single MockResponse. If there are conflicts or multiple matches
+ * an error response with the given pactErrorCode is created which describes the Mismatch.
+ *
+ * If you want to create a self contained mock server to fully mirror the real server
+ * you can register a matchObserver to perform changes.
+ * To verify that a expected request count has been received the method validatePactsCompleted may be invoked.
+ *
+ * @author Jan Phillip Kretzschmar
+ */
 internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErrorCode: Int) : Dispatcher() {
 
     private var pactMatcher = OkHttpRequestMatcher(allowUnexpectedKeys)
