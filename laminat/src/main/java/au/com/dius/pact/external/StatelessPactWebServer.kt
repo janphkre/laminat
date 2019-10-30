@@ -65,6 +65,7 @@ open class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: I
     protected fun addCurrentInteractions(interactions: Collection<RequestResponseInteraction>) {
         synchronized(this) {
             currentInteractionList = currentInteractionList.plus(interactions)
+            dispatcher.setInteractions(currentInteractionList)
         }
     }
 
