@@ -16,10 +16,6 @@ open class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: I
     internal val mockWebServer = MockWebServer()
     internal val dispatcher = PactDispatcher(allowUnexpectedKeys, pactErrorCode)
     private var currentInteractionList: List<RequestResponseInteraction> = emptyList()
-    set(value) {
-        field = field.plus(value)
-        dispatcher.setInteractions(field)
-    }
 
     init {
         mockWebServer.setDispatcher(dispatcher)
@@ -60,11 +56,16 @@ open class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: I
     }
 
     protected fun clearCurrentInteractions() {
-        currentInteractionList = emptyList()
+        synchronized(this) {
+            currentInteractionList = emptyList()
+            dispatcher.setInteractions(currentInteractionList)
+        }
     }
 
     protected fun addCurrentInteractions(interactions: Collection<RequestResponseInteraction>) {
-        currentInteractionList = currentInteractionList.plus(interactions)
+        synchronized(this) {
+            currentInteractionList = currentInteractionList.plus(interactions)
+        }
     }
 
     protected open fun updateInteractions(pact: RequestResponsePact) {
