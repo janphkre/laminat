@@ -24,7 +24,6 @@ import org.apache.commons.lang3.time.DateFormatUtils
 import org.apache.commons.lang3.time.FastDateFormat
 import org.json.JSONObject
 import java.math.BigDecimal
-import java.util.Arrays
 import java.util.Calendar
 import java.util.UUID
 import java.util.regex.Pattern
@@ -32,9 +31,10 @@ import java.util.regex.Pattern
 /**
  * DSL to define a JSON Object
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: DslPart? = null) : DslPart(parent, rootPath, rootName) {
 
-    private val EXAMPLE = "Example \""
+    private val exampleString = "Example \""
     private var body = JSONObject()
 
     override fun putObject(`object`: DslPart) {
@@ -47,7 +47,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
             body.put(`object`.rootName, `object`.body)
         } else {
             val name = StringUtils.strip(elementBase, ".")
-            val p = Pattern.compile("\\['(.+)'\\]")
+            val p = Pattern.compile("\\['(.+)']")
             val matcher = p.matcher(name)
             if (matcher.matches()) {
                 body.put(matcher.group(1), `object`.body)
@@ -181,6 +181,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * Attribute that must be an integer
      * @param name attribute name
      */
+    @Suppress("USELESS_CAST")
     fun integerType(name: String): PactDslJsonBody {
         generators.addGenerator(Category.BODY, matcherKey(name), RandomIntGenerator(0, Integer.MAX_VALUE))
         return integerType(name, 100 as Int)
@@ -223,7 +224,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * Attribute that must be a real value
      * @param name attribute name
      */
-    @Deprecated("Use decimal instead")
+    @Deprecated("Use decimal instead", ReplaceWith("decimalType"))
     fun realType(name: String): PactDslJsonBody {
         return decimalType(name)
     }
@@ -233,7 +234,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param name attribute name
      * @param number example real value
      */
-    @Deprecated("Use decimal instead")
+    @Deprecated("Use decimal instead", ReplaceWith("decimalType"))
     fun realType(name: String, number: Double?): PactDslJsonBody {
         return decimalType(name, number)
     }
@@ -319,7 +320,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
     fun stringMatcher(name: String, regex: String, value: String): PactDslJsonBody {
         if (!value.matches(regex.toRegex())) {
             throw InvalidMatcherException(
-                EXAMPLE + value + "\" does not match regular expression \"" +
+                exampleString + value + "\" does not match regular expression \"" +
                         regex + "\""
             )
         }
@@ -355,7 +356,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         val pattern = DateFormatUtils.ISO_DATETIME_FORMAT.pattern
         generators.addGenerator(Category.BODY, matcherKey(name), DateTimeGenerator(pattern))
         val calendar = Calendar.getInstance()
-        calendar.timeInMillis = DslPart.DATE_2000
+        calendar.timeInMillis = DATE_2000
         body.put(name, DateFormatUtils.ISO_DATETIME_FORMAT.format(calendar))
         matchers.addRule(matcherKey(name), matchTimestamp(pattern))
         return this
@@ -370,7 +371,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         generators.addGenerator(Category.BODY, matcherKey(name), DateTimeGenerator(format))
         val instance = FastDateFormat.getInstance(format)
         val calendar = Calendar.getInstance()
-        calendar.timeInMillis = DslPart.DATE_2000
+        calendar.timeInMillis = DATE_2000
         body.put(name, instance.format(calendar))
         matchers.addRule(matcherKey(name), matchTimestamp(format))
         return this
@@ -404,7 +405,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         val pattern = DateFormatUtils.ISO_DATE_FORMAT.pattern
         generators.addGenerator(Category.BODY, matcherKey(name), DateGenerator(pattern))
         val calendar = Calendar.getInstance()
-        calendar.timeInMillis = DslPart.DATE_2000
+        calendar.timeInMillis = DATE_2000
         body.put(name, DateFormatUtils.ISO_DATE_FORMAT.format(calendar))
         matchers.addRule(matcherKey(name), matchDate(pattern))
         return this
@@ -419,7 +420,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         generators.addGenerator(Category.BODY, matcherKey(name), DateGenerator(format))
         val instance = FastDateFormat.getInstance(format)
         val calendar = Calendar.getInstance()
-        calendar.timeInMillis = DslPart.DATE_2000
+        calendar.timeInMillis = DATE_2000
         body.put(name, instance.format(calendar))
         matchers.addRule(matcherKey(name), matchDate(format))
         return this
@@ -453,7 +454,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         val pattern = DateFormatUtils.ISO_TIME_FORMAT.pattern
         generators.addGenerator(Category.BODY, matcherKey(name), TimeGenerator(pattern))
         val calendar = Calendar.getInstance()
-        calendar.timeInMillis = DslPart.DATE_2000
+        calendar.timeInMillis = DATE_2000
         body.put(name, DateFormatUtils.ISO_TIME_FORMAT.format(calendar))
         matchers.addRule(matcherKey(name), matchTime(pattern))
         return this
@@ -468,7 +469,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         generators.addGenerator(Category.BODY, matcherKey(name), TimeGenerator(format))
         val instance = FastDateFormat.getInstance(format)
         val calendar = Calendar.getInstance()
-        calendar.timeInMillis = DslPart.DATE_2000
+        calendar.timeInMillis = DATE_2000
         body.put(name, instance.format(calendar))
         matchers.addRule(matcherKey(name), matchTime(format))
         return this
@@ -528,10 +529,10 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
             var parent = closeObject()
             while (parent != null) {
                 parentToReturn = parent
-                if (parent is PactDslJsonArray) {
-                    parent = parent.closeArray()
+                parent = if (parent is PactDslJsonArray) {
+                    parent.closeArray()
                 } else {
-                    parent = parent.closeObject()
+                    parent.closeObject()
                 }
             }
         }
@@ -570,13 +571,13 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * Attribute that is an array where each item must match the following example
      * @param name field name
      */
-    @Deprecated("use eachLike")
+    @Deprecated("Use eachLike instead", ReplaceWith("eachLike"))
     override fun arrayLike(name: String): PactDslJsonBody {
         matchers.addRule(matcherKey(name), TypeMatcher)
         return PactDslJsonBody(".", ".", PactDslJsonArray(matcherKey(name), "", this, true))
     }
 
-    @Deprecated("")
+    @Deprecated("Use eachLike instead", ReplaceWith("eachLike"))
     override fun arrayLike(): PactDslJsonBody {
         throw UnsupportedOperationException("use the arrayLike(String name) form")
     }
@@ -818,8 +819,8 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param hexValue example value to use for generated bodies
      */
     fun hexValue(name: String, hexValue: String): PactDslJsonBody {
-        if (!hexValue.matches(DslPart.HEXADECIMAL.toRegex())) {
-            throw InvalidMatcherException("$EXAMPLE$hexValue\" is not a hexadecimal value")
+        if (!hexValue.matches(HEXADECIMAL.toRegex())) {
+            throw InvalidMatcherException("$exampleString$hexValue\" is not a hexadecimal value")
         }
         body.put(name, hexValue)
         matchers.addRule(matcherKey(name), regexp("[0-9a-fA-F]+"))
@@ -830,7 +831,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * Attribute that must be encoded as a GUID
      * @param name attribute name
      */
-    @Deprecated("use uuid instead")
+    @Deprecated("use uuid instead", ReplaceWith("uuid"))
     fun guid(name: String): PactDslJsonBody {
         return uuid(name)
     }
@@ -840,7 +841,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param name attribute name
      * @param uuid example UUID to use for generated bodies
      */
-    @Deprecated("use uuid instead")
+    @Deprecated("use uuid instead", ReplaceWith("uuid"))
     fun guid(name: String, uuid: UUID): PactDslJsonBody {
         return uuid(name, uuid)
     }
@@ -850,7 +851,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param name attribute name
      * @param uuid example UUID to use for generated bodies
      */
-    @Deprecated("use uuid instead")
+    @Deprecated("use uuid instead", ReplaceWith("uuid"))
     fun guid(name: String, uuid: String): PactDslJsonBody {
         return uuid(name, uuid)
     }
@@ -879,11 +880,11 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param uuid example UUID to use for generated bodies
      */
     fun uuid(name: String, uuid: String): PactDslJsonBody {
-        if (!uuid.matches(DslPart.UUID_REGEX.toRegex())) {
-            throw InvalidMatcherException("$EXAMPLE$uuid\" is not an UUID")
+        if (!uuid.matches(UUID_REGEX.toRegex())) {
+            throw InvalidMatcherException("$exampleString$uuid\" is not an UUID")
         }
         body.put(name, uuid)
-        matchers.addRule(matcherKey(name), regexp(DslPart.UUID_REGEX))
+        matchers.addRule(matcherKey(name), regexp(UUID_REGEX))
         return this
     }
 
@@ -1035,7 +1036,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         } else {
             body.put(name, JSONObject.NULL)
         }
-        matchers.setRules(matcherKey(name), MatchingRuleGroup(Arrays.asList(*rules), RuleLogic.AND))
+        matchers.setRules(matcherKey(name), MatchingRuleGroup(mutableListOf(*rules), RuleLogic.AND))
         return this
     }
 
@@ -1051,20 +1052,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         } else {
             body.put(name, JSONObject.NULL)
         }
-        matchers.setRules(matcherKey(name), MatchingRuleGroup(Arrays.asList(*rules), RuleLogic.OR))
+        matchers.setRules(matcherKey(name), MatchingRuleGroup(mutableListOf(*rules), RuleLogic.OR))
         return this
     }
-
-    /**
-     * Matches a URL that is composed of a base path and a sequence of path expressions
-     * @param name Attribute name
-     * @param basePath The base path for the URL (like "http://localhost:8080/") which will be excluded from the matching
-     * @param pathFragments Series of path fragments to match on. These can be strings or regular expressions.
-     */
-    /*public PactDslJsonBody matchUrl(String name, String basePath, Object... pathFragments) {
-      UrlMatcherSupport urlMatcher = new UrlMatcherSupport(basePath, Arrays.asList(pathFragments));
-      body.put(name, urlMatcher.getExampleValue());
-      matchers.addRule(matcherKey(name), regexp(urlMatcher.getRegexExpression()));
-      return this;
-    }*/
 }

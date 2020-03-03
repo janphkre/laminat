@@ -30,8 +30,9 @@ import au.com.dius.pact.model.matchingrules.RuleLogic;
 import au.com.dius.pact.model.matchingrules.TypeMatcher;
 
 /**
- * DSL to define a JSON array
+ * DSL to define a JSON array.
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class PactDslJsonArray extends DslPart {
 
     private static final String EXAMPLE = "Example \"";

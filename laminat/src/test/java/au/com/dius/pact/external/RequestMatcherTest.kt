@@ -15,8 +15,7 @@ import java.net.InetAddress
 import java.net.Socket
 
 /**
- * This test is targeting the RequestMatcher.
- * It checks that pacts match incoming requests correctly.
+ * This test checks that the RequestMatcher matches incoming requests correctly.
  *
  * @see RequestMatcher
  * @author Jan Phillip Kretzschmar

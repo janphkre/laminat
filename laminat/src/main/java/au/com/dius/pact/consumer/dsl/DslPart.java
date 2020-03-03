@@ -11,7 +11,7 @@ import au.com.dius.pact.model.matchingrules.TimeMatcher;
 import au.com.dius.pact.model.matchingrules.TimestampMatcher;
 
 /**
- * Abstract base class to support Object and Array JSON DSL builders
+ * Abstract base class of the Pact DSL to support Object and Array JSON DSL builders.
  */
 public abstract class DslPart {
     public static final String HEXADECIMAL = "[0-9a-fA-F]+";
