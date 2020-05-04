@@ -154,10 +154,10 @@ public class PactDslResponse {
           ((PactDslJsonRootValue)parent).setEncodeJson(true);
         }
 
-        responseMatchers.addCategory(parent.getMatchers());
+        responseMatchers.addCategory(parent.matchers);
         responseGenerators.addGenerators(parent.generators);
-        if (parent.getBody() != null) {
-            responseBody = OptionalBody.body(parent.getBody().toString());
+        if (parent.body != null) {
+            responseBody = OptionalBody.body(parent.body.toString());
         } else {
             responseBody = OptionalBody.nullBody();
         }

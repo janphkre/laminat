@@ -220,8 +220,8 @@ public class PactDslRootValue extends DslPart {
 
   @Override
   public DslPart close() {
-    getMatchers().applyMatcherRootPrefix("$");
-    getGenerators().applyRootPrefix("$");
+    matchers.applyMatcherRootPrefix("$");
+    generators.applyRootPrefix("$");
     return this;
   }
 

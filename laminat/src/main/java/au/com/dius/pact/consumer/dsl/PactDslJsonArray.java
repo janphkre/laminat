@@ -189,7 +189,7 @@ public class PactDslJsonArray extends DslPart {
       }
       generators.addGenerators(object.generators, rootPath + appendArrayIndex(1));
       for (int i = 0; i < getNumberExamples(); i++) {
-        body.put(object.getBody());
+        body.put(object.body);
       }
     }
 
@@ -199,7 +199,7 @@ public class PactDslJsonArray extends DslPart {
               object.matchers.getMatchingRules().get(matcherName));
         }
         generators.addGenerators(object.generators, rootPath + appendArrayIndex(1));
-        body.put(object.getBody());
+        body.put(object.body);
     }
 
     @Override
@@ -557,8 +557,8 @@ public class PactDslJsonArray extends DslPart {
       }
     }
 
-    parentToReturn.getMatchers().applyMatcherRootPrefix("$");
-    parentToReturn.getGenerators().applyRootPrefix("$");
+    parentToReturn.matchers.applyMatcherRootPrefix("$");
+    parentToReturn.generators.applyRootPrefix("$");
 
     return parentToReturn;
   }

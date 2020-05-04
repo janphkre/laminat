@@ -536,8 +536,8 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
             }
         }
 
-        parentToReturn.getMatchers().applyMatcherRootPrefix("$")
-        parentToReturn.getGenerators().applyRootPrefix("$")
+        parentToReturn.matchers.applyMatcherRootPrefix("$")
+        parentToReturn.generators.applyRootPrefix("$")
 
         return parentToReturn
     }

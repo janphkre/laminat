@@ -222,7 +222,7 @@ class PactDslRequestWithPath {
      */
     fun body(body: DslPart): PactDslRequestWithPath {
         val parent = body.close()
-        requestMatchers.addCategory(parent.getMatchers())
+        requestMatchers.addCategory(parent.matchers)
         requestGenerators.addGenerators(parent.generators)
         requestBody = OptionalBody.body(parent.toString())
         if (!requestHeaders.containsKey(ContentType.CONTENT_TYPE)) {
