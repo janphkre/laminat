@@ -209,7 +209,7 @@ public class PactDslResponse {
     }
 
     private void addInteraction() {
-        consumerPactBuilder.getInteractions().add(new RequestResponseInteraction(
+        consumerPactBuilder.interactions.add(new RequestResponseInteraction(
           request.description,
           request.state,
           new Request(request.requestMethod, request.path, request.query,
@@ -223,7 +223,7 @@ public class PactDslResponse {
      */
     public RequestResponsePact toPact() {
         addInteraction();
-        return new RequestResponsePact(request.provider, request.consumer, consumerPactBuilder.getInteractions());
+        return new RequestResponsePact(request.provider, request.consumer, consumerPactBuilder.interactions);
     }
 
     /**
