@@ -24,42 +24,23 @@
  * <http://www.apache.org/>.
  *
  */
+package org.apache.http
 
-/*
- * Edited by Jan Phillip Kretzschmar (github.com/janphkre)
- * - Removed unused methods
- * - Made some methods package internal
- */
-
-package org.apache.http.util;
+import java.nio.charset.Charset
 
 /**
- * @since 4.3
+ * Commons constants.
+ *
+ * @since 4.2
  */
-public final class TextUtils {
+object Consts {
+    const val CR = 13 // <US-ASCII CR, carriage return (13)>
+    const val LF = 10 // <US-ASCII LF, linefeed (10)>
+    const val SP = 32 // <US-ASCII SP, space (32)>
+    const val HT = 9 // <US-ASCII HT, horizontal-tab (9)>
+    @JvmField
+    val UTF_8: Charset = Charset.forName("UTF-8")
 
-    /**
-     * Returns true if the parameter is null or of zero length
-     */
-    public static boolean isEmpty(final CharSequence s) {
-        if (s == null) {
-            return true;
-        }
-        return s.length() == 0;
-    }
-
-    /**
-     * Returns true if the parameter is null or contains only whitespace
-     */
-    static boolean isBlank(final CharSequence s) {
-        if (s == null) {
-            return true;
-        }
-        for (int i = 0; i < s.length(); i++) {
-            if (!Character.isWhitespace(s.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
+    @JvmField
+    val ISO_8859_1: Charset = Charset.forName("ISO-8859-1")
 }

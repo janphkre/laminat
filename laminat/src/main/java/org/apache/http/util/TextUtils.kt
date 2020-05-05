@@ -24,29 +24,37 @@
  * <http://www.apache.org/>.
  *
  */
-
 /*
  * Edited by Jan Phillip Kretzschmar (github.com/janphkre)
  * - Removed unused methods
+ * - Made some methods package internal
  */
+package org.apache.http.util
 
-package org.apache.http.util;
-
-public class Args {
-
-    public static void check(final boolean expression, final String message) {
-        if (!expression) {
-            throw new IllegalArgumentException(message);
-        }
+/**
+ * @since 4.3
+ */
+object TextUtils {
+    /**
+     * Returns true if the parameter is null or of zero length
+     */
+    fun isEmpty(s: CharSequence?): Boolean {
+        return s?.isEmpty() ?: true
     }
 
-    public static <T extends CharSequence> T notBlank(final T argument, final String name) {
-        if (argument == null) {
-            throw new IllegalArgumentException(name + " may not be null");
+    /**
+     * Returns true if the parameter is null or contains only whitespace
+     */
+    @JvmStatic
+    fun isBlank(s: CharSequence?): Boolean {
+        if (s == null) {
+            return true
         }
-        if (TextUtils.isBlank(argument)) {
-            throw new IllegalArgumentException(name + " may not be blank");
+        for (element in s) {
+            if (!Character.isWhitespace(element)) {
+                return false
+            }
         }
-        return argument;
+        return true
     }
 }
