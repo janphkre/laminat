@@ -13,7 +13,7 @@ import java.math.BigDecimal
 import java.util.*
 
 class PactDslJsonRootValue : DslPart("", "") {
-    private var value: Any = JSONObject.NULL
+    private var value: Any? = null
     /**
      * If the value should be encoded to be safe as JSON
      */
@@ -29,7 +29,7 @@ class PactDslJsonRootValue : DslPart("", "") {
         throw UnsupportedOperationException()
     }
 
-    override val body: Any
+    override val body: Any?
         get() = if (isEncodeJson) {
             Gson().toJson(value)
         } else value
@@ -141,7 +141,7 @@ class PactDslJsonRootValue : DslPart("", "") {
     }
 
     fun setValue(value: Any?) {
-        this.value = value ?: JSONObject.NULL
+        this.value = value
     }
 
     fun setMatcher(matcher: MatchingRule) {
