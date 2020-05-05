@@ -139,7 +139,7 @@ class PactDslResponse(private val consumerPactBuilder: ConsumerPactBuilder, priv
         if (parent is PactDslJsonRootValue) {
             parent.isEncodeJson = true
         }
-        responseMatchers.addCategory(parent!!.matchers)
+        responseMatchers.addCategory(parent.matchers)
         responseGenerators.addGenerators(parent.generators)
         responseBody = if (parent.body != null) {
             OptionalBody.body(parent.body.toString())

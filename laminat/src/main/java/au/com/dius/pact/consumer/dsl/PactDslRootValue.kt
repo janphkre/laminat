@@ -355,7 +355,7 @@ class PactDslRootValue : DslPart("", "") {
         @Deprecated("Use the version that takes an example value")
         fun stringMatcher(regex: String): PactDslRootValue {
             val rootValue = PactDslRootValue()
-            rootValue.generators.addGenerator(Category.BODY, "", RegexGenerator(regex!!))
+            rootValue.generators.addGenerator(Category.BODY, "", RegexGenerator(regex))
             rootValue.setValue(Generex(regex).random())
             rootValue.setMatcher(rootValue.regexp(regex))
             return rootValue
