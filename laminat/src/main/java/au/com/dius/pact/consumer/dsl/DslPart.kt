@@ -4,7 +4,7 @@ import au.com.dius.pact.model.generators.Generators
 import au.com.dius.pact.model.matchingrules.*
 
 /**
- * Abstract base class to support Object and Array JSON DSL builders
+ * Abstract base class of the Pact DSL to support Object and Array JSON DSL builders.
  */
 abstract class DslPart {
     protected lateinit var parent: DslPart

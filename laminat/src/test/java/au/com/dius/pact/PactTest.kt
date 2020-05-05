@@ -6,13 +6,14 @@ import au.com.dius.pact.consumer.dsl.PactDslJsonRootValue
 import au.com.dius.pact.external.PactJsonifier
 import au.com.dius.pact.model.PactMergeException
 import au.com.dius.pact.model.RequestResponsePact
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
 
-
 /**
- * this is a larger test that completely tests the pact dsl and its json generation
+ * this is a larger test that checks the pact dsl and its json generation
  * against a fixed pact json in the assets.
  *
  * @author Jan Phillip Kretzschmar
@@ -83,8 +84,22 @@ class PactTest {
         Assert.assertTrue("Pact was not generated!", outputPactFile.exists())
 
         val outputPact = outputPactFile.readText()
-        val expectedPact = File("src/test/assets/$expectedPact").readText()
-        Assert.assertEquals("Generated pact does not match expectations!", expectedPact, outputPact)
+        val expectedPactJson = File("src/test/assets/$expectedPact").readText()
+        val gson = GsonBuilder()
+            .setPrettyPrinting()
+            .create()
+        val expectedPactTree = gson.fromJson<JsonObject>(expectedPactJson, JsonObject::class.java)
+        expectedPactTree.getAsJsonObject("metadata").getAsJsonObject("pact-laminat-android").addProperty("version", BuildConfig.VERSION_NAME)
+        val expectedPactString = gson.toJson(expectedPactTree)
+
+        Assert.assertEquals("Generated pact does not match expectations!", expectedPactString, outputPact)
+    }
+
+    private inline fun <reified T> Map<*, *>.checkedField(key: String): T {
+        val entry = this[key]
+        Assert.assertNotNull("Could not find field for key $key!", entry)
+        Assert.assertTrue("Field at $key is not of expected type!", entry is T)
+        return entry as T
     }
 
     @Test(expected = PactMergeException::class)

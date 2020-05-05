@@ -13,8 +13,9 @@ import java.math.BigDecimal
 import java.util.*
 
 /**
- * DSL to define a JSON array
+ * DSL to define a JSON array.
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class PactDslJsonArray @JvmOverloads constructor(rootPath: String = "", rootName: String = "", parent: DslPart = DslRootStub, private val wildCard: Boolean = false) :
     DslPart(parent, rootPath, rootName) {
     override var body: JSONArray = JSONArray()
