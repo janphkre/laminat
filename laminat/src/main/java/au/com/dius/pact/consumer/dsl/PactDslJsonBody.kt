@@ -32,10 +32,10 @@ import java.util.regex.Pattern
 /**
  * DSL to define a JSON Object
  */
-class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: DslPart? = null) : DslPart(parent, rootPath, rootName) {
+class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: DslPart = DslRootStub) : DslPart(parent, rootPath, rootName) {
 
     private val EXAMPLE = "Example \""
-    private var body = JSONObject()
+    override var body = JSONObject()
 
     override fun putObject(`object`: DslPart) {
         for (matcherName in `object`.matchers.matchingRules.keys) {
@@ -69,21 +69,13 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         }
     }
 
-    override fun getBody(): Any {
-        return body
-    }
-
     /**
      * Attribute that must be the specified value
      * @param name attribute name
      * @param value string value
      */
     fun stringValue(name: String, value: String?): PactDslJsonBody {
-        if (value == null) {
-            body.put(name, JSONObject.NULL)
-        } else {
-            body.put(name, value)
-        }
+        body.put(name, value ?: JSONObject.NULL)
         return this
     }
 
@@ -103,7 +95,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param value boolean value
      */
     fun booleanValue(name: String, value: Boolean?): PactDslJsonBody {
-        body.put(name, value!!)
+        body.put(name, value ?: JSONObject.NULL)
         return this
     }
 
@@ -183,7 +175,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      */
     fun integerType(name: String): PactDslJsonBody {
         generators.addGenerator(Category.BODY, matcherKey(name), RandomIntGenerator(0, Integer.MAX_VALUE))
-        return integerType(name, 100 as Int)
+        return integerType(name, 100)
     }
 
     /**
@@ -202,8 +194,8 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param name attribute name
      * @param number example integer value to use for generated bodies
      */
-    fun integerType(name: String, number: Long?): PactDslJsonBody {
-        body.put(name, number!!)
+    fun integerType(name: String, number: Long): PactDslJsonBody {
+        body.put(name, number)
         matchers.addRule(matcherKey(name), NumberTypeMatcher(NumberTypeMatcher.NumberType.INTEGER))
         return this
     }
@@ -213,8 +205,8 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param name attribute name
      * @param number example integer value to use for generated bodies
      */
-    fun integerType(name: String, number: Int?): PactDslJsonBody {
-        body.put(name, number!!)
+    fun integerType(name: String, number: Int): PactDslJsonBody {
+        body.put(name, number)
         matchers.addRule(matcherKey(name), NumberTypeMatcher(NumberTypeMatcher.NumberType.INTEGER))
         return this
     }
@@ -516,9 +508,12 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
     /**
      * Closes the current JSON object
      */
-    override fun closeObject(): DslPart? {
-        parent?.putObject(this)
+    override fun closeObject(): DslPart {
         closed = true
+        if (parent == DslRootStub)  {
+            return DslRootStub
+        }
+        parent.putObject(this)
         return parent
     }
 
@@ -526,7 +521,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         var parentToReturn: DslPart = this
         if (!closed) {
             var parent = closeObject()
-            while (parent != null) {
+            while (parent != DslRootStub) {
                 parentToReturn = parent
                 if (parent is PactDslJsonArray) {
                     parent = parent.closeArray()
@@ -641,7 +636,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         return minArrayLike(name, size, size)
     }
 
-    override fun minArrayLike(size: Int?): PactDslJsonBody {
+    override fun minArrayLike(size: Int): PactDslJsonBody {
         throw UnsupportedOperationException("use the minArrayLike(String name, Integer size) form")
     }
 
@@ -1030,11 +1025,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param rules Matching rules to apply
      */
     fun and(name: String, value: Any?, vararg rules: MatchingRule): PactDslJsonBody {
-        if (value != null) {
-            body.put(name, value)
-        } else {
-            body.put(name, JSONObject.NULL)
-        }
+        body.put(name, value?: JSONObject.NULL)
         matchers.setRules(matcherKey(name), MatchingRuleGroup(Arrays.asList(*rules), RuleLogic.AND))
         return this
     }
@@ -1046,11 +1037,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param rules Matching rules to apply
      */
     fun or(name: String, value: Any?, vararg rules: MatchingRule): PactDslJsonBody {
-        if (value != null) {
-            body.put(name, value)
-        } else {
-            body.put(name, JSONObject.NULL)
-        }
+        body.put(name, value?: JSONObject.NULL)
         matchers.setRules(matcherKey(name), MatchingRuleGroup(Arrays.asList(*rules), RuleLogic.OR))
         return this
     }

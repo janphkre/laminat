@@ -168,8 +168,8 @@ class PactDslResponse(private val consumerPactBuilder: ConsumerPactBuilder, priv
     /**
      * Match a response header.
      *
-     * @param header        Header to match
-     * @param regexp        Regular expression to match
+     * @param header Header to match
+     * @param regexp Regular expression to match
      * @param headerExample Example value to use
      */
     /**
@@ -225,7 +225,7 @@ class PactDslResponse(private val consumerPactBuilder: ConsumerPactBuilder, priv
      * Adds a provider state to this interaction
      * @param state Description of the state
      */
-    fun given(state: String?): PactDslWithState {
+    fun given(state: String): PactDslWithState {
         addInteraction()
         return PactDslWithState(
             consumerPactBuilder, request.consumer.name, request.provider.name,
@@ -238,12 +238,11 @@ class PactDslResponse(private val consumerPactBuilder: ConsumerPactBuilder, priv
      * @param state Description of the state
      * @param params Data parameters for this state
      */
-    fun given(state: String?, params: Map<String?, Any?>?): PactDslWithState {
+    fun given(state: String, params: Map<String, Any>): PactDslWithState {
         addInteraction()
         return PactDslWithState(
             consumerPactBuilder, request.consumer.name, request.provider.name,
-            ProviderState(state!!, params)
+            ProviderState(state, params)
         )
     }
-
 }

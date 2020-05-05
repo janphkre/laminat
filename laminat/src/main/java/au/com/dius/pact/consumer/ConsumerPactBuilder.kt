@@ -17,13 +17,13 @@ class ConsumerPactBuilder(val consumerName: String) {
      * Returns the name of the consumer
      * @return consumer name
      */
-    val interactions: List<RequestResponseInteraction> = ArrayList()
+    val interactions: MutableList<RequestResponseInteraction> = ArrayList()
 
     /**
      * Name the provider that the consumer has a au.com.dius.pact with
      * @param provider provider name
      */
-    fun hasPactWith(provider: String?): PactDslWithProvider {
+    fun hasPactWith(provider: String): PactDslWithProvider {
         return PactDslWithProvider(this, provider)
     }
 
@@ -51,5 +51,4 @@ class ConsumerPactBuilder(val consumerName: String) {
             return result.writer.toString()
         }
     }
-
 }

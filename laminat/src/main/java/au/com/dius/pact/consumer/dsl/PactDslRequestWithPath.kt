@@ -33,7 +33,7 @@ class PactDslRequestWithPath {
     var requestMethod = "GET"
     @JvmField
     var requestHeaders: MutableMap<String, String> = HashMap()
-    var query: Map<String, List<String>> = HashMap()
+    var query: MutableMap<String, List<String>> = HashMap()
     @JvmField
     var requestBody = missing()
     @JvmField
@@ -47,10 +47,10 @@ class PactDslRequestWithPath {
         providerName: String?,
         state: List<ProviderState>,
         description: String,
-        path: String,
-        requestMethod: String,
+        path: String?,
+        requestMethod: String?,
         requestHeaders: MutableMap<String, String>,
-        query: Map<String, List<String>>,
+        query: MutableMap<String, List<String>>,
         requestBody: OptionalBody,
         requestMatchers: MatchingRules,
         requestGenerators: Generators
@@ -61,8 +61,8 @@ class PactDslRequestWithPath {
         provider = Provider(providerName!!)
         this.state = state
         this.description = description
-        this.path = path
-        this.requestMethod = requestMethod
+        this.path = path ?: this.path
+        this.requestMethod = requestMethod ?: this.requestMethod
         this.requestHeaders = requestHeaders
         this.query = query
         this.requestBody = requestBody
@@ -95,8 +95,8 @@ class PactDslRequestWithPath {
     /**
      * Headers to be included in the request
      *
-     * @param firstHeaderName      The name of the first header
-     * @param firstHeaderValue     The value of the first header
+     * @param firstHeaderName The name of the first header
+     * @param firstHeaderValue The value of the first header
      * @param headerNameValuePairs Additional headers in name-value pairs.
      */
     fun headers(firstHeaderName: String, firstHeaderValue: String, vararg headerNameValuePairs: String): PactDslRequestWithPath {
@@ -257,7 +257,7 @@ class PactDslRequestWithPath {
     /**
      * The path of the request
      *
-     * @param path      string path to use when generating requests
+     * @param path string path to use when generating requests
      * @param pathRegex regular expression to use to match paths
      */
     /**
@@ -274,15 +274,15 @@ class PactDslRequestWithPath {
     /**
      * Match a request header.
      *
-     * @param header        Header to match
-     * @param regex         Regular expression to match
+     * @param header Header to match
+     * @param regex Regular expression to match
      * @param headerExample Example value to use
      */
     /**
      * Match a request header. A random example header value will be generated from the provided regular expression.
      *
      * @param header Header to match
-     * @param regex  Regular expression to match
+     * @param regex Regular expression to match
      */
     @JvmOverloads
     fun matchHeader(header: String, regex: String?, headerExample: String = Generex(regex).random()): PactDslRequestWithPath {

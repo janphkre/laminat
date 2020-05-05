@@ -13,7 +13,7 @@ import java.math.BigDecimal
 import java.util.*
 
 class PactDslJsonRootValue : DslPart("", "") {
-    private var value: Any? = null
+    private var value: Any = JSONObject.NULL
     /**
      * If the value should be encoded to be safe as JSON
      */
@@ -21,190 +21,190 @@ class PactDslJsonRootValue : DslPart("", "") {
      * If the value should be encoded to be safe as JSON
      */
     var isEncodeJson = false
-    override fun putObject(`object`: DslPart?) {
+    override fun putObject(`object`: DslPart) {
         throw UnsupportedOperationException()
     }
 
-    protected override fun putArray(`object`: DslPart?) {
+    override fun putArray(`object`: DslPart) {
         throw UnsupportedOperationException()
     }
 
-    override val body: Any?
+    override val body: Any
         get() = if (isEncodeJson) {
             Gson().toJson(value)
         } else value
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun array(name: String?): PactDslJsonArray? {
+    override fun array(name: String): PactDslJsonArray {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun array(): PactDslJsonArray? {
+    override fun array(): PactDslJsonArray {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun closeArray(): DslPart? {
+    override fun closeArray(): DslPart {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun arrayLike(name: String?): PactDslJsonBody? {
+    override fun arrayLike(name: String): PactDslJsonBody {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun arrayLike(): PactDslJsonBody? {
+    override fun arrayLike(): PactDslJsonBody {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun eachLike(name: String?): PactDslJsonBody? {
+    override fun eachLike(name: String): PactDslJsonBody {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun eachLike(numberExamples: Int): PactDslJsonBody? {
+    override fun eachLike(numberExamples: Int): PactDslJsonBody {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun eachLike(name: String?, numberExamples: Int): PactDslJsonBody? {
+    override fun eachLike(name: String, numberExamples: Int): PactDslJsonBody {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun eachLike(): PactDslJsonBody? {
+    override fun eachLike(): PactDslJsonBody {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun minArrayLike(name: String?, size: Int?): PactDslJsonBody? {
+    override fun minArrayLike(name: String, size: Int): PactDslJsonBody {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun minArrayLike(size: Int?): PactDslJsonBody? {
+    override fun minArrayLike(size: Int): PactDslJsonBody {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun minArrayLike(name: String?, size: Int?, numberExamples: Int): PactDslJsonBody? {
+    override fun minArrayLike(name: String, size: Int, numberExamples: Int): PactDslJsonBody {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun minArrayLike(size: Int?, numberExamples: Int): PactDslJsonBody? {
+    override fun minArrayLike(size: Int, numberExamples: Int): PactDslJsonBody {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun maxArrayLike(name: String?, size: Int?): PactDslJsonBody? {
+    override fun maxArrayLike(name: String, size: Int): PactDslJsonBody {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun maxArrayLike(size: Int?): PactDslJsonBody? {
+    override fun maxArrayLike(size: Int): PactDslJsonBody {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun maxArrayLike(name: String?, size: Int?, numberExamples: Int): PactDslJsonBody? {
+    override fun maxArrayLike(name: String, size: Int, numberExamples: Int): PactDslJsonBody {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun maxArrayLike(size: Int?, numberExamples: Int): PactDslJsonBody? {
+    override fun maxArrayLike(size: Int, numberExamples: Int): PactDslJsonBody {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonBody for objects")
-    override fun `object`(name: String?): PactDslJsonBody? {
+    override fun `object`(name: String): PactDslJsonBody {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_BODY_FOR_OBJECTS)
     }
 
     @Deprecated("Use PactDslJsonBody for objects")
-    override fun `object`(): PactDslJsonBody? {
+    override fun `object`(): PactDslJsonBody {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_BODY_FOR_OBJECTS)
     }
 
     @Deprecated("Use PactDslJsonBody for objects")
-    override fun closeObject(): DslPart? {
+    override fun closeObject(): DslPart {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_BODY_FOR_OBJECTS)
     }
 
-    override fun close(): DslPart? {
+    override fun close(): DslPart {
         matchers.applyMatcherRootPrefix("$")
         generators.applyRootPrefix("$")
         return this
     }
 
     fun setValue(value: Any?) {
-        this.value = value
+        this.value = value ?: JSONObject.NULL
     }
 
-    fun setMatcher(matcher: MatchingRule?) {
-        matchers.addRule(matcher!!)
+    fun setMatcher(matcher: MatchingRule) {
+        matchers.addRule(matcher)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun eachArrayLike(name: String?): PactDslJsonArray? {
+    override fun eachArrayLike(name: String): PactDslJsonArray {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun eachArrayLike(numberExamples: Int): PactDslJsonArray? {
+    override fun eachArrayLike(numberExamples: Int): PactDslJsonArray {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun eachArrayWithMaxLike(name: String?, size: Int?): PactDslJsonArray? {
+    override fun eachArrayWithMaxLike(name: String, size: Int): PactDslJsonArray {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun eachArrayWithMaxLike(size: Int?): PactDslJsonArray? {
+    override fun eachArrayWithMaxLike(size: Int): PactDslJsonArray {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun eachArrayWithMaxLike(name: String?, numberExamples: Int, size: Int?): PactDslJsonArray? {
+    override fun eachArrayWithMaxLike(name: String, numberExamples: Int, size: Int): PactDslJsonArray {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun eachArrayWithMaxLike(numberExamples: Int, size: Int?): PactDslJsonArray? {
+    override fun eachArrayWithMaxLike(numberExamples: Int, size: Int): PactDslJsonArray {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun eachArrayWithMinLike(name: String?, size: Int?): PactDslJsonArray? {
+    override fun eachArrayWithMinLike(name: String, size: Int): PactDslJsonArray {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun eachArrayWithMinLike(size: Int?): PactDslJsonArray? {
+    override fun eachArrayWithMinLike(size: Int): PactDslJsonArray {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun eachArrayWithMinLike(name: String?, numberExamples: Int, size: Int?): PactDslJsonArray? {
+    override fun eachArrayWithMinLike(name: String, numberExamples: Int, size: Int): PactDslJsonArray {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun eachArrayWithMinLike(numberExamples: Int, size: Int?): PactDslJsonArray? {
+    override fun eachArrayWithMinLike(numberExamples: Int, size: Int): PactDslJsonArray {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun eachArrayLike(name: String?, numberExamples: Int): PactDslJsonArray? {
+    override fun eachArrayLike(name: String, numberExamples: Int): PactDslJsonArray {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
-    override fun eachArrayLike(): PactDslJsonArray? {
+    override fun eachArrayLike(): PactDslJsonArray {
         throw UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS)
     }
 
@@ -229,7 +229,7 @@ class PactDslJsonRootValue : DslPart("", "") {
          *
          * @param example example value to use for generated bodies
          */
-        fun stringType(example: String?): PactDslJsonRootValue {
+        fun stringType(example: String): PactDslJsonRootValue {
             val value = PactDslJsonRootValue()
             value.setValue(example)
             value.setMatcher(TypeMatcher)
@@ -284,7 +284,7 @@ class PactDslJsonRootValue : DslPart("", "") {
          * Value that must be an integer
          * @param number example integer value to use for generated bodies
          */
-        fun integerType(number: Int?): PactDslJsonRootValue {
+        fun integerType(number: Int): PactDslJsonRootValue {
             val value = PactDslJsonRootValue()
             value.setValue(number)
             value.setMatcher(NumberTypeMatcher(NumberTypeMatcher.NumberType.INTEGER))
@@ -344,7 +344,7 @@ class PactDslJsonRootValue : DslPart("", "") {
          * @param value example value to use for generated bodies
          */
         fun stringMatcher(regex: String, value: String): PactDslJsonRootValue {
-            if (!value.matches(regex)) {
+            if (!value.matches(Regex(regex))) {
                 throw InvalidMatcherException(
                     EXAMPLE + value + "\" does not match regular expression \"" +
                         regex + "\""
@@ -361,9 +361,9 @@ class PactDslJsonRootValue : DslPart("", "") {
          * @param regex regular expression
          */
         @Deprecated("Use the version that takes an example value")
-        fun stringMatcher(regex: String?): PactDslJsonRootValue {
+        fun stringMatcher(regex: String): PactDslJsonRootValue {
             val rootValue = PactDslJsonRootValue()
-            rootValue.generators.addGenerator(Category.BODY, "", RegexGenerator(regex!!))
+            rootValue.generators.addGenerator(Category.BODY, "", RegexGenerator(regex))
             rootValue.setValue(Generex(regex).random())
             rootValue.setMatcher(rootValue.regexp(regex))
             return rootValue
@@ -376,7 +376,7 @@ class PactDslJsonRootValue : DslPart("", "") {
          * Value that must be an ISO formatted timestamp
          */
         @JvmOverloads
-        fun timestamp(format: String? = DateFormatUtils.ISO_DATETIME_FORMAT.pattern): PactDslJsonRootValue {
+        fun timestamp(format: String = DateFormatUtils.ISO_DATETIME_FORMAT.pattern): PactDslJsonRootValue {
             val value = PactDslJsonRootValue()
             value.generators.addGenerator(Category.BODY, "", DateTimeGenerator(format))
             val instance = FastDateFormat.getInstance(format)
@@ -392,7 +392,7 @@ class PactDslJsonRootValue : DslPart("", "") {
          * @param format timestamp format
          * @param example example date and time to use for generated bodies
          */
-        fun timestamp(format: String?, example: Calendar?): PactDslJsonRootValue {
+        fun timestamp(format: String, example: Calendar?): PactDslJsonRootValue {
             val instance = FastDateFormat.getInstance(format)
             val value = PactDslJsonRootValue()
             value.setValue(instance.format(example))
@@ -407,7 +407,7 @@ class PactDslJsonRootValue : DslPart("", "") {
          * Value that must be formatted as an ISO date
          */
         @JvmOverloads
-        fun date(format: String? = DateFormatUtils.ISO_DATE_FORMAT.pattern): PactDslJsonRootValue {
+        fun date(format: String = DateFormatUtils.ISO_DATE_FORMAT.pattern): PactDslJsonRootValue {
             val instance = FastDateFormat.getInstance(format)
             val value = PactDslJsonRootValue()
             value.generators.addGenerator(Category.BODY, "", DateGenerator(format))
@@ -423,7 +423,7 @@ class PactDslJsonRootValue : DslPart("", "") {
          * @param format date format to match
          * @param example example date to use for generated values
          */
-        fun date(format: String?, example: Calendar?): PactDslJsonRootValue {
+        fun date(format: String, example: Calendar?): PactDslJsonRootValue {
             val instance = FastDateFormat.getInstance(format)
             val value = PactDslJsonRootValue()
             value.setValue(instance.format(example))
@@ -438,7 +438,7 @@ class PactDslJsonRootValue : DslPart("", "") {
          * Value that must be an ISO formatted time
          */
         @JvmOverloads
-        fun time(format: String? = DateFormatUtils.ISO_TIME_FORMAT.pattern): PactDslJsonRootValue {
+        fun time(format: String = DateFormatUtils.ISO_TIME_FORMAT.pattern): PactDslJsonRootValue {
             val instance = FastDateFormat.getInstance(format)
             val value = PactDslJsonRootValue()
             value.generators.addGenerator(Category.BODY, "", TimeGenerator(format))
@@ -454,7 +454,7 @@ class PactDslJsonRootValue : DslPart("", "") {
          * @param format time format to match
          * @param example example time to use for generated bodies
          */
-        fun time(format: String?, example: Calendar?): PactDslJsonRootValue {
+        fun time(format: String, example: Calendar?): PactDslJsonRootValue {
             val instance = FastDateFormat.getInstance(format)
             val value = PactDslJsonRootValue()
             value.setValue(instance.format(example))
@@ -494,7 +494,7 @@ class PactDslJsonRootValue : DslPart("", "") {
             val value = PactDslJsonRootValue()
             value.generators.addGenerator(Category.BODY, "", RandomHexadecimalGenerator(10))
             value.setValue("1234a")
-            value.setMatcher(value.regexp("[0-9a-fA-F]+"))
+            value.setMatcher(value.regexp(HEXADECIMAL))
             return value
         }
 
@@ -503,12 +503,13 @@ class PactDslJsonRootValue : DslPart("", "") {
          * @param hexValue example value to use for generated bodies
          */
         fun hexValue(hexValue: String): PactDslJsonRootValue {
-            if (!hexValue.matches(HEXADECIMAL)) {
+            val pattern = HEXADECIMAL
+            if (!hexValue.matches(Regex(pattern))) {
                 throw InvalidMatcherException("$EXAMPLE$hexValue\" is not a hexadecimal value")
             }
             val value = PactDslJsonRootValue()
             value.setValue(hexValue)
-            value.setMatcher(value.regexp("[0-9a-fA-F]+"))
+            value.setMatcher(value.regexp(pattern))
             return value
         }
 
@@ -536,7 +537,7 @@ class PactDslJsonRootValue : DslPart("", "") {
          * @param uuid example UUID to use for generated bodies
          */
         fun uuid(uuid: String): PactDslJsonRootValue {
-            if (!uuid.matches(UUID_REGEX)) {
+            if (!uuid.matches(Regex(UUID_REGEX))) {
                 throw InvalidMatcherException("$EXAMPLE$uuid\" is not an UUID")
             }
             val value = PactDslJsonRootValue()

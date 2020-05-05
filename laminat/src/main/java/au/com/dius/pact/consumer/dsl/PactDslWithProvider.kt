@@ -11,7 +11,7 @@ class PactDslWithProvider(private val consumerPactBuilder: ConsumerPactBuilder, 
      *
      * @param state Provider state
      */
-    fun given(state: String?): PactDslWithState {
+    fun given(state: String): PactDslWithState {
         return PactDslWithState(
             consumerPactBuilder, consumerPactBuilder.consumerName, providerName,
             ProviderState(state)
@@ -24,10 +24,10 @@ class PactDslWithProvider(private val consumerPactBuilder: ConsumerPactBuilder, 
      * @param state Provider state
      * @param params Data parameters for the state
      */
-    fun given(state: String?, params: Map<String?, Any?>?): PactDslWithState {
+    fun given(state: String, params: Map<String, Any>): PactDslWithState {
         return PactDslWithState(
             consumerPactBuilder, consumerPactBuilder.consumerName, providerName,
-            ProviderState(state!!, params)
+            ProviderState(state, params)
         )
     }
 
@@ -58,9 +58,8 @@ class PactDslWithProvider(private val consumerPactBuilder: ConsumerPactBuilder, 
      *
      * @param description request description
      */
-    fun uponReceiving(description: String?): PactDslRequestWithoutPath {
+    fun uponReceiving(description: String): PactDslRequestWithoutPath {
         return PactDslWithState(consumerPactBuilder, consumerPactBuilder.consumerName, providerName)
             .uponReceiving(description)
     }
-
 }

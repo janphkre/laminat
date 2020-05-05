@@ -22,7 +22,7 @@ class PactDslRequestWithoutPath(
 ) {
     private var requestMethod: String? = null
     private var requestHeaders: MutableMap<String, String> = HashMap()
-    private var query: Map<String, List<String>> = HashMap()
+    private var query: MutableMap<String, List<String>> = HashMap()
     private var requestBody = missing()
     private val requestMatchers = MatchingRules()
     private val requestGenerators = Generators()
@@ -52,8 +52,8 @@ class PactDslRequestWithoutPath(
     /**
      * Headers to be included in the request
      *
-     * @param firstHeaderName      The name of the first header
-     * @param firstHeaderValue     The value of the first header
+     * @param firstHeaderName The name of the first header
+     * @param firstHeaderValue The value of the first header
      * @param headerNameValuePairs Additional headers in name-value pairs.
      */
     fun headers(firstHeaderName: String, firstHeaderValue: String, vararg headerNameValuePairs: String): PactDslRequestWithoutPath {
@@ -206,7 +206,7 @@ class PactDslRequestWithoutPath(
     /**
      * The path of the request
      *
-     * @param path      string path to use when generating requests
+     * @param path string path to use when generating requests
      * @param pathRegex regular expression to use to match paths
      */
     /**

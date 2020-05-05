@@ -5,7 +5,7 @@ import java.net.URLDecoder
 
 object PactReader {
 
-    fun queryStringToMap(query: String?, decode: Boolean = true): Map<String, List<String>> {
+    fun queryStringToMap(query: String?, decode: Boolean = true): MutableMap<String, List<String>> {
         return query?.split('&')?.asSequence()?.map {
             it.split('=', limit = 2)
         }?.fold(HashMap()) { map, nameAndValue ->
@@ -17,6 +17,6 @@ object PactReader {
                 map[name] = mutableListOf(value)
             }
             map
-        } ?: emptyMap()
+        } ?: HashMap()
     }
 }
