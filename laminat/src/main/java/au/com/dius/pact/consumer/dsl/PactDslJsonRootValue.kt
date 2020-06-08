@@ -1,17 +1,32 @@
 package au.com.dius.pact.consumer.dsl
 
 import au.com.dius.pact.consumer.InvalidMatcherException
-import au.com.dius.pact.model.generators.*
 import au.com.dius.pact.model.generators.Category
-import au.com.dius.pact.model.matchingrules.*
+import au.com.dius.pact.model.generators.DateGenerator
+import au.com.dius.pact.model.generators.DateTimeGenerator
+import au.com.dius.pact.model.generators.RandomDecimalGenerator
+import au.com.dius.pact.model.generators.RandomHexadecimalGenerator
+import au.com.dius.pact.model.generators.RandomIntGenerator
+import au.com.dius.pact.model.generators.RandomStringGenerator
+import au.com.dius.pact.model.generators.RegexGenerator
+import au.com.dius.pact.model.generators.TimeGenerator
+import au.com.dius.pact.model.generators.UuidGenerator
+import au.com.dius.pact.model.matchingrules.MatchingRule
+import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
+import au.com.dius.pact.model.matchingrules.NullMatcher
+import au.com.dius.pact.model.matchingrules.NumberTypeMatcher
+import au.com.dius.pact.model.matchingrules.RuleLogic
+import au.com.dius.pact.model.matchingrules.TypeMatcher
 import com.google.gson.Gson
 import com.mifmif.common.regex.Generex
 import org.apache.commons.lang3.time.DateFormatUtils
 import org.apache.commons.lang3.time.FastDateFormat
 import org.json.JSONObject
 import java.math.BigDecimal
-import java.util.*
+import java.util.Calendar
+import java.util.UUID
 
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class PactDslJsonRootValue : DslPart("", "") {
     private var value: Any? = null
     /**
@@ -327,9 +342,6 @@ class PactDslJsonRootValue : DslPart("", "") {
          * Value that must be a boolean
          * @param example example boolean to use for generated bodies
          */
-        /**
-         * Value that must be a boolean
-         */
         @JvmOverloads
         fun booleanType(example: Boolean? = true): PactDslJsonRootValue {
             val value = PactDslJsonRootValue()
@@ -372,9 +384,6 @@ class PactDslJsonRootValue : DslPart("", "") {
          * Value that must match the given timestamp format
          * @param format timestamp format
          */
-        /**
-         * Value that must be an ISO formatted timestamp
-         */
         @JvmOverloads
         fun timestamp(format: String = DateFormatUtils.ISO_DATETIME_FORMAT.pattern): PactDslJsonRootValue {
             val value = PactDslJsonRootValue()
@@ -403,9 +412,6 @@ class PactDslJsonRootValue : DslPart("", "") {
          * Value that must match the provided date format
          * @param format date format to match
          */
-        /**
-         * Value that must be formatted as an ISO date
-         */
         @JvmOverloads
         fun date(format: String = DateFormatUtils.ISO_DATE_FORMAT.pattern): PactDslJsonRootValue {
             val instance = FastDateFormat.getInstance(format)
@@ -433,9 +439,6 @@ class PactDslJsonRootValue : DslPart("", "") {
         /**
          * Value that must match the given time format
          * @param format time format to match
-         */
-        /**
-         * Value that must be an ISO formatted time
          */
         @JvmOverloads
         fun time(format: String = DateFormatUtils.ISO_TIME_FORMAT.pattern): PactDslJsonRootValue {
@@ -551,14 +554,14 @@ class PactDslJsonRootValue : DslPart("", "") {
          * @param example Attribute example value
          * @param rules Matching rules to apply
          */
-        fun and(example: Any?, vararg rules: MatchingRule?): PactDslJsonRootValue {
+        fun and(example: Any?, vararg rules: MatchingRule): PactDslJsonRootValue {
             val value = PactDslJsonRootValue()
             if (example != null) {
                 value.setValue(example)
             } else {
                 value.setValue(JSONObject.NULL)
             }
-            value.matchers.setRules("", MatchingRuleGroup(Arrays.asList(*rules), RuleLogic.AND))
+            value.matchers.setRules("", MatchingRuleGroup(mutableListOf(*rules), RuleLogic.AND))
             return value
         }
 
@@ -567,14 +570,14 @@ class PactDslJsonRootValue : DslPart("", "") {
          * @param example Attribute name
          * @param rules Matching rules to apply
          */
-        fun or(example: Any?, vararg rules: MatchingRule?): PactDslJsonRootValue {
+        fun or(example: Any?, vararg rules: MatchingRule): PactDslJsonRootValue {
             val value = PactDslJsonRootValue()
             if (example != null) {
                 value.setValue(example)
             } else {
                 value.setValue(JSONObject.NULL)
             }
-            value.matchers.setRules("", MatchingRuleGroup(Arrays.asList(*rules), RuleLogic.OR))
+            value.matchers.setRules("", MatchingRuleGroup(mutableListOf(*rules), RuleLogic.OR))
             return value
         }
 
@@ -591,7 +594,7 @@ class PactDslJsonRootValue : DslPart("", "") {
             return value
         }
         /**
-         * Matches a URL that is composed of a base path and a sequence of path expressions
+         * TODO! Matches a URL that is composed of a base path and a sequence of path expressions
          * @param basePath The base path for the URL (like "http://localhost:8080/") which will be excluded from the matching
          * @param pathFragments Series of path fragments to match on. These can be strings or regular expressions.
          */

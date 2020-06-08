@@ -2,10 +2,10 @@ package au.com.dius.pact.consumer.dsl
 
 import au.com.dius.pact.consumer.ConsumerPactBuilder
 import au.com.dius.pact.model.ProviderState
-import java.util.*
 
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class PactDslWithState internal constructor(private val consumerPactBuilder: ConsumerPactBuilder, var consumerName: String, var providerName: String) {
-    var state: MutableList<ProviderState>
+    var state: MutableList<ProviderState> = ArrayList()
 
     internal constructor(consumerPactBuilder: ConsumerPactBuilder, consumerName: String, providerName: String, state: ProviderState) : this(
         consumerPactBuilder,
@@ -41,9 +41,5 @@ class PactDslWithState internal constructor(private val consumerPactBuilder: Con
     fun given(stateDesc: String, params: Map<String, Any>): PactDslWithState {
         state.add(ProviderState(stateDesc, params))
         return this
-    }
-
-    init {
-        state = ArrayList()
     }
 }

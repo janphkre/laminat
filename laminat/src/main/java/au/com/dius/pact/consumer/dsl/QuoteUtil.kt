@@ -18,15 +18,15 @@ object QuoteUtil {
      */
     fun convert(text: String): String {
         val builder = StringBuilder()
-        var single_context = false
+        var singleContext = false
         var i = 0
         while (i < text.length) {
             var ch = text[i]
             if (ch == '\\') {
-                i = i + 1
+                i += 1
                 if (i < text.length) {
                     ch = text[i]
-                    if (!(single_context && ch == '\'')) {
+                    if (!(singleContext && ch == '\'')) {
                         // unescape ' inside single quotes
                         builder.append('\\')
                     }
@@ -34,7 +34,7 @@ object QuoteUtil {
             } else if (ch == '\'') {
                 // Turn ' into ", for proper string
                 ch = '"'
-                single_context = !single_context
+                singleContext = !singleContext
             }
             builder.append(ch)
             i++

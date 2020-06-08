@@ -1,16 +1,29 @@
 package au.com.dius.pact.consumer.dsl
 
 import au.com.dius.pact.consumer.InvalidMatcherException
-import au.com.dius.pact.model.generators.*
 import au.com.dius.pact.model.generators.Category
-import au.com.dius.pact.model.matchingrules.*
+import au.com.dius.pact.model.generators.DateGenerator
+import au.com.dius.pact.model.generators.DateTimeGenerator
+import au.com.dius.pact.model.generators.RandomBooleanGenerator
+import au.com.dius.pact.model.generators.RandomDecimalGenerator
+import au.com.dius.pact.model.generators.RandomHexadecimalGenerator
+import au.com.dius.pact.model.generators.RandomIntGenerator
+import au.com.dius.pact.model.generators.RandomStringGenerator
+import au.com.dius.pact.model.generators.TimeGenerator
+import au.com.dius.pact.model.generators.UuidGenerator
+import au.com.dius.pact.model.matchingrules.EqualsMatcher
+import au.com.dius.pact.model.matchingrules.MatchingRule
+import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
+import au.com.dius.pact.model.matchingrules.NumberTypeMatcher
+import au.com.dius.pact.model.matchingrules.RuleLogic
+import au.com.dius.pact.model.matchingrules.TypeMatcher
 import com.mifmif.common.regex.Generex
 import org.apache.commons.lang3.time.DateFormatUtils
 import org.apache.commons.lang3.time.FastDateFormat
 import org.json.JSONArray
 import org.json.JSONObject
 import java.math.BigDecimal
-import java.util.*
+import java.util.Calendar
 
 /**
  * DSL to define a JSON array.
@@ -36,7 +49,7 @@ class PactDslJsonArray @JvmOverloads constructor(rootPath: String = "", rootName
         return parent
     }
 
-    @Deprecated("")
+    @Deprecated("Use eachLike instead", ReplaceWith("eachLike"))
     override fun arrayLike(name: String): PactDslJsonBody {
         throw UnsupportedOperationException("use the eachLike() form")
     }
@@ -44,7 +57,7 @@ class PactDslJsonArray @JvmOverloads constructor(rootPath: String = "", rootName
     /**
      * Element that is an array where each item must match the following example
      */
-    @Deprecated("use eachLike")
+    @Deprecated("Use eachLike", ReplaceWith("eachLike"))
     override fun arrayLike(): PactDslJsonBody {
         return eachLike()
     }
@@ -265,7 +278,7 @@ class PactDslJsonArray @JvmOverloads constructor(rootPath: String = "", rootName
     /**
      * Element that must be a real value
      */
-    @Deprecated("Use decimalType instead")
+    @Deprecated("Use decimalType instead", ReplaceWith("decimalType"))
     fun realType(): PactDslJsonArray {
         return decimalType()
     }
@@ -274,7 +287,7 @@ class PactDslJsonArray @JvmOverloads constructor(rootPath: String = "", rootName
      * Element that must be a real value
      * @param number example real value
      */
-    @Deprecated("Use decimalType instead")
+    @Deprecated("Use decimalType instead", ReplaceWith("decimalType"))
     fun realType(number: Double?): PactDslJsonArray {
         return decimalType(number)
     }
@@ -329,7 +342,7 @@ class PactDslJsonArray @JvmOverloads constructor(rootPath: String = "", rootName
 
     /**
      * Element that must match the regular expression
-     * @param regex regular expression
+     * @param pattern regular expression
      * @param value example value to use for generated bodies
      */
     fun stringMatcher(pattern: String, value: String): PactDslJsonArray {
@@ -570,7 +583,7 @@ class PactDslJsonArray @JvmOverloads constructor(rootPath: String = "", rootName
     /**
      * Element that must be encoded as a GUID
      */
-    @Deprecated("use uuid instead")
+    @Deprecated("use uuid instead", ReplaceWith("uuid"))
     fun guid(): PactDslJsonArray {
         return uuid()
     }
@@ -579,7 +592,7 @@ class PactDslJsonArray @JvmOverloads constructor(rootPath: String = "", rootName
      * Element that must be encoded as a GUID
      * @param uuid example UUID to use for generated bodies
      */
-    @Deprecated("use uuid instead")
+    @Deprecated("use uuid instead", ReplaceWith("uuid"))
     fun guid(uuid: String): PactDslJsonArray {
         return uuid(uuid)
     }
@@ -711,14 +724,11 @@ class PactDslJsonArray @JvmOverloads constructor(rootPath: String = "", rootName
         parent.numberExamples = numberExamples
         return PactDslJsonArray("", "", parent)
     }
+
     /**
      * Array of values that are not objects where each item must match the provided example
      * @param value Value to use to match each item
      * @param numberExamples number of examples to generate
-     */
-    /**
-     * Array of values that are not objects where each item must match the provided example
-     * @param value Value to use to match each item
      */
     @JvmOverloads
     fun eachLike(value: PactDslJsonRootValue, numberExamples: Int = 1): PactDslJsonArray {
@@ -728,16 +738,12 @@ class PactDslJsonArray @JvmOverloads constructor(rootPath: String = "", rootName
         parent.putObject(value)
         return parent.closeArray() as PactDslJsonArray
     }
+
     /**
      * Array of values with a minimum size that are not objects where each item must match the provided example
      * @param size minimum size of the array
      * @param value Value to use to match each item
      * @param numberExamples number of examples to generate
-     */
-    /**
-     * Array of values with a minimum size that are not objects where each item must match the provided example
-     * @param size minimum size of the array
-     * @param value Value to use to match each item
      */
     @JvmOverloads
     fun minArrayLike(size: Int, value: PactDslJsonRootValue, numberExamples: Int = size): PactDslJsonArray {
@@ -753,16 +759,12 @@ class PactDslJsonArray @JvmOverloads constructor(rootPath: String = "", rootName
         parent.putObject(value)
         return parent.closeArray() as PactDslJsonArray
     }
+
     /**
      * Array of values with a maximum size that are not objects where each item must match the provided example
      * @param size maximum size of the array
      * @param value Value to use to match each item
      * @param numberExamples number of examples to generate
-     */
-    /**
-     * Array of values with a maximum size that are not objects where each item must match the provided example
-     * @param size maximum size of the array
-     * @param value Value to use to match each item
      */
     @JvmOverloads
     fun maxArrayLike(size: Int, value: PactDslJsonRootValue, numberExamples: Int = 1): PactDslJsonArray {
@@ -804,9 +806,9 @@ class PactDslJsonArray @JvmOverloads constructor(rootPath: String = "", rootName
      * @param value Attribute example value
      * @param rules Matching rules to apply
      */
-    fun and(value: Any?, vararg rules: MatchingRule?): PactDslJsonArray {
+    fun and(value: Any?, vararg rules: MatchingRule): PactDslJsonArray {
         body.put(value ?: JSONObject.NULL)
-        matchers.setRules(rootPath + appendArrayIndex(0), MatchingRuleGroup(Arrays.asList(*rules), RuleLogic.AND))
+        matchers.setRules(rootPath + appendArrayIndex(0), MatchingRuleGroup(mutableListOf(*rules), RuleLogic.AND))
         return this
     }
 
@@ -815,14 +817,14 @@ class PactDslJsonArray @JvmOverloads constructor(rootPath: String = "", rootName
      * @param value Attribute example value
      * @param rules Matching rules to apply
      */
-    fun or(value: Any?, vararg rules: MatchingRule?): PactDslJsonArray {
+    fun or(value: Any?, vararg rules: MatchingRule): PactDslJsonArray {
         body.put(value ?: JSONObject.NULL)
-        matchers.setRules(rootPath + appendArrayIndex(0), MatchingRuleGroup(Arrays.asList(*rules), RuleLogic.OR))
+        matchers.setRules(rootPath + appendArrayIndex(0), MatchingRuleGroup(mutableListOf(*rules), RuleLogic.OR))
         return this
     }
 
     /**
-     * Matches a URL that is composed of a base path and a sequence of path expressions
+     * TODO:Matches a URL that is composed of a base path and a sequence of path expressions
      * @param basePath The base path for the URL (like "http://localhost:8080/") which will be excluded from the matching
      * @param pathFragments Series of path fragments to match on. These can be strings or regular expressions.
      */
@@ -832,14 +834,13 @@ class PactDslJsonArray @JvmOverloads constructor(rootPath: String = "", rootName
     matchers.addRule(rootPath + appendArrayIndex(0), regexp(urlMatcher.getRegexExpression()));
     return this;
   }*/
+
     companion object {
         private const val EXAMPLE = "Example \""
+
         /**
          * Array where each item must match the following example
          * @param numberExamples Number of examples to generate
-         */
-        /**
-         * Array where each item must match the following example
          */
         @JvmOverloads
         fun arrayEachLike(numberExamples: Int = 1): PactDslJsonBody {
@@ -867,14 +868,11 @@ class PactDslJsonArray @JvmOverloads constructor(rootPath: String = "", rootName
             parent.putObject(value)
             return parent
         }
+
         /**
          * Array with a minimum size where each item must match the following example
          * @param minSize minimum size
          * @param numberExamples Number of examples to generate
-         */
-        /**
-         * Array with a minimum size where each item must match the following example
-         * @param minSize minimum size
          */
         @JvmOverloads
         fun arrayMinLike(minSize: Int, numberExamples: Int = minSize): PactDslJsonBody {
@@ -916,14 +914,11 @@ class PactDslJsonArray @JvmOverloads constructor(rootPath: String = "", rootName
             parent.putObject(value)
             return parent
         }
+
         /**
          * Array with a maximum size where each item must match the following example
          * @param maxSize maximum size
          * @param numberExamples Number of examples to generate
-         */
-        /**
-         * Array with a maximum size where each item must match the following example
-         * @param maxSize maximum size
          */
         @JvmOverloads
         fun arrayMaxLike(maxSize: Int, numberExamples: Int = 1): PactDslJsonBody {
@@ -965,9 +960,5 @@ class PactDslJsonArray @JvmOverloads constructor(rootPath: String = "", rootName
             parent.putObject(value)
             return parent
         }
-    }
-
-    init {
-        body = JSONArray()
     }
 }

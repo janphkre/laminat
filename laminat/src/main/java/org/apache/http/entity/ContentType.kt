@@ -40,7 +40,7 @@ import org.apache.http.util.Args.check
 import org.apache.http.util.Args.notBlank
 import java.io.Serializable
 import java.nio.charset.Charset
-import java.util.*
+import java.util.Locale
 
 /**
  * Content type information consisting of a MIME type and an optional charset.
@@ -52,6 +52,7 @@ import java.util.*
  *
  * @since 4.2
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class ContentType internal constructor(
     val mimeType: String,
     private val charset: Charset?
@@ -143,6 +144,7 @@ class ContentType internal constructor(
         // defaults
         val DEFAULT_TEXT = TEXT_PLAIN
         val DEFAULT_BINARY = APPLICATION_OCTET_STREAM
+
         private fun valid(s: String): Boolean {
             for (element in s) {
                 if (element == '"' || element == ',' || element == ';') {
@@ -151,6 +153,7 @@ class ContentType internal constructor(
             }
             return true
         }
+
         /**
          * Creates a new instance of [ContentType].
          *
@@ -159,18 +162,10 @@ class ContentType internal constructor(
          * @param charset charset.
          * @return content type
          */
-        /**
-         * Creates a new instance of [ContentType] without a charset.
-         *
-         * @param mimeType MIME type. It may not be `null` or empty. It may not contain
-         * characters `<">, <;>, <,>` reserved by the HTTP specification.
-         * @return content type
-         */
         private fun create(mimeType: String, charset: Charset? = null): ContentType {
             val normalizedMimeType = notBlank(mimeType, "MIME type").toLowerCase(Locale.ROOT)
             check(valid(normalizedMimeType), "MIME type may not contain reserved characters")
             return ContentType(normalizedMimeType, charset)
         }
     }
-
 }

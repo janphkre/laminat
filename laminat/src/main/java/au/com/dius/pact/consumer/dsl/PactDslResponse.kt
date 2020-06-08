@@ -2,9 +2,14 @@ package au.com.dius.pact.consumer.dsl
 
 import au.com.dius.pact.consumer.ConsumerPactBuilder
 import au.com.dius.pact.consumer.ConsumerPactBuilder.Companion.xmlToString
-import au.com.dius.pact.model.*
+import au.com.dius.pact.model.OptionalBody
 import au.com.dius.pact.model.OptionalBody.Companion.missing
 import au.com.dius.pact.model.OptionalBody.Companion.nullBody
+import au.com.dius.pact.model.ProviderState
+import au.com.dius.pact.model.Request
+import au.com.dius.pact.model.RequestResponseInteraction
+import au.com.dius.pact.model.RequestResponsePact
+import au.com.dius.pact.model.Response
 import au.com.dius.pact.model.generators.Generators
 import au.com.dius.pact.model.matchingrules.MatchingRules
 import au.com.dius.pact.model.matchingrules.RegexMatcher
@@ -12,9 +17,9 @@ import com.mifmif.common.regex.Generex
 import org.apache.http.entity.ContentType
 import org.json.JSONObject
 import org.w3c.dom.Document
-import java.util.*
 import javax.xml.transform.TransformerException
 
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class PactDslResponse(private val consumerPactBuilder: ConsumerPactBuilder, private val request: PactDslRequestWithPath) {
     private var responseStatus = 200
     private val responseHeaders: MutableMap<String, String> = HashMap()
@@ -83,11 +88,7 @@ class PactDslResponse(private val consumerPactBuilder: ConsumerPactBuilder, priv
      * @param body Request body in string form
      */
     fun bodyWithSingleQuotes(body: String?): PactDslResponse {
-        var body = body
-        if (body != null) {
-            body = QuoteUtil.convert(body)
-        }
-        return body(body)
+        return body(body?.let { QuoteUtil.convert(it) })
     }
 
     /**
@@ -98,11 +99,7 @@ class PactDslResponse(private val consumerPactBuilder: ConsumerPactBuilder, priv
      * @param mimeType the Content-Type response header value
      */
     fun bodyWithSingleQuotes(body: String?, mimeType: String): PactDslResponse {
-        var body = body
-        if (body != null) {
-            body = QuoteUtil.convert(body)
-        }
-        return body(body, mimeType)
+        return body(body?.let { QuoteUtil.convert(it) }, mimeType)
     }
 
     /**
@@ -165,18 +162,13 @@ class PactDslResponse(private val consumerPactBuilder: ConsumerPactBuilder, priv
         }
         return this
     }
+
     /**
      * Match a response header.
      *
      * @param header Header to match
      * @param regexp Regular expression to match
      * @param headerExample Example value to use
-     */
-    /**
-     * Match a response header. A random example header value will be generated from the provided regular expression.
-     *
-     * @param header Header to match
-     * @param regexp Regular expression to match
      */
     @JvmOverloads
     fun matchHeader(header: String, regexp: String?, headerExample: String = Generex(regexp).random()): PactDslResponse {

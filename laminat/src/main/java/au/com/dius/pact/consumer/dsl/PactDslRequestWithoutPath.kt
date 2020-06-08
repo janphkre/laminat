@@ -12,9 +12,9 @@ import com.mifmif.common.regex.Generex
 import org.apache.http.entity.ContentType
 import org.json.JSONObject
 import org.w3c.dom.Document
-import java.util.*
 import javax.xml.transform.TransformerException
 
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class PactDslRequestWithoutPath(
     private val consumerPactBuilder: ConsumerPactBuilder,
     private val pactDslWithState: PactDslWithState,
@@ -26,8 +26,8 @@ class PactDslRequestWithoutPath(
     private var requestBody = missing()
     private val requestMatchers = MatchingRules()
     private val requestGenerators = Generators()
-    private val consumerName: String
-    private val providerName: String
+    private val consumerName: String = pactDslWithState.consumerName
+    private val providerName: String = pactDslWithState.providerName
 
     /**
      * The HTTP method for the request
@@ -45,7 +45,7 @@ class PactDslRequestWithoutPath(
      * @param headers Key-value pairs
      */
     fun headers(headers: Map<String, String>?): PactDslRequestWithoutPath {
-        requestHeaders = HashMap(headers)
+        requestHeaders = HashMap(headers?.toMutableMap() ?: emptyMap())
         return this
     }
 
@@ -114,11 +114,7 @@ class PactDslRequestWithoutPath(
      * @param body Request body in string form
      */
     fun bodyWithSingleQuotes(body: String?): PactDslRequestWithoutPath {
-        var body = body
-        if (body != null) {
-            body = QuoteUtil.convert(body)
-        }
-        return body(body)
+        return body(body?.let { QuoteUtil.convert(it) })
     }
 
     /**
@@ -128,11 +124,7 @@ class PactDslRequestWithoutPath(
      * @param body Request body in string form
      */
     fun bodyWithSingleQuotes(body: String?, mimeType: String): PactDslRequestWithoutPath {
-        var body = body
-        if (body != null) {
-            body = QuoteUtil.convert(body)
-        }
-        return body(body, mimeType)
+        return body(body?.let { QuoteUtil.convert(it) }, mimeType)
     }
 
     /**
@@ -142,11 +134,7 @@ class PactDslRequestWithoutPath(
      * @param body Request body in string form
      */
     fun bodyWithSingleQuotes(body: String?, mimeType: ContentType): PactDslRequestWithoutPath {
-        var body = body
-        if (body != null) {
-            body = QuoteUtil.convert(body)
-        }
-        return body(body, mimeType)
+        return body(body?.let { QuoteUtil.convert(it) }, mimeType)
     }
 
     /**
@@ -209,11 +197,6 @@ class PactDslRequestWithoutPath(
      * @param path string path to use when generating requests
      * @param pathRegex regular expression to use to match paths
      */
-    /**
-     * The path of the request. This will generate a random path to use when generating requests
-     *
-     * @param pathRegex string path regular expression to match with
-     */
     @JvmOverloads
     fun matchPath(pathRegex: String?, path: String? = Generex(pathRegex).random()): PactDslRequestWithPath {
         requestMatchers.addCategory("path").addRule(RegexMatcher(pathRegex!!))
@@ -221,10 +204,5 @@ class PactDslRequestWithoutPath(
             consumerPactBuilder, consumerName, providerName, pactDslWithState.state, description, path,
             requestMethod, requestHeaders, query, requestBody, requestMatchers, requestGenerators
         )
-    }
-
-    init {
-        consumerName = pactDslWithState.consumerName
-        providerName = pactDslWithState.providerName
     }
 }

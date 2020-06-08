@@ -5,13 +5,13 @@ import au.com.dius.pact.consumer.dsl.PactDslWithProvider
 import au.com.dius.pact.model.RequestResponseInteraction
 import org.w3c.dom.Document
 import java.io.StringWriter
-import java.util.*
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.TransformerException
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
+@Suppress("unused")
 class ConsumerPactBuilder(val consumerName: String) {
     /**
      * Returns the name of the consumer

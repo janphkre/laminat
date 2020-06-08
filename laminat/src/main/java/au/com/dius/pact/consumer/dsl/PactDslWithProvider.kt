@@ -2,8 +2,8 @@ package au.com.dius.pact.consumer.dsl
 
 import au.com.dius.pact.consumer.ConsumerPactBuilder
 import au.com.dius.pact.model.ProviderState
-import java.util.*
 
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class PactDslWithProvider(private val consumerPactBuilder: ConsumerPactBuilder, private val providerName: String) {
 
     /**

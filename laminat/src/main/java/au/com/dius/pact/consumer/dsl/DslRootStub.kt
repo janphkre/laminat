@@ -1,11 +1,13 @@
 package au.com.dius.pact.consumer.dsl
 
+@Suppress("OverridingDeprecatedMember")
 object DslRootStub : DslPart(rootPath = "", rootName = "") {
+
     init {
         parent = this
     }
 
-    private val errorText = "DslRoot should not be used as an element"
+    private const val errorText = "DslRoot should not be used as an element"
 
     override fun putObject(`object`: DslPart) {
         throw UnsupportedOperationException(errorText)

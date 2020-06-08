@@ -1,11 +1,19 @@
 package au.com.dius.pact.consumer.dsl
 
 import au.com.dius.pact.model.generators.Generators
-import au.com.dius.pact.model.matchingrules.*
+import au.com.dius.pact.model.matchingrules.Category
+import au.com.dius.pact.model.matchingrules.DateMatcher
+import au.com.dius.pact.model.matchingrules.IncludeMatcher
+import au.com.dius.pact.model.matchingrules.MaxTypeMatcher
+import au.com.dius.pact.model.matchingrules.MinTypeMatcher
+import au.com.dius.pact.model.matchingrules.RegexMatcher
+import au.com.dius.pact.model.matchingrules.TimeMatcher
+import au.com.dius.pact.model.matchingrules.TimestampMatcher
 
 /**
  * Abstract base class of the Pact DSL to support Object and Array JSON DSL builders.
  */
+@Suppress("unused")
 abstract class DslPart {
     protected lateinit var parent: DslPart
     @JvmField

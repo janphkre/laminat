@@ -1,19 +1,33 @@
 package au.com.dius.pact.consumer.dsl
 
 import au.com.dius.pact.consumer.InvalidMatcherException
-import au.com.dius.pact.model.generators.*
 import au.com.dius.pact.model.generators.Category
-import au.com.dius.pact.model.matchingrules.*
+import au.com.dius.pact.model.generators.DateGenerator
+import au.com.dius.pact.model.generators.DateTimeGenerator
+import au.com.dius.pact.model.generators.RandomDecimalGenerator
+import au.com.dius.pact.model.generators.RandomHexadecimalGenerator
+import au.com.dius.pact.model.generators.RandomIntGenerator
+import au.com.dius.pact.model.generators.RandomStringGenerator
+import au.com.dius.pact.model.generators.RegexGenerator
+import au.com.dius.pact.model.generators.TimeGenerator
+import au.com.dius.pact.model.generators.UuidGenerator
+import au.com.dius.pact.model.matchingrules.MatchingRule
+import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
+import au.com.dius.pact.model.matchingrules.NumberTypeMatcher
+import au.com.dius.pact.model.matchingrules.RuleLogic
+import au.com.dius.pact.model.matchingrules.TypeMatcher
 import com.mifmif.common.regex.Generex
 import org.apache.commons.lang3.time.DateFormatUtils
 import org.apache.commons.lang3.time.FastDateFormat
 import org.json.JSONObject
 import java.math.BigDecimal
-import java.util.*
+import java.util.Calendar
+import java.util.UUID
 
 /**
  * Matcher to create a plain root matching strategy. Used with text/plain to match regex responses
  */
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class PactDslRootValue : DslPart("", "") {
     override var body: Any? = null
         private set
@@ -136,8 +150,8 @@ class PactDslRootValue : DslPart("", "") {
         body = value
     }
 
-    fun setMatcher(matcher: MatchingRule?) {
-        matchers.addRule(matcher!!)
+    fun setMatcher(matcher: MatchingRule) {
+        matchers.addRule(matcher)
     }
 
     @Deprecated("Use PactDslJsonArray for arrays")
@@ -319,9 +333,6 @@ class PactDslRootValue : DslPart("", "") {
          * Value that must be a boolean
          * @param example example boolean to use for generated bodies
          */
-        /**
-         * Value that must be a boolean
-         */
         @JvmOverloads
         fun booleanType(example: Boolean? = true): PactDslRootValue {
             val value = PactDslRootValue()
@@ -364,9 +375,6 @@ class PactDslRootValue : DslPart("", "") {
          * Value that must match the given timestamp format
          * @param format timestamp format
          */
-        /**
-         * Value that must be an ISO formatted timestamp
-         */
         @JvmOverloads
         fun timestamp(format: String = DateFormatUtils.ISO_DATETIME_FORMAT.pattern): PactDslRootValue {
             val value = PactDslRootValue()
@@ -395,9 +403,6 @@ class PactDslRootValue : DslPart("", "") {
          * Value that must match the provided date format
          * @param format date format to match
          */
-        /**
-         * Value that must be formatted as an ISO date
-         */
         @JvmOverloads
         fun date(format: String = DateFormatUtils.ISO_DATE_FORMAT.pattern): PactDslRootValue {
             val instance = FastDateFormat.getInstance(format)
@@ -425,9 +430,6 @@ class PactDslRootValue : DslPart("", "") {
         /**
          * Value that must match the given time format
          * @param format time format to match
-         */
-        /**
-         * Value that must be an ISO formatted time
          */
         @JvmOverloads
         fun time(format: String = DateFormatUtils.ISO_TIME_FORMAT.pattern): PactDslRootValue {
@@ -544,14 +546,14 @@ class PactDslRootValue : DslPart("", "") {
          * @param example Attribute example value
          * @param rules Matching rules to apply
          */
-        fun and(example: Any?, vararg rules: MatchingRule?): PactDslRootValue {
+        fun and(example: Any?, vararg rules: MatchingRule): PactDslRootValue {
             val value = PactDslRootValue()
             if (example != null) {
                 value.setValue(example)
             } else {
                 value.setValue(JSONObject.NULL)
             }
-            value.matchers.setRules("", MatchingRuleGroup(Arrays.asList(*rules), RuleLogic.AND))
+            value.matchers.setRules("", MatchingRuleGroup(mutableListOf(*rules), RuleLogic.AND))
             return value
         }
 
@@ -560,14 +562,14 @@ class PactDslRootValue : DslPart("", "") {
          * @param example Attribute name
          * @param rules Matching rules to apply
          */
-        fun or(example: Any?, vararg rules: MatchingRule?): PactDslRootValue {
+        fun or(example: Any?, vararg rules: MatchingRule): PactDslRootValue {
             val value = PactDslRootValue()
             if (example != null) {
                 value.setValue(example)
             } else {
                 value.setValue(JSONObject.NULL)
             }
-            value.matchers.setRules("", MatchingRuleGroup(Arrays.asList(*rules), RuleLogic.OR))
+            value.matchers.setRules("", MatchingRuleGroup(mutableListOf(*rules), RuleLogic.OR))
             return value
         }
     }

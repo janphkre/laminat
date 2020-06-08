@@ -511,7 +511,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      */
     override fun closeObject(): DslPart {
         closed = true
-        if (parent == DslRootStub)  {
+        if (parent == DslRootStub) {
             return DslRootStub
         }
         parent.putObject(this)
@@ -1026,7 +1026,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param rules Matching rules to apply
      */
     fun and(name: String, value: Any?, vararg rules: MatchingRule): PactDslJsonBody {
-        body.put(name, value?: JSONObject.NULL)
+        body.put(name, value ?: JSONObject.NULL)
         matchers.setRules(matcherKey(name), MatchingRuleGroup(mutableListOf(*rules), RuleLogic.AND))
         return this
     }
@@ -1038,7 +1038,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param rules Matching rules to apply
      */
     fun or(name: String, value: Any?, vararg rules: MatchingRule): PactDslJsonBody {
-        body.put(name, value?: JSONObject.NULL)
+        body.put(name, value ?: JSONObject.NULL)
         matchers.setRules(matcherKey(name), MatchingRuleGroup(mutableListOf(*rules), RuleLogic.OR))
         return this
     }

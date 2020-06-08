@@ -15,9 +15,9 @@ import com.mifmif.common.regex.Generex
 import org.apache.http.entity.ContentType
 import org.json.JSONObject
 import org.w3c.dom.Document
-import java.util.*
 import javax.xml.transform.TransformerException
 
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class PactDslRequestWithPath {
     private val consumerPactBuilder: ConsumerPactBuilder
     @JvmField
@@ -167,11 +167,7 @@ class PactDslRequestWithPath {
      * @param body Request body in string form
      */
     fun bodyWithSingleQuotes(body: String?): PactDslRequestWithPath {
-        var body = body
-        if (body != null) {
-            body = QuoteUtil.convert(body)
-        }
-        return body(body)
+        return body(body?.let { QuoteUtil.convert(it) })
     }
 
     /**
@@ -181,11 +177,7 @@ class PactDslRequestWithPath {
      * @param body Request body in string form
      */
     fun bodyWithSingleQuotes(body: String?, mimeType: String): PactDslRequestWithPath {
-        var body = body
-        if (body != null) {
-            body = QuoteUtil.convert(body)
-        }
-        return body(body, mimeType)
+        return body(body?.let { QuoteUtil.convert(it) }, mimeType)
     }
 
     /**
@@ -195,11 +187,7 @@ class PactDslRequestWithPath {
      * @param body Request body in string form
      */
     fun bodyWithSingleQuotes(body: String?, mimeType: ContentType): PactDslRequestWithPath {
-        var body = body
-        if (body != null) {
-            body = QuoteUtil.convert(body)
-        }
-        return body(body, mimeType)
+        return body(body?.let { QuoteUtil.convert(it) }, mimeType)
     }
 
     /**
@@ -260,11 +248,6 @@ class PactDslRequestWithPath {
      * @param path string path to use when generating requests
      * @param pathRegex regular expression to use to match paths
      */
-    /**
-     * The path of the request. This will generate a random path to use when generating requests
-     *
-     * @param pathRegex string path regular expression to match with
-     */
     @JvmOverloads
     fun matchPath(pathRegex: String?, path: String = Generex(pathRegex).random()): PactDslRequestWithPath {
         requestMatchers.addCategory("path").addRule(RegexMatcher(pathRegex!!))
@@ -277,12 +260,6 @@ class PactDslRequestWithPath {
      * @param header Header to match
      * @param regex Regular expression to match
      * @param headerExample Example value to use
-     */
-    /**
-     * Match a request header. A random example header value will be generated from the provided regular expression.
-     *
-     * @param header Header to match
-     * @param regex Regular expression to match
      */
     @JvmOverloads
     fun matchHeader(header: String, regex: String?, headerExample: String = Generex(regex).random()): PactDslRequestWithPath {
@@ -303,15 +280,10 @@ class PactDslRequestWithPath {
      * @param regex Regular expression to match with
      * @param example Example value to use for the query parameter
      */
-    /**
-     * Match a query parameter with a regex. A random query parameter value will be generated from the regex.
-     * @param parameter Query parameter
-     * @param regex Regular expression to match with
-     */
     @JvmOverloads
     fun matchQuery(parameter: String, regex: String?, example: String = Generex(regex).random()): PactDslRequestWithPath {
         requestMatchers.addCategory("query").addRule(parameter, RegexMatcher(regex!!))
-        query.put(parameter, listOf(example))
+        query[parameter] = listOf(example)
         return this
     }
 }
