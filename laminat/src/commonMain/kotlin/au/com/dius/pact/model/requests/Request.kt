@@ -64,7 +64,7 @@ class Request(
             try {
                 val jsonModel = JsonParser.parse(body.value)
                 val otherJsonModel = JsonParser.parse(other.body.value)
-                return jsonModel == otherJsonModel
+                return jsonModel == otherJsonModel // TODO: WRITE JSON EQUALS METHOD!
             } catch (e: Exception) { }
         }
         return body == other.body

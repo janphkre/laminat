@@ -1,7 +1,7 @@
 package au.com.dius.pact.external
 
+import au.com.dius.pact.model.util.json.JsonElement
 import au.com.dius.pact.model.util.json.JsonParser
-import kotlinx.serialization.json.JsonElement
 import okhttp3.mockwebserver.RecordedRequest
 import org.apache.http.entity.ContentType
 

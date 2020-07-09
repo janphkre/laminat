@@ -1,8 +1,8 @@
 package au.com.dius.pact.model.requests
 
 import au.com.dius.pact.model.exceptions.UnwrapMissingBodyException
+import au.com.dius.pact.model.util.json.JsonElement
 import au.com.dius.pact.model.util.json.JsonParser
-import kotlinx.serialization.json.JsonElement
 import kotlin.jvm.JvmStatic
 
 /**

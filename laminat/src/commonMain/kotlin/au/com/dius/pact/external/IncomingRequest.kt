@@ -1,6 +1,6 @@
 package au.com.dius.pact.external
 
-import kotlinx.serialization.json.JsonElement
+import au.com.dius.pact.model.util.json.JsonElement
 
 interface IncomingRequest {
     fun getMethod(): String
