@@ -4,9 +4,8 @@ import au.com.dius.pact.matchers.MatchingConfig
 import au.com.dius.pact.model.base.PactSpecVersion
 import au.com.dius.pact.model.exceptions.InvalidPactException
 import au.com.dius.pact.model.requests.OptionalBody
-import au.com.dius.pact.model.util.PathToken
-import au.com.dius.pact.model.util.json.JsonParser
-import au.com.dius.pact.model.util.parsePath
+import au.com.dius.pact.util.json.JsonParser
+import au.com.dius.pact.util.path.PathToken
 import org.apache.http.entity.ContentType
 import kotlin.jvm.JvmOverloads
 
@@ -38,7 +37,7 @@ object JsonContentTypeHandler : ContentTypeHandler {
     }
 
     override fun applyKey(body: QueryResult, key: String, generator: Generator) {
-        val pathExp = parsePath(key)
+        val pathExp = PathToken.parsePath(key)
         queryObjectGraph(pathExp.iterator(), body) { (value, valueKey, parent) ->
             @Suppress("UNCHECKED_CAST")
             when (parent) {

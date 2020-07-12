@@ -7,7 +7,7 @@ import au.com.dius.pact.model.matchingrules.MatchingRules
 import au.com.dius.pact.model.matchingrules.RegexMatcher
 import au.com.dius.pact.model.requests.OptionalBody
 import au.com.dius.pact.model.requests.OptionalBody.Companion.missing
-import au.com.dius.pact.model.util.PactReader.queryStringToMap
+import au.com.dius.pact.util.PactReader.queryStringToMap
 import com.mifmif.common.regex.Generex
 import org.apache.http.entity.ContentType
 import org.json.JSONObject

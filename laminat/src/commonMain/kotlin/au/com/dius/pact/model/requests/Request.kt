@@ -2,7 +2,7 @@ package au.com.dius.pact.model.requests
 
 import au.com.dius.pact.model.generators.Generators
 import au.com.dius.pact.model.matchingrules.MatchingRules
-import au.com.dius.pact.model.util.json.JsonParser
+import au.com.dius.pact.util.json.JsonParser
 
 class Request(
     val method: String = DEFAULT_METHOD,

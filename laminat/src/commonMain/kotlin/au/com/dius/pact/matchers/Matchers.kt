@@ -3,29 +3,14 @@ package au.com.dius.pact.matchers
 import au.com.dius.pact.model.matchingrules.Category
 import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
 import au.com.dius.pact.model.matchingrules.MatchingRules
-import au.com.dius.pact.model.util.zipFirstNullable
+import au.com.dius.pact.util.path.PathExpression
+import au.com.dius.pact.util.zipFirstNullable
 import io.gatling.jsonpath.AST
 import io.gatling.jsonpath.Parser
 
 object Matchers {
 
     private val arrayRegex = Regex("\\d+")
-    private val compiledPaths = WeakHashMap<String, ArrayList<AST.PathToken>>() //TODO: KOTLIN 1.4.20 might bring a weak hash map!
-
-    private fun getCompiledPath(pathExp: String?): ArrayList<AST.PathToken>? {
-        return compiledPaths.getOrPut(pathExp) { Parser().compile(pathExp).let {
-            if (it.successful() && !it.isEmpty) {
-                val parseList = it.get()
-                val result = ArrayList<AST.PathToken>(parseList?.size() ?: 0)
-                for (i in 0 until parseList.size()) {
-                    result.add(i, parseList.apply(i))
-                }
-                result
-            } else {
-                null
-            }
-        } }
-    }
 
     private fun matchesToken(pathElement: String?, token: AST.PathToken): Int {
         if (pathElement == null) {
@@ -41,9 +26,8 @@ object Matchers {
         }
     }
 
-    private fun matchPathExact(pathExp: String?, actualItems: List<String>): Int {
-        val compiledPath = getCompiledPath(pathExp)
-        return if (compiledPath != null) {
+    private fun matchPathExact(pathExp: PathExpression?, actualItems: List<String>): Int {
+        return pathExp?.compiledPath?.let { compiledPath ->
             val filter = actualItems.tailsFilter { list ->
                 list.allIndexed { index, element ->
                     matchesToken(element, compiledPath.elementAt(index)) != 0
@@ -54,14 +38,11 @@ object Matchers {
             } else {
                 0
             }
-        } else {
-            0
-        }
+        } ?: 0
     }
 
-    private fun matchPath(pathExp: String?, actualItems: List<String>): Int {
-        val compiledPath = getCompiledPath(pathExp)?.toList()
-        return if (compiledPath != null) {
+    private fun matchPath(pathExp: PathExpression?, actualItems: List<String>): Int {
+        return pathExp?.compiledPath?.let { compiledPath ->
             val filter = actualItems.tailsFilter { list ->
                 list.allIndexed { index, element ->
                     if (compiledPath.size <= index) {
@@ -76,9 +57,7 @@ object Matchers {
             } else {
                 0
             }
-        } else {
-            0
-        }
+        } ?: 0
     }
 
     private fun <T> List<T>.tailsFilter(lambda: (List<T>) -> Boolean): List<List<T>> {
@@ -112,21 +91,19 @@ object Matchers {
 //          0
 //      }
 //  }
-    private fun calculatePathWeight(pathExp: String?, actualItems: List<String>): Int {
-        val compiledPath = getCompiledPath(pathExp)
-        return if (compiledPath != null) {
+    private fun calculatePathWeight(pathExp: PathExpression?, actualItems: List<String>): Int {
+        return pathExp?.compiledPath?.let { compiledPath ->
             actualItems.zipFirstNullable(compiledPath).asSequence().map { entry -> matchesToken(entry.first, entry.second) }.fold(1) { result, element -> result * element }
-        } else {
-            0
-        }
+        } ?: 0
     }
 
     fun definedWildcardMatchers(category: String, path: List<String>, matchers: MatchingRules): Boolean {
+        //TODO: CONVERT STRING TO PATH EXPRESSION!
         val resolvedMatchers = matchers.getCategory(category)?.filter { pathExp -> matchPath(
             pathExp,
             path
         ) == path.size }
-        return resolvedMatchers?.matchingRules?.keys?.any { key -> key.endsWith(".*") } ?: false
+        return resolvedMatchers?.matchingRules?.keys?.any { key -> key.path.endsWith(".*") } ?: false
     }
 
     fun definedMatchers(category: String, path: List<String>, matchers: MatchingRules): Category? {
@@ -136,7 +113,7 @@ object Matchers {
                 path
             ) > 0 }
         } else if (category == "header" || category == "query") {
-            matchers.getCategory(category)?.filter { pathExp -> path.size == 1 && path.first() == pathExp }
+            matchers.getCategory(category)?.filter { pathExp -> path.size == 1 && pathExp == path.first() }
         } else {
             matchers.getCategory(category)
         }

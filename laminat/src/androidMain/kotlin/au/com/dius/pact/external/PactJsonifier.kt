@@ -4,7 +4,7 @@ import au.com.dius.pact.model.Pact
 import au.com.dius.pact.model.exceptions.PactMergeException
 import au.com.dius.pact.model.merge.PactMerge
 import au.com.dius.pact.model.requests.RequestResponsePact
-import au.com.dius.pact.model.util.PactWriter
+import au.com.dius.pact.util.PactWriter
 import java.io.File
 import java.io.PrintWriter
 

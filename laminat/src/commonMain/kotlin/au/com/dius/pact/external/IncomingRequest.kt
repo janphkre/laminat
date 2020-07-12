@@ -1,6 +1,6 @@
 package au.com.dius.pact.external
 
-import au.com.dius.pact.model.util.json.JsonElement
+import au.com.dius.pact.util.json.JsonElement
 
 interface IncomingRequest {
     fun getMethod(): String

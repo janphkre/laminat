@@ -1,4 +1,4 @@
-package au.com.dius.pact.model.util.json
+package au.com.dius.pact.util.json
 
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration

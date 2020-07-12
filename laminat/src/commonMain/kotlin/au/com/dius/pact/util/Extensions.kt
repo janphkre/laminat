@@ -1,4 +1,4 @@
-package au.com.dius.pact.model.util
+package au.com.dius.pact.util
 
 fun <T, R> List<T>.zipFirstNullable(other: Iterable<R>): List<Pair<T?, R>> {
     val first = iterator()

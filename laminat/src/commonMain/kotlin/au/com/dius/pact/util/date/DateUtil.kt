@@ -1,4 +1,4 @@
-package au.com.dius.pact.model.util.date
+package au.com.dius.pact.util.date
 
 import au.com.dius.pact.model.exceptions.ParseException
 import com.soywiz.klock.DateFormat

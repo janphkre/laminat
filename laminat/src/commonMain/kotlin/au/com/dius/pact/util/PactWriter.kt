@@ -1,4 +1,4 @@
-package au.com.dius.pact.model.util
+package au.com.dius.pact.util
 
 import au.com.dius.pact.model.Pact
 import au.com.dius.pact.model.base.PactSpecVersion

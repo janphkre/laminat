@@ -3,7 +3,7 @@ package au.com.dius.pact.matchers
 import au.com.dius.pact.external.IncomingRequest
 import au.com.dius.pact.model.matchingrules.MatchingRules
 import au.com.dius.pact.model.requests.OptionalBody
-import au.com.dius.pact.model.util.json.JsonElement
+import au.com.dius.pact.util.json.JsonElement
 import kotlin.math.min
 
 class JsonBodyMatcher : BodyMatcher() {

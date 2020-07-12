@@ -1,4 +1,4 @@
-package au.com.dius.pact.model.util
+package au.com.dius.pact.util
 
 import org.apache.http.Consts
 import java.net.URLDecoder

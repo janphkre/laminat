@@ -1,4 +1,4 @@
-package au.com.dius.pact.model.util
+package au.com.dius.pact.util
 
 /**
  * Iterator which allows to push back elements onto the iterator.

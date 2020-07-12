@@ -14,8 +14,8 @@ import au.com.dius.pact.model.matchingrules.RuleLogic
 import au.com.dius.pact.model.matchingrules.TimeMatcher
 import au.com.dius.pact.model.matchingrules.TimestampMatcher
 import au.com.dius.pact.model.matchingrules.TypeMatcher
-import au.com.dius.pact.model.util.date.DateUtil
-import au.com.dius.pact.model.util.json.JsonElement
+import au.com.dius.pact.util.date.DateUtil
+import au.com.dius.pact.util.json.JsonElement
 
 fun valueOf(value: Any?): String {
     return when (value) {
