@@ -31,10 +31,11 @@ kotlin {
     sourceSets["commonMain"].dependencies {
         implementation("org.jetbrains.kotlin:kotlin-stdlib-common")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:${properties["mainSerializationVersion"]}")
-//        implementation("com.google.code.gson:gson:${properties["mainGsonVersion"]}") // TODO: JSON ALTERNATIVE IN KOTLIN NATIVE? (kotlinx serialization)
 //        implementation("org.apache.commons:commons-lang3:${properties["mainApacheCommonsVersion"]}") // TODO: COMMONS NECESSARY FOR LISTS?
 //        implementation("com.github.mifmif:generex:${properties["mainGenerexVersion"]}") // TODO: DROP SUPPORT FOR REGEX ITEM GENERATION?
 //        implementation("io.gatling:jsonpath_2.11:${properties["mainJsonpathVersion"]}") // TODO: WHAT DOES THIS DO? CAN IT BE REMOVED?
+
+        implementation("com.soywiz.korlibs.klock:klock:${properties["mainKlockVersion"]}")
 
         // The Android vm does not like the library "org.apache.httpcomponents:httpcore:4.4.4"
         // because it already contains parts from it that are final for example but a super class in the lib.
@@ -45,7 +46,7 @@ kotlin {
         implementation("org.jetbrains.kotlin:kotlin-stdlib")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:${properties["mainSerializationVersion"]}")
 
-        implementation("com.squareup.okhttp3:mockwebserver:${properties["androidMockServerVersion"]}") // TODO: HOW TO SPECIFY A VERSION?
+        implementation("com.squareup.okhttp3:mockwebserver:${properties["androidMockServerVersion"]}")
 
         // TODO: MAKE TESTS WORK AGAIN
         //testImplementation "junit:junit:$test_junit_version"

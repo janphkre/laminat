@@ -1,6 +1,4 @@
-package au.com.dius.pact.external.util
-
-import java.util.Stack
+package au.com.dius.pact.model.util
 
 /**
  * Iterator which allows to push back elements onto the iterator.
@@ -14,7 +12,8 @@ import java.util.Stack
 class PushbackIterator<T>(
     private val wrappedIterator: Iterator<T>
 ) : Iterator<T> {
-    private val pushedBackElements = Stack<T>()
+
+    private val pushedBackElements = ArrayList<T>()
 
     override fun hasNext(): Boolean {
         return pushedBackElements.isNotEmpty() || wrappedIterator.hasNext()
@@ -22,13 +21,13 @@ class PushbackIterator<T>(
 
     override fun next(): T {
         return if (pushedBackElements.isNotEmpty()) {
-            pushedBackElements.pop()
+            pushedBackElements.removeAt(pushedBackElements.size - 1)
         } else {
             wrappedIterator.next()
         }
     }
 
     fun pushback(element: T) {
-        pushedBackElements.push(element)
+        pushedBackElements.add(element)
     }
 }

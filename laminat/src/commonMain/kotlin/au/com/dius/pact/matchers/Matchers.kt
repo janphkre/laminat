@@ -3,14 +3,14 @@ package au.com.dius.pact.matchers
 import au.com.dius.pact.model.matchingrules.Category
 import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
 import au.com.dius.pact.model.matchingrules.MatchingRules
+import au.com.dius.pact.model.util.zipFirstNullable
 import io.gatling.jsonpath.AST
 import io.gatling.jsonpath.Parser
-import java.util.WeakHashMap
 
 object Matchers {
 
     private val arrayRegex = Regex("\\d+")
-    private val compiledPaths = WeakHashMap<String, ArrayList<AST.PathToken>>()
+    private val compiledPaths = WeakHashMap<String, ArrayList<AST.PathToken>>() //TODO: KOTLIN 1.4.20 might bring a weak hash map!
 
     private fun getCompiledPath(pathExp: String?): ArrayList<AST.PathToken>? {
         return compiledPaths.getOrPut(pathExp) { Parser().compile(pathExp).let {

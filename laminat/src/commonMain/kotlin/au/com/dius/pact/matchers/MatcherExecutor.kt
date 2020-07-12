@@ -1,5 +1,6 @@
 package au.com.dius.pact.matchers
 
+import au.com.dius.pact.model.exceptions.ParseException
 import au.com.dius.pact.model.matchingrules.DateMatcher
 import au.com.dius.pact.model.matchingrules.IncludeMatcher
 import au.com.dius.pact.model.matchingrules.MatchingRule
@@ -13,10 +14,8 @@ import au.com.dius.pact.model.matchingrules.RuleLogic
 import au.com.dius.pact.model.matchingrules.TimeMatcher
 import au.com.dius.pact.model.matchingrules.TimestampMatcher
 import au.com.dius.pact.model.matchingrules.TypeMatcher
-import org.apache.commons.lang3.time.DateUtils
-import java.math.BigDecimal
-import java.math.BigInteger
-import java.text.ParseException
+import au.com.dius.pact.model.util.date.DateUtil
+import au.com.dius.pact.model.util.json.JsonElement
 
 fun valueOf(value: Any?): String {
     return when (value) {
@@ -195,7 +194,7 @@ fun matchDate(
     mismatchFactory: MismatchFactory<RequestMatchProblem>
 ): List<RequestMatchProblem> {
     return try {
-        DateUtils.parseDate(actual.toString(), pattern)
+        DateUtil.parse(actual.toString(), pattern)
         listOf(RequestMatchProblem.None)
     } catch (e: ParseException) {
         listOf(mismatchFactory.create(expected, actual,
@@ -211,7 +210,7 @@ fun matchTime(
     mismatchFactory: MismatchFactory<RequestMatchProblem>
 ): List<RequestMatchProblem> {
     return try {
-        DateUtils.parseDate(actual.toString(), pattern)
+        DateUtil.parse(actual.toString(), pattern)
         listOf(RequestMatchProblem.None)
     } catch (e: ParseException) {
         listOf(mismatchFactory.create(expected, actual,
@@ -227,7 +226,7 @@ fun matchTimestamp(
     mismatchFactory: MismatchFactory<RequestMatchProblem>
 ): List<RequestMatchProblem> {
     return try {
-        DateUtils.parseDate(actual.toString(), pattern)
+        DateUtil.parse(actual.toString(), pattern)
         listOf(RequestMatchProblem.None)
     } catch (e: ParseException) {
         listOf(mismatchFactory.create(expected, actual,
@@ -248,14 +247,8 @@ fun matchMinType(
         } else {
             listOf(RequestMatchProblem.None)
         }
-    } else if (actual is scala.collection.immutable.List<*>) {
+    } else if (actual is JsonElement.Array) {
         if (actual.size() < min) {
-            listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to have minimum $min"))
-        } else {
-            listOf(RequestMatchProblem.None)
-        }
-    } else if (actual is JsonElement) {
-        if (actual.isJsonArray && actual.asJsonArray.size() < min) {
             listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to have minimum $min"))
         } else {
             listOf(RequestMatchProblem.None)
@@ -277,14 +270,8 @@ fun matchMaxType(
         } else {
             listOf(RequestMatchProblem.None)
         }
-    } else if (actual is scala.collection.immutable.List<*>) {
+    } else if (actual is JsonElement.Array) {
         if (actual.size() > max) {
-            listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to have maximum $max"))
-        } else {
-            listOf(RequestMatchProblem.None)
-        }
-    } else if (actual is JsonElement) {
-        if (actual.isJsonArray && actual.asJsonArray.size() > max) {
             listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to have maximum $max"))
         } else {
             listOf(RequestMatchProblem.None)

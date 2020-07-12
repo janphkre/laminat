@@ -1,6 +1,5 @@
 package au.com.dius.pact.model.util
 
-import au.com.dius.pact.external.util.PushbackIterator
 import au.com.dius.pact.model.exceptions.InvalidPathExpression
 
 sealed class PathToken {
