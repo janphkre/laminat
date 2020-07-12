@@ -8,7 +8,7 @@ import au.com.dius.pact.util.isLetterOrDigit
 sealed class PathToken {
     object Root : PathToken()
     data class Field(val name: String) : PathToken()
-    data class Index(val index: Int) : PathToken()
+    data class Index(val indices: IntRange) : PathToken()
     object Star : PathToken()
     object StarIndex : PathToken()
 
@@ -36,7 +36,7 @@ sealed class PathToken {
             }
 
             if (c.value == '\'') {
-                tokens.add(PathToken.Field(id))
+                tokens.add(Field(id))
             } else {
                 throw InvalidPathExpression("Unterminated string in path expression \"$path\" at index ${c.index}")
             }
@@ -65,7 +65,8 @@ sealed class PathToken {
                 }
             }
 
-            tokens.add(PathToken.Index(id.toInt()))
+            val index = id.toInt()
+            tokens.add(Index(IntRange(index, index)))
         }
 
         // identifier -> a-zA-Z0-9\-+
@@ -85,7 +86,7 @@ sealed class PathToken {
                     )
                 }
             }
-            tokens.add(PathToken.Field(id))
+            tokens.add(Field(id))
         }
 
         // path_identifier -> identifier | *
@@ -98,7 +99,7 @@ sealed class PathToken {
             if (chars.hasNext()) {
                 val ch = chars.next()
                 when {
-                    ch.value == '*' -> tokens.add(PathToken.Star)
+                    ch.value == '*' -> tokens.add(Star)
                     ch.value.isLetterOrDigit() || validPathCharacters.contains(ch.value) -> identifier(
                         ch.value,
                         chars,
@@ -122,7 +123,7 @@ sealed class PathToken {
                 when {
                     ch.value == '\'' -> stringPath(chars, tokens, path, ch.index)
                     ch.value.isDigit() -> indexPath(ch, chars, tokens, path)
-                    ch.value == '*' -> tokens.add(PathToken.StarIndex)
+                    ch.value == '*' -> tokens.add(StarIndex)
                     ch.value == ']' -> throw InvalidPathExpression(
                         "Empty bracket expressions are not allowed in path expression " +
                             "\"$path\" at index ${ch.index}"
@@ -174,7 +175,7 @@ sealed class PathToken {
             if (chars.hasNext()) {
                 val ch = chars.next()
                 if (ch.value == '$') {
-                    tokens.add(PathToken.Root)
+                    tokens.add(Root)
                     pathExp(chars, tokens, path)
                 } else {
                     throw InvalidPathExpression("Path expression \"$path\" does not start with a root marker \"$\"")

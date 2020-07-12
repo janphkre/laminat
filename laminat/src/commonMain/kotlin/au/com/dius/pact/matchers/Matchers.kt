@@ -4,25 +4,23 @@ import au.com.dius.pact.model.matchingrules.Category
 import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
 import au.com.dius.pact.model.matchingrules.MatchingRules
 import au.com.dius.pact.util.path.PathExpression
+import au.com.dius.pact.util.path.PathToken
 import au.com.dius.pact.util.zipFirstNullable
-import io.gatling.jsonpath.AST
-import io.gatling.jsonpath.Parser
 
 object Matchers {
 
     private val arrayRegex = Regex("\\d+")
 
-    private fun matchesToken(pathElement: String?, token: AST.PathToken): Int {
+    private fun matchesToken(pathElement: String?, token: PathToken): Int {
         if (pathElement == null) {
             return 0
         }
         return when (token) {
-            is AST.`RootNode$` -> if (pathElement == "$") 2 else 0
-            is AST.Field -> if (pathElement == token.name()) 2 else 0
-            is AST.ArrayRandomAccess -> if (pathElement.matches(arrayRegex) && token.indices().contains(pathElement.toInt())) 2 else 0
-            is AST.ArraySlice -> if (pathElement.matches(arrayRegex)) 1 else 0
-            is AST.`AnyField$` -> 1
-            else -> 0
+            is PathToken.Root -> if (pathElement == "$") 2 else 0
+            is PathToken.Field -> if (pathElement == token.name) 2 else 0
+            is PathToken.Index -> if (pathElement.matches(arrayRegex) && token.indices.contains(pathElement.toInt())) 2 else 0 //TODO: WHAT ABOUT INDICES?
+            is PathToken.StarIndex -> if (pathElement.matches(arrayRegex)) 1 else 0
+            is PathToken.Star -> 1
         }
     }
 
@@ -98,7 +96,6 @@ object Matchers {
     }
 
     fun definedWildcardMatchers(category: String, path: List<String>, matchers: MatchingRules): Boolean {
-        //TODO: CONVERT STRING TO PATH EXPRESSION!
         val resolvedMatchers = matchers.getCategory(category)?.filter { pathExp -> matchPath(
             pathExp,
             path
@@ -113,7 +110,7 @@ object Matchers {
                 path
             ) > 0 }
         } else if (category == "header" || category == "query") {
-            matchers.getCategory(category)?.filter { pathExp -> path.size == 1 && pathExp == path.first() }
+            matchers.getCategory(category)?.filter { pathExp -> path.size == 1 && pathExp.path == path.first() }
         } else {
             matchers.getCategory(category)
         }
