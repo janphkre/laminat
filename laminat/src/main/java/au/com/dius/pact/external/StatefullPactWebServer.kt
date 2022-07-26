@@ -54,7 +54,7 @@ open class StatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: I
     }
 
     fun getDefinedInteractionCount(): Int {
-        return definedPactList.sumBy { it.requestResponseInteractions.size }
+        return definedPactList.sumOf { it.requestResponseInteractions.size }
     }
 
     override fun updateInteractions(pact: RequestResponsePact) {

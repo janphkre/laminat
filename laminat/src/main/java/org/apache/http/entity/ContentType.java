@@ -48,7 +48,7 @@ import java.util.Locale;
  * Content type information consisting of a MIME type and an optional charset.
  * <p>
  * This class makes no attempts to verify validity of the MIME type.
- * The input parameters of the {@link #create(String, String)} method, however, may not
+ * The input parameters of the {@link #create(String, Charset)} method, however, may not
  * contain characters {@code <">, <;>, <,>} reserved by the HTTP specification.
  *
  * @since 4.2

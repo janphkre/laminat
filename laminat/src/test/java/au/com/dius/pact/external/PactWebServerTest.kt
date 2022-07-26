@@ -6,10 +6,10 @@ import au.com.dius.pact.consumer.dsl.PactDslJsonRootValue
 import au.com.dius.pact.model.ProviderState
 import au.com.dius.pact.model.RequestResponsePact
 import java.util.concurrent.TimeUnit
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -124,7 +124,7 @@ class PactWebServerTest {
 
     private fun postRequest(): Request {
         return Request.Builder()
-            .post(RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "null"))
+            .post("null".toRequestBody("application/json; charset=UTF-8".toMediaTypeOrNull()))
             .url("${mockPactWebServer.getUrlString()}test/path")
             .build()
     }

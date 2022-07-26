@@ -18,7 +18,7 @@ open class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: I
     private var currentInteractionList: List<RequestResponseInteraction> = emptyList()
 
     init {
-        mockWebServer.setDispatcher(dispatcher)
+        mockWebServer.dispatcher = dispatcher
     }
 
     open fun teardown() {

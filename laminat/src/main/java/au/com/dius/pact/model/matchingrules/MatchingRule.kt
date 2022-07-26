@@ -1,6 +1,7 @@
 package au.com.dius.pact.model.matchingrules
 
 import au.com.dius.pact.model.PactSpecVersion
+import java.util.Locale
 
 /**
  * Logic to use to combine rules
@@ -68,7 +69,7 @@ data class NumberTypeMatcher(val numberType: NumberType) : MatchingRule {
         DECIMAL
     }
 
-    override fun toMap() = mapOf("match" to numberType.name.toLowerCase())
+    override fun toMap() = mapOf("match" to numberType.name.lowercase(Locale.ROOT))
 }
 
 /**

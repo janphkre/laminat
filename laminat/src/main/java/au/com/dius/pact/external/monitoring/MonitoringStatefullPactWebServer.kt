@@ -18,7 +18,7 @@ class MonitoringStatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCo
     StatefullPactWebServer(allowUnexpectedKeys, pactErrorCode) {
 
     init {
-        mockWebServer.setDispatcher(MonitoringDispatcher(dispatcher))
+        mockWebServer.dispatcher = MonitoringDispatcher(dispatcher)
     }
 
     private class MonitoringDispatcher(
@@ -27,8 +27,8 @@ class MonitoringStatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCo
 
         private val tag = "PactWebServer"
 
-        override fun dispatch(request: RecordedRequest?): MockResponse {
-            Log.d(tag, "Received request for ${request?.method} ${request?.path}")
+        override fun dispatch(request: RecordedRequest): MockResponse {
+            Log.d(tag, "Received request for ${request.method} ${request.path}")
             val startMs = System.currentTimeMillis()
             val result = wrapped.dispatch(request)
             Log.d(tag, "Generated result in ${System.currentTimeMillis() - startMs} ms.")

@@ -3,6 +3,7 @@ package au.com.dius.pact.model
 import au.com.dius.pact.model.BasePact.Companion.jsonParser
 import au.com.dius.pact.model.generators.Generators
 import au.com.dius.pact.model.matchingrules.MatchingRules
+import java.util.Locale
 
 class Request(
     val method: String = DEFAULT_METHOD,
@@ -35,7 +36,7 @@ class Request(
     }
 
     fun headersWithoutCookie(): Map<String, String> {
-        return headers.filter { mapEntry -> mapEntry.key.toLowerCase() != COOKIE_KEY }
+        return headers.filter { mapEntry -> mapEntry.key.lowercase(Locale.ROOT) != COOKIE_KEY }
     }
 
     fun cookie(): List<String> {

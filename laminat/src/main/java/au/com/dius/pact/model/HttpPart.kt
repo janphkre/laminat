@@ -2,6 +2,7 @@ package au.com.dius.pact.model
 
 import au.com.dius.pact.matchers.MatchingConfig
 import au.com.dius.pact.model.matchingrules.MatchingRules
+import java.util.Locale
 import org.apache.http.entity.ContentType
 
 abstract class HttpPart {
@@ -24,7 +25,7 @@ abstract class HttpPart {
             val s = body.value!!.substring(0, Math.min(body.value!!.length, 32)).filter { it != '\n' }
             if (XMLREGEXP.matches(s)) {
                 ContentType.APPLICATION_XML.mimeType
-            } else if (HTMLREGEXP.matches(s.toUpperCase())) {
+            } else if (HTMLREGEXP.matches(s.uppercase(Locale.ROOT))) {
                 ContentType.TEXT_HTML.mimeType
             } else if (JSONREGEXP.matches(s)) {
                 ContentType.APPLICATION_JSON.mimeType

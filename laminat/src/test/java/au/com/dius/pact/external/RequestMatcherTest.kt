@@ -182,7 +182,7 @@ class RequestMatcherTest {
         body.outputStream().use {
             it.write(requestBody)
         }
-        val recordedRequest = RecordedRequest("$method /test/path HTTP/1.1", headers, ArrayList(), body.size(), body, 0, mockSocket)
+        val recordedRequest = RecordedRequest("$method /test/path HTTP/1.1", headers, ArrayList(), body.size, body, 0, mockSocket)
         return IncomingRequest(recordedRequest)
     }
 

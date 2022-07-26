@@ -7,6 +7,7 @@ import au.com.dius.pact.model.PactWriter
 import au.com.dius.pact.model.RequestResponsePact
 import java.io.File
 import java.io.PrintWriter
+import java.util.Locale
 
 /**
  * This PactJsonifier singleton allows the generation of a pact json from
@@ -48,7 +49,7 @@ object PactJsonifier {
     }
 
     private fun getEmptyFileFor(pact: Pact, baseDir: File): File {
-        val name = "${pact.consumer.name.toLowerCase().replace(' ','_')}___${pact.provider.name.toLowerCase().replace(' ','_')}.json"
+        val name = "${pact.consumer.name.lowercase(Locale.ROOT).replace(' ','_')}___${pact.provider.name.lowercase(Locale.ROOT).replace(' ','_')}.json"
         return File(baseDir, name)
     }
 }

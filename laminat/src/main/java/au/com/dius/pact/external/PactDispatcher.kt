@@ -6,6 +6,8 @@ import au.com.dius.pact.model.Response
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import okhttp3.Headers
+import okhttp3.Headers.Companion.headersOf
+import okhttp3.Headers.Companion.toHeaders
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
@@ -47,10 +49,7 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
         return matchedRequestCount == count && unmatchedRequestsCount == 0L
     }
 
-    override fun dispatch(request: RecordedRequest?): MockResponse {
-        if (request == null) {
-            return notFoundMockResponse()
-        }
+    override fun dispatch(request: RecordedRequest): MockResponse {
         try {
             val incomingRequest = IncomingRequest(request)
             val requestMatch = pactMatcher.findInteraction(interactionList, incomingRequest)
@@ -71,7 +70,7 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
                 }
             }
         } catch (e: PactMergeException) {
-            return notFoundMockResponse().setBody(e.message)
+            return notFoundMockResponse().setBody(e.message ?: "Unknown error while merging pact")
         } catch (e: Exception) {
             ByteArrayOutputStream().use { outputStream ->
                 PrintStream(outputStream, true, Consts.UTF_8.name()).use { printStream ->
@@ -91,9 +90,9 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
 
     private fun Map<String, String>?.mapToMockHeaders(): Headers {
         if (this == null) {
-            return Headers.of()
+            return headersOf()
         }
-        return Headers.of(this)
+        return this.toHeaders()
     }
 
     private fun notFoundMockResponse(): MockResponse {

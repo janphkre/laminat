@@ -50,7 +50,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
             val p = Pattern.compile("\\['(.+)']")
             val matcher = p.matcher(name)
             if (matcher.matches()) {
-                body.put(matcher.group(1), `object`.body)
+                body.put(matcher.group(1)!!, `object`.body)
             } else {
                 body.put(name, `object`.body)
             }

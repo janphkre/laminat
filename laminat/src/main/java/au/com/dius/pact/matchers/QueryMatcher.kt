@@ -5,7 +5,7 @@ import java.util.LinkedList
 
 object QueryMatcher {
 
-    private fun compare(parameter: String, path: List<String>, expected: String, actual: String, matchers: MatchingRules): List<RequestMatchProblem> {
+    private fun compare(parameter: String, path: List<String>, expected: String?, actual: String?, matchers: MatchingRules): List<RequestMatchProblem> {
         val category = Matchers.definedMatchers("query", path, matchers)
         return if (category?.isNotEmpty() == true) {
             Matchers.doMatch(
@@ -29,7 +29,7 @@ object QueryMatcher {
         }
     }
 
-    private fun compareQueryParameterValues(parameter: String, expected: List<String>, actual: List<String>, path: List<String>, matchers: MatchingRules): List<RequestMatchProblem> {
+    private fun compareQueryParameterValues(parameter: String, expected: List<String?>, actual: List<String?>, path: List<String>, matchers: MatchingRules): List<RequestMatchProblem> {
         val result = LinkedList<RequestMatchProblem>()
         expected.forEachIndexed { index, item ->
             if (index < actual.size) {
@@ -54,7 +54,7 @@ object QueryMatcher {
         return result
     }
 
-    fun compareQuery(parameter: String, expected: List<String>, actual: List<String>, matchers: MatchingRules): List<RequestMatchProblem> {
+    fun compareQuery(parameter: String, expected: List<String?>, actual: List<String?>, matchers: MatchingRules): List<RequestMatchProblem> {
         val result = LinkedList<RequestMatchProblem>()
         val path = listOf(parameter)
         val category = Matchers.definedMatchers("query", path, matchers)

@@ -8,6 +8,7 @@ import au.com.dius.pact.model.PactSpecVersion
 import au.com.dius.pact.model.PathToken
 import au.com.dius.pact.model.parsePath
 import com.google.gson.JsonParser
+import java.util.Locale
 import org.apache.http.entity.ContentType
 
 enum class Category {
@@ -177,10 +178,10 @@ data class Generators(val categories: MutableMap<Category, MutableMap<String, Ge
         }
         return categories.entries.associate { (key, value) ->
             when (key) {
-                Category.METHOD, Category.PATH, Category.STATUS -> key.name.toLowerCase() to value[""]!!.toMap(
+                Category.METHOD, Category.PATH, Category.STATUS -> key.name.lowercase(Locale.ROOT) to value[""]!!.toMap(
                     pactSpecVersion
                 )
-                else -> key.name.toLowerCase() to value.entries.associate { (genKey, generator) ->
+                else -> key.name.lowercase(Locale.ROOT) to value.entries.associate { (genKey, generator) ->
                     genKey to generator.toMap(pactSpecVersion)
                 }
             }

@@ -20,27 +20,27 @@ class IncomingRequest(
 ) {
 
     private val lazyBody: String? by lazy {
-        internalRequest.body?.readUtf8()
+        internalRequest.body.readUtf8()
     }
 
     private val lazyJson: JsonElement by lazy {
         BasePact.jsonParser.parse(lazyBody)
     }
 
-    fun getMethod(): String {
+    fun getMethod(): String? {
         return internalRequest.method
     }
 
-    fun getEncodedPath(): String {
-        return internalRequest.requestUrl.encodedPath()
+    fun getEncodedPath(): String? {
+        return internalRequest.requestUrl?.encodedPath
     }
 
-    fun queryParameterValues(key: String): List<String> {
-        return internalRequest.requestUrl.queryParameterValues(key)
+    fun queryParameterValues(key: String): List<String?> {
+        return internalRequest.requestUrl?.queryParameterValues(key) ?: emptyList()
     }
 
     fun queryParameterNames(): Set<String> {
-        return internalRequest.requestUrl.queryParameterNames()
+        return internalRequest.requestUrl?.queryParameterNames ?: emptySet()
     }
 
     fun getHeaders(): Map<String, List<String>> {

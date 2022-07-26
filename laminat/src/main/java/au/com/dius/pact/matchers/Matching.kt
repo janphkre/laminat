@@ -3,6 +3,7 @@ package au.com.dius.pact.matchers
 import au.com.dius.pact.external.IncomingRequest
 import au.com.dius.pact.model.Request
 import java.util.LinkedList
+import java.util.Locale
 
 internal object Matching {
 
@@ -16,7 +17,7 @@ internal object Matching {
 
     fun matchPath(expected: Request, actual: IncomingRequest): List<RequestMatchProblem> {
         val matchers = Matchers.definedMatchers("path", emptyList(), expected.matchingRules)
-        val actualPath = actual.getEncodedPath().split('?').firstOrNull()
+        val actualPath = actual.getEncodedPath()?.split('?')?.firstOrNull()
         return if (matchers?.isNotEmpty() == true) {
             Matchers.doMatch(
                 matchers,
@@ -61,9 +62,9 @@ internal object Matching {
     fun matchRequestHeaders(expected: Request, actual: IncomingRequest): List<RequestMatchProblem> {
         val problems = LinkedList<RequestMatchProblem>()
         val expectedWithoutCookies = expected.headersWithoutCookie()
-        val actualWithoutCookies = actual.getHeaders().filterKeys { it.toLowerCase() != "cookie" }
+        val actualWithoutCookies = actual.getHeaders().filterKeys { it.lowercase(Locale.ROOT) != "cookie" }
         expectedWithoutCookies.forEach { expectedEntry ->
-            val actualValue = actualWithoutCookies[expectedEntry.key.toLowerCase()]
+            val actualValue = actualWithoutCookies[expectedEntry.key.lowercase(Locale.ROOT)]
             if (actualValue == null) {
                 problems.add(RequestMatchProblem.HeaderMismatch(expectedEntry.key, "Expected a header '${expectedEntry.key}' but was missing"))
             } else {

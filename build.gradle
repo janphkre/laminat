@@ -16,7 +16,7 @@ buildscript {
         generex_version = '1.0.1'
         jsonpath_version = '0.6.4'
 
-        mockserver_version = '3.9.0'
+        mockserver_version = '4.9.1'
 
         //Testing:
         test_junit_version = '4.12'
