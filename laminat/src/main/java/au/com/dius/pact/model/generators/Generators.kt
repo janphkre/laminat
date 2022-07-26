@@ -89,6 +89,9 @@ object JsonContentTypeHandler : ContentTypeHandler {
                 } else {
                     return
                 }
+                is PathToken.Root -> {
+                    bodyCursor = body
+                }
             }
         }
 

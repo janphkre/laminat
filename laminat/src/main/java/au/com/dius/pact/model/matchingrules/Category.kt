@@ -51,7 +51,7 @@ data class Category @JvmOverloads constructor(
         copy(matchingRules = matchingRules.filter { predicate.invoke(it.key) }.toMutableMap())
 
     fun maxBy(fn: (String) -> Int): MatchingRuleGroup {
-        val max = matchingRules.maxBy { fn.invoke(it.key) }
+        val max = matchingRules.maxByOrNull { fn.invoke(it.key) }
         return max?.value ?: MatchingRuleGroup()
     }
 

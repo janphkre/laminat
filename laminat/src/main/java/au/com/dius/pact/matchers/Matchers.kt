@@ -53,7 +53,7 @@ object Matchers {
                 }
             }
             if (filter.isNotEmpty()) {
-                filter.maxBy { it.size }?.size ?: 0
+                filter.maxByOrNull { it.size }?.size ?: 0
             } else {
                 0
             }
@@ -75,7 +75,7 @@ object Matchers {
                 }
             }
             if (filter.isNotEmpty()) {
-                filter.maxBy { it.size }?.size ?: 0
+                filter.maxByOrNull { it.size }?.size ?: 0
             } else {
                 0
             }
@@ -156,7 +156,7 @@ object Matchers {
 
     private fun selectBestMatcher(category: Category, path: List<String>): MatchingRuleGroup {
         return if (category.name == "body")
-            category.matchingRules.maxBy {
+            category.matchingRules.maxByOrNull {
                 calculatePathWeight(it.key, path)
             }!!.value
         else {
