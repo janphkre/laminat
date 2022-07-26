@@ -22,9 +22,6 @@ buildscript {
         test_mockito_version = '1.9.5'
 
         ktlint_version = '6.2.1'
-
-        //Retrofit-extension:
-        retrofit_version = '2.6.0'
     }
     repositories {
         google()
