@@ -23,7 +23,8 @@ object PactMerge {
             return MergeResult(true, "", existing)
         } else {
             return MergeResult(
-                false, "Cannot merge pacts as there were ${conflicts.size} conflict(s) " +
+                false,
+                "Cannot merge pacts as there were ${conflicts.size} conflict(s) " +
                     "between the interactions - ${conflicts.joinToString("\n")}"
             )
         }

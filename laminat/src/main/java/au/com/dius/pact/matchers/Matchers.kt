@@ -14,18 +14,20 @@ object Matchers {
     private val compiledPaths = WeakHashMap<String, ArrayList<AST.PathToken>>()
 
     private fun getCompiledPath(pathExp: String?): ArrayList<AST.PathToken>? {
-        return compiledPaths.getOrPut(pathExp) { Parser().compile(pathExp).let {
-            if (it.successful() && !it.isEmpty) {
-                val parseList = it.get()
-                val result = ArrayList<AST.PathToken>(parseList?.size() ?: 0)
-                for (i in 0 until parseList.size()) {
-                    result.add(i, parseList.apply(i))
+        return compiledPaths.getOrPut(pathExp) {
+            Parser().compile(pathExp).let {
+                if (it.successful() && !it.isEmpty) {
+                    val parseList = it.get()
+                    val result = ArrayList<AST.PathToken>(parseList?.size() ?: 0)
+                    for (i in 0 until parseList.size()) {
+                        result.add(i, parseList.apply(i))
+                    }
+                    result
+                } else {
+                    null
                 }
-                result
-            } else {
-                null
             }
-        } }
+        }
     }
 
     private fun matchesToken(pathElement: String?, token: AST.PathToken): Int {
@@ -123,19 +125,23 @@ object Matchers {
     }
 
     fun definedWildcardMatchers(category: String, path: List<String>, matchers: MatchingRules): Boolean {
-        val resolvedMatchers = matchers.getCategory(category)?.filter { pathExp -> matchPath(
-            pathExp,
-            path
-        ) == path.size }
+        val resolvedMatchers = matchers.getCategory(category)?.filter { pathExp ->
+            matchPath(
+                pathExp,
+                path
+            ) == path.size
+        }
         return resolvedMatchers?.matchingRules?.keys?.any { key -> key.endsWith(".*") } ?: false
     }
 
     fun definedMatchers(category: String, path: List<String>, matchers: MatchingRules): Category? {
         return if (category == "body") {
-            matchers.getCategory(category)?.filter { pathExp -> matchPath(
-                pathExp,
-                path
-            ) > 0 }
+            matchers.getCategory(category)?.filter { pathExp ->
+                matchPath(
+                    pathExp,
+                    path
+                ) > 0
+            }
         } else if (category == "header" || category == "query") {
             matchers.getCategory(category)?.filter { pathExp -> path.size == 1 && path.first() == pathExp }
         } else {

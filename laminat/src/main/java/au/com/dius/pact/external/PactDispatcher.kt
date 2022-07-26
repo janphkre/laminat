@@ -3,13 +3,13 @@ package au.com.dius.pact.external
 import au.com.dius.pact.model.PactMergeException
 import au.com.dius.pact.model.RequestResponseInteraction
 import au.com.dius.pact.model.Response
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 import okhttp3.Headers
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 import org.apache.http.Consts
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 
 /**
  * An okhttp dispatcher that creates matches based on the list of interactions through an OkHttpRequestMatcher.
@@ -64,8 +64,10 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
                     notFoundMockResponse().setBody("Partially matched ${requestMatch.interaction.uniqueKey()}:\n${requestMatch.problems.joinToString("\n")}")
                 }
                 is RequestMatch.RequestMismatch -> {
-                    notFoundMockResponse().setBody("Failed to match request at all! Best match was with ${requestMatch.interaction?.uniqueKey()}:\n" +
-                        "${requestMatch.problems?.joinToString("\n")}")
+                    notFoundMockResponse().setBody(
+                        "Failed to match request at all! Best match was with ${requestMatch.interaction?.uniqueKey()}:\n" +
+                            "${requestMatch.problems?.joinToString("\n")}"
+                    )
                 }
             }
         } catch (e: PactMergeException) {

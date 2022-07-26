@@ -43,12 +43,12 @@ object QueryMatcher {
                     )
                 )
             } else if (Matchers.definedMatchers("query", path, matchers)?.isEmpty() != false) {
-                    result.add(
-                        RequestMatchProblem.QueryMismatch(
-                            "Expected query parameter $parameter but was missing",
-                            path.joinToString(".")
-                        )
+                result.add(
+                    RequestMatchProblem.QueryMismatch(
+                        "Expected query parameter $parameter but was missing",
+                        path.joinToString(".")
                     )
+                )
             }
         }
         return result

@@ -14,8 +14,8 @@ import okhttp3.mockwebserver.RecordedRequest
  *
  * @author Jan Phillip Kretzschmar
  */
-class MonitoringStatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int)
-    : StatefullPactWebServer(allowUnexpectedKeys, pactErrorCode) {
+class MonitoringStatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int) :
+    StatefullPactWebServer(allowUnexpectedKeys, pactErrorCode) {
 
     init {
         mockWebServer.setDispatcher(MonitoringDispatcher(dispatcher))

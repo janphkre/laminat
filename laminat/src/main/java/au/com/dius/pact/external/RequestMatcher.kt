@@ -49,7 +49,8 @@ class RequestMatcher(private val allowUnexpectedKeys: Boolean) {
         }
         val conflictingMatch = matches.firstOrNull { it !== bestMatch && it is RequestMatch.FullRequestMatch && it.matchedCount == (bestMatch as RequestMatch.FullRequestMatch).matchedCount }
         if (conflictingMatch != null) {
-            throw PactMergeException("Multiple interactions have matched this request: " +
+            throw PactMergeException(
+                "Multiple interactions have matched this request: " +
                     "${(bestMatch as RequestMatch.FullRequestMatch).interaction.uniqueKey()} and " +
                     (conflictingMatch as RequestMatch.FullRequestMatch).interaction.uniqueKey()
             )

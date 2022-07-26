@@ -57,7 +57,8 @@ object HeaderMatcher {
     }
 
     private fun parseParameters(values: List<String>?): Map<String, String> {
-        return values?.asSequence()?.map { it.split('=').map { split -> split.trim() }
+        return values?.asSequence()?.map {
+            it.split('=').map { split -> split.trim() }
         }?.fold(HashMap()) { map, item ->
             map[item.component1()] = item.component2()
             map

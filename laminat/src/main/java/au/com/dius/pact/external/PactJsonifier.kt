@@ -26,18 +26,20 @@ object PactJsonifier {
             if (conflicts.isNotEmpty()) {
                 throw PactMergeException(
                     "Cannot merge pacts as there were ${conflicts.size} conflict(s) " +
-                    "between the interactions - ${conflicts.joinToString("\n")}"
+                        "between the interactions - ${conflicts.joinToString("\n")}"
                 )
             }
         }
         val firstPact = pacts.first()
-        val mergedPact = (pacts.fold(RequestResponsePact(firstPact.provider, firstPact.consumer, emptyList())) { left, current ->
-            val result = PactMerge.merge(current, left)
-            if (!result.ok) {
-                throw PactMergeException(result.message)
+        val mergedPact = (
+            pacts.fold(RequestResponsePact(firstPact.provider, firstPact.consumer, emptyList())) { left, current ->
+                val result = PactMerge.merge(current, left)
+                if (!result.ok) {
+                    throw PactMergeException(result.message)
+                }
+                left
             }
-            left
-        }).sortInteractions()
+            ).sortInteractions()
 
         val file = getEmptyFileFor(mergedPact, baseDir)
         PrintWriter(file).use { printWriter ->

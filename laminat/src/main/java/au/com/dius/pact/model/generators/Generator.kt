@@ -3,15 +3,15 @@ package au.com.dius.pact.model.generators
 import android.os.Build
 import au.com.dius.pact.model.PactSpecVersion
 import com.mifmif.common.regex.Generex
-import org.apache.commons.lang3.RandomStringUtils
-import org.apache.commons.lang3.RandomUtils
-import org.apache.commons.lang3.time.DateFormatUtils
-import org.apache.commons.lang3.time.FastDateFormat
 import java.math.BigDecimal
 import java.util.Calendar
 import java.util.Random
 import java.util.UUID
 import java.util.concurrent.ThreadLocalRandom
+import org.apache.commons.lang3.RandomStringUtils
+import org.apache.commons.lang3.RandomUtils
+import org.apache.commons.lang3.time.DateFormatUtils
+import org.apache.commons.lang3.time.FastDateFormat
 
 interface Generator {
     fun generate(base: Any?): Any

@@ -8,9 +8,9 @@ import au.com.dius.pact.model.PactMergeException
 import au.com.dius.pact.model.RequestResponsePact
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
+import java.io.File
 import org.junit.Assert
 import org.junit.Test
-import java.io.File
 
 /**
  * this is a larger test that checks the pact dsl and its json generation
@@ -30,51 +30,57 @@ class PactTest {
     )
 
     private fun getInitialPacts(): List<RequestResponsePact> {
-        return listOf(ConsumerPactBuilder("TestConsumer").hasPactWith("TestProducer")
-            .uponReceiving("GET testRequest")
-            .method("GET")
-            .path("test/path")
-            .headers(defaultRequestHeaders)
-            .willRespondWith()
-            .status(200)
-            .headers(defaultResponseHeaders)
-            .body(PactDslJsonBody().stringType("abc", "def"))
-            .uponReceiving("POST nullTestRequest")
-            .method("POST")
-            .path("test/path")
-            .headers(defaultRequestHeaders)
-            .body(PactDslJsonRootValue.matchNull())
-            .willRespondWith()
-            .status(200)
-            .headers(defaultResponseHeaders)
-            .body(PactDslJsonRootValue.matchNull())
-            .toPact())
+        return listOf(
+            ConsumerPactBuilder("TestConsumer").hasPactWith("TestProducer")
+                .uponReceiving("GET testRequest")
+                .method("GET")
+                .path("test/path")
+                .headers(defaultRequestHeaders)
+                .willRespondWith()
+                .status(200)
+                .headers(defaultResponseHeaders)
+                .body(PactDslJsonBody().stringType("abc", "def"))
+                .uponReceiving("POST nullTestRequest")
+                .method("POST")
+                .path("test/path")
+                .headers(defaultRequestHeaders)
+                .body(PactDslJsonRootValue.matchNull())
+                .willRespondWith()
+                .status(200)
+                .headers(defaultResponseHeaders)
+                .body(PactDslJsonRootValue.matchNull())
+                .toPact()
+        )
     }
 
     private fun getAdditionalPacts(): List<RequestResponsePact> {
-        return listOf(ConsumerPactBuilder("TestConsumer").hasPactWith("TestProducer")
-            .uponReceiving("GET additionaltestRequest")
-            .method("GET")
-            .path("test/path/additional")
-            .headers(defaultRequestHeaders)
-            .willRespondWith()
-            .status(200)
-            .headers(defaultResponseHeaders)
-            .body("{}")
-            .toPact())
+        return listOf(
+            ConsumerPactBuilder("TestConsumer").hasPactWith("TestProducer")
+                .uponReceiving("GET additionaltestRequest")
+                .method("GET")
+                .path("test/path/additional")
+                .headers(defaultRequestHeaders)
+                .willRespondWith()
+                .status(200)
+                .headers(defaultResponseHeaders)
+                .body("{}")
+                .toPact()
+        )
     }
 
     private fun getConflictPacts(): List<RequestResponsePact> {
-        return listOf(ConsumerPactBuilder("TestConsumer").hasPactWith("TestProducer")
-            .uponReceiving("GET testRequest")
-            .method("GET")
-            .path("test/path")
-            .headers(defaultRequestHeaders)
-            .willRespondWith()
-            .status(200)
-            .headers(defaultResponseHeaders)
-            .body("{}")
-            .toPact())
+        return listOf(
+            ConsumerPactBuilder("TestConsumer").hasPactWith("TestProducer")
+                .uponReceiving("GET testRequest")
+                .method("GET")
+                .path("test/path")
+                .headers(defaultRequestHeaders)
+                .willRespondWith()
+                .status(200)
+                .headers(defaultResponseHeaders)
+                .body("{}")
+                .toPact()
+        )
     }
 
     @Test
@@ -117,8 +123,11 @@ class PactTest {
                 }
                 Assert.assertTrue("Pacts are not compatible: $first; $second", first.compatibleTo(second))
                 val conflicts = first.conflictsWith(second)
-                Assert.assertTrue("Pacts are incompatible as there were ${conflicts.size} conflict(s) " +
-                        "between the interactions - ${conflicts.joinToString("\n")}", conflicts.isEmpty())
+                Assert.assertTrue(
+                    "Pacts are incompatible as there were ${conflicts.size} conflict(s) " +
+                        "between the interactions - ${conflicts.joinToString("\n")}",
+                    conflicts.isEmpty()
+                )
             }
         }
     }

@@ -1,7 +1,7 @@
 package au.com.dius.pact.model
 
-import org.apache.http.Consts
 import java.net.URLDecoder
+import org.apache.http.Consts
 
 object PactReader {
 

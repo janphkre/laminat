@@ -1,9 +1,9 @@
 package au.com.dius.pact.model
 
 import com.google.gson.JsonParser
-import org.apache.http.Consts
 import java.net.URLEncoder
 import java.util.Locale
+import org.apache.http.Consts
 
 class RequestResponseInteraction(
     override val description: String,

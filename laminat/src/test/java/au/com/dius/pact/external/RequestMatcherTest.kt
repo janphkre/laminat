@@ -3,6 +3,9 @@ package au.com.dius.pact.external
 import au.com.dius.pact.consumer.ConsumerPactBuilder
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody
 import au.com.dius.pact.model.RequestResponseInteraction
+import java.io.File
+import java.net.InetAddress
+import java.net.Socket
 import okhttp3.Headers
 import okhttp3.mockwebserver.RecordedRequest
 import okio.Buffer
@@ -10,9 +13,6 @@ import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.mock
-import java.io.File
-import java.net.InetAddress
-import java.net.Socket
 
 /**
  * This test checks that the RequestMatcher matches incoming requests correctly.
@@ -94,18 +94,18 @@ class RequestMatcherTest {
                     .stringMatcher("regex2", ".{4}", "abcd")
                     .decimalType("decimal1", 50.99234)
                     .closeObject()
-                    !!.`object`()
+                !!.`object`()
                     .stringMatcher("regex1", "\\d{8,9}", "123456789")
                     .stringMatcher("regex2", ".{4}", "abcd")
                     .decimalType("decimal1", 50.99234)
                     .closeObject()
-                    !!.`object`()
+                !!.`object`()
                     .minArrayLike("nestedArray", 2)
                     .stringMatcher("regex5", "\\d{9}")
                     .closeObject()
-                    !!.closeArray()
+                !!.closeArray()
                     .closeObject()
-                    !!.closeArray()
+                !!.closeArray()
 
             )
             .willRespondWith()
@@ -114,19 +114,19 @@ class RequestMatcherTest {
             .body(
                 PactDslJsonBody()
                     .`object`("_embedded")
-                        .stringMatcher("regex3", "\\d{5,6}", "12345")
-                        .stringMatcher("regex4", ".{3}", "abc")
-                        .array("firstArray")
-                            .`object`().closeObject()
-                            !!.`object`().closeObject()
-                            !!.`object`().closeObject()
-                            !!.`object`()
-                                .minArrayLike("nestedArray", 80)
-                                .stringMatcher("uid", "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|([A-Z0-9]{40})")
-                                .closeObject()
-                                !!.closeArray()
-                            .closeObject()
-                        !!.closeArray()
+                    .stringMatcher("regex3", "\\d{5,6}", "12345")
+                    .stringMatcher("regex4", ".{3}", "abc")
+                    .array("firstArray")
+                    .`object`().closeObject()
+                !!.`object`().closeObject()
+                !!.`object`().closeObject()
+                !!.`object`()
+                    .minArrayLike("nestedArray", 80)
+                    .stringMatcher("uid", "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|([A-Z0-9]{40})")
+                    .closeObject()
+                !!.closeArray()
+                    .closeObject()
+                !!.closeArray()
                     .closeObject()
             )
             .toPact()

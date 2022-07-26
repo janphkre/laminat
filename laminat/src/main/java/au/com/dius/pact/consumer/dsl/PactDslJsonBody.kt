@@ -19,14 +19,14 @@ import au.com.dius.pact.model.matchingrules.RuleLogic
 import au.com.dius.pact.model.matchingrules.TypeMatcher
 import com.mifmif.common.regex.Generex
 import io.gatling.jsonpath.`Parser$`
-import org.apache.commons.lang3.StringUtils
-import org.apache.commons.lang3.time.DateFormatUtils
-import org.apache.commons.lang3.time.FastDateFormat
-import org.json.JSONObject
 import java.math.BigDecimal
 import java.util.Calendar
 import java.util.UUID
 import java.util.regex.Pattern
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.time.DateFormatUtils
+import org.apache.commons.lang3.time.FastDateFormat
+import org.json.JSONObject
 
 /**
  * DSL to define a JSON Object
@@ -321,7 +321,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         if (!value.matches(regex.toRegex())) {
             throw InvalidMatcherException(
                 exampleString + value + "\" does not match regular expression \"" +
-                        regex + "\""
+                    regex + "\""
             )
         }
         body.put(name, value)

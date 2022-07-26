@@ -15,10 +15,10 @@ import au.com.dius.pact.model.matchingrules.TimestampMatcher
 import au.com.dius.pact.model.matchingrules.TypeMatcher
 import com.google.gson.JsonElement
 import com.google.gson.internal.LazilyParsedNumber
-import org.apache.commons.lang3.time.DateUtils
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.text.ParseException
+import org.apache.commons.lang3.time.DateUtils
 
 fun valueOf(value: Any?): String {
     return when (value) {
@@ -38,10 +38,14 @@ fun matchInclude(
     return if (matches) {
         listOf(RequestMatchProblem.None)
     } else {
-        listOf(mismatchFactory.create(expected, actual,
-            "Expected ${valueOf(actual)} to include ${valueOf(
-                includedValue
-            )}"))
+        listOf(
+            mismatchFactory.create(
+                expected, actual,
+                "Expected ${valueOf(actual)} to include ${valueOf(
+                    includedValue
+                )}"
+            )
+        )
     }
 }
 
@@ -99,9 +103,14 @@ fun matchEquality(
     return if (matches) {
         listOf(RequestMatchProblem.None)
     } else {
-        listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to equal ${valueOf(
-            actual
-        )}"))
+        listOf(
+            mismatchFactory.create(
+                expected, actual,
+                "Expected ${valueOf(actual)} to equal ${valueOf(
+                    actual
+                )}"
+            )
+        )
     }
 }
 
@@ -114,7 +123,8 @@ fun matchRegex(
     val matches = actual.toString().matches(regex)
     return if (matches ||
         expected is List<*> && actual is List<*> ||
-        expected is Map<*, *> && actual is Map<*, *>) {
+        expected is Map<*, *> && actual is Map<*, *>
+    ) {
         listOf(RequestMatchProblem.None)
     } else {
         listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to match '$regex'"))
@@ -130,7 +140,8 @@ fun matchType(
         expected is Number && actual is Number ||
         expected is Boolean && actual is Boolean ||
         expected is List<*> && actual is List<*> ||
-        expected is Map<*, *> && actual is Map<*, *>) {
+        expected is Map<*, *> && actual is Map<*, *>
+    ) {
         listOf(RequestMatchProblem.None)
     } else if (expected == null) {
         if (actual == null) {
@@ -139,10 +150,14 @@ fun matchType(
             listOf(mismatchFactory.create(expected, actual, "Expected ${valueOf(actual)} to be null"))
         }
     } else {
-        listOf(mismatchFactory.create(expected, actual,
-            "Expected ${valueOf(actual)} to be the same type as ${valueOf(
-                expected
-            )}"))
+        listOf(
+            mismatchFactory.create(
+                expected, actual,
+                "Expected ${valueOf(actual)} to be the same type as ${valueOf(
+                    expected
+                )}"
+            )
+        )
     }
 }
 
@@ -235,9 +250,13 @@ fun matchDate(
         DateUtils.parseDate(actual.toString(), pattern)
         listOf(RequestMatchProblem.None)
     } catch (e: ParseException) {
-        listOf(mismatchFactory.create(expected, actual,
-            "Expected ${valueOf(actual)} to match a date of '$pattern': " +
-                    "${e.message}"))
+        listOf(
+            mismatchFactory.create(
+                expected, actual,
+                "Expected ${valueOf(actual)} to match a date of '$pattern': " +
+                    "${e.message}"
+            )
+        )
     }
 }
 
@@ -251,9 +270,13 @@ fun matchTime(
         DateUtils.parseDate(actual.toString(), pattern)
         listOf(RequestMatchProblem.None)
     } catch (e: ParseException) {
-        listOf(mismatchFactory.create(expected, actual,
-            "Expected ${valueOf(actual)} to match a time of '$pattern': " +
-                    "${e.message}"))
+        listOf(
+            mismatchFactory.create(
+                expected, actual,
+                "Expected ${valueOf(actual)} to match a time of '$pattern': " +
+                    "${e.message}"
+            )
+        )
     }
 }
 
@@ -267,9 +290,13 @@ fun matchTimestamp(
         DateUtils.parseDate(actual.toString(), pattern)
         listOf(RequestMatchProblem.None)
     } catch (e: ParseException) {
-        listOf(mismatchFactory.create(expected, actual,
-            "Expected ${valueOf(actual)} to match a timestamp of '$pattern': " +
-                    "${e.message}"))
+        listOf(
+            mismatchFactory.create(
+                expected, actual,
+                "Expected ${valueOf(actual)} to match a timestamp of '$pattern': " +
+                    "${e.message}"
+            )
+        )
     }
 }
 

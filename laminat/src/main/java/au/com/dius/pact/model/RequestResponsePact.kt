@@ -3,7 +3,7 @@ package au.com.dius.pact.model
 class RequestResponsePact(override val provider: Provider, override val consumer: Consumer, var requestResponseInteractions: List<RequestResponseInteraction>) : BasePact() {
 
     override val interactions: List<Interaction>
-    get() = requestResponseInteractions
+        get() = requestResponseInteractions
 
     override fun sortInteractions(): Pact {
         requestResponseInteractions = ArrayList(requestResponseInteractions).sortedBy {

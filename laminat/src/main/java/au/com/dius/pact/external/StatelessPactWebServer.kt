@@ -2,8 +2,8 @@ package au.com.dius.pact.external
 
 import au.com.dius.pact.model.RequestResponseInteraction
 import au.com.dius.pact.model.RequestResponsePact
-import okhttp3.mockwebserver.MockWebServer
 import java.io.IOException
+import okhttp3.mockwebserver.MockWebServer
 
 /**
  * This is a web server which ignores any state specified in pacts and

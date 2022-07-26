@@ -19,17 +19,19 @@ class Request(
     }
 
     fun copy(): Request {
-        return Request(method, path,
+        return Request(
+            method, path,
             HashMap<String, List<String>>(query),
             HashMap<String, String>(headers),
             body,
             matchingRules.copy(),
-            generators.copy())
+            generators.copy()
+        )
     }
 
     override fun toString(): String {
         return "\tmethod: $method\n\tpath: $path\n\tquery: $query\n\theaders: $headers\n\tmatchers: $matchingRules\n\t" +
-                "generators: $generators\n\tbody: $body"
+            "generators: $generators\n\tbody: $body"
     }
 
     fun headersWithoutCookie(): Map<String, String> {
@@ -45,13 +47,13 @@ class Request(
         if (other !is Request) {
             return false
         }
-        return this. method == other.method &&
-                this.path == other.path &&
-                this.query.keys.size == other.query.keys.size &&
-                this.query.keys.containsAll(other.query.keys) &&
-                this.headers.keys.size == other.headers.keys.size &&
-                this.headers.keys.containsAll(other.headers.keys) &&
-                matchesBody(other)
+        return this.method == other.method &&
+            this.path == other.path &&
+            this.query.keys.size == other.query.keys.size &&
+            this.query.keys.containsAll(other.query.keys) &&
+            this.headers.keys.size == other.headers.keys.size &&
+            this.headers.keys.containsAll(other.headers.keys) &&
+            matchesBody(other)
     }
 
     private fun matchesBody(other: Request): Boolean {
