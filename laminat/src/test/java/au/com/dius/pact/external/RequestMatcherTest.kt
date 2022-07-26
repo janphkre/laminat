@@ -161,6 +161,7 @@ class RequestMatcherTest {
 
         val mockSocket = mock(Socket::class.java)
         doReturn(mockInetAddress).`when`(mockSocket).inetAddress
+        doReturn(mockInetAddress).`when`(mockSocket).localAddress
         doReturn(1234).`when`(mockSocket).localPort
 
         return mockSocket
