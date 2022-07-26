@@ -19,9 +19,9 @@ buildscript {
         mockserver_version = '4.9.1'
 
         //Testing:
-        test_junit_version = '4.12'
-        test_json_version = '20180130'
-        test_mockito_version = '1.9.5'
+        test_junit_version = '4.13.2'
+        test_json_version = '20220320'
+        test_mockito_version = '2.19.0'
 
         ktlint_version = '10.2.0'
     }
