@@ -10,7 +10,7 @@ buildscript {
 
         min_sdk_version = 14
         target_sdk_version = 30
-        kotlin_version = '1.3.61'
+        kotlin_version = '1.6.20'
         gson_version = '2.8.2'
         apache_commons_version = '3.4'
         generex_version = '1.0.1'

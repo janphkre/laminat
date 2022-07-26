@@ -50,7 +50,7 @@ dependencies {
 //TODO: CHECKOUT if we can replace api with implementation & remove some dependencies?
     implementation "com.squareup.okhttp3:mockwebserver:$mockserver_version"
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "com.google.code.gson:gson:$gson_version"
     implementation "org.apache.commons:commons-lang3:$apache_commons_version"
     implementation "com.github.mifmif:generex:$generex_version"
