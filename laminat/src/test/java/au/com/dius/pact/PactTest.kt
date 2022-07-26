@@ -20,7 +20,7 @@ import org.junit.Test
  */
 class PactTest {
 
-    private val expectedPact = "testconsumer_testproducer.json"
+    private val expectedPact = "testconsumer___testproducer.json"
 
     private val defaultRequestHeaders = hashMapOf(
         Pair("We", "will have to see about this!")

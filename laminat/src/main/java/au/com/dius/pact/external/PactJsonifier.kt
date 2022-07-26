@@ -48,7 +48,7 @@ object PactJsonifier {
     }
 
     private fun getEmptyFileFor(pact: Pact, baseDir: File): File {
-        val name = "${pact.consumer.name.toLowerCase().replace(' ','_')}:${pact.provider.name.toLowerCase().replace(' ','_')}.json"
+        val name = "${pact.consumer.name.toLowerCase().replace(' ','_')}___${pact.provider.name.toLowerCase().replace(' ','_')}.json"
         return File(baseDir, name)
     }
 }
