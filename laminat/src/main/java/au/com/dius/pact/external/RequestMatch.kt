@@ -12,7 +12,7 @@ import au.com.dius.pact.model.RequestResponseInteraction
  * @author Jan Philip Kretzschmar
  */
 sealed class RequestMatch {
-    class RequestMismatch(val interaction: RequestResponseInteraction? = null, val problems: List<RequestMatchProblem>? = null) : RequestMatch()
-    class FullRequestMatch(val interaction: RequestResponseInteraction, val matchedCount: Int) : RequestMatch()
-    class PartialRequestMatch(val interaction: RequestResponseInteraction, val problems: List<RequestMatchProblem>) : RequestMatch()
+    data class RequestMismatch(val interaction: RequestResponseInteraction? = null, val problems: List<RequestMatchProblem>? = null) : RequestMatch()
+    data class FullRequestMatch(val interaction: RequestResponseInteraction, val matchedCount: Int) : RequestMatch()
+    data class PartialRequestMatch(val interaction: RequestResponseInteraction, val problems: List<RequestMatchProblem>) : RequestMatch()
 }
