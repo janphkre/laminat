@@ -27,6 +27,13 @@ class RequestResponsePact(override val provider: Provider, override val consumer
         }.distinctBy { it.uniqueKey() }
     }
 
+    @Deprecated(
+        "Wrap the au.com.dius.pact in a FilteredPact instead",
+        ReplaceWith(
+            "FilteredPact(this, predicate)",
+            "au.com.dius.pact.model.FilteredPact"
+        )
+    )
     override fun filterInteractions(predicate: (Interaction) -> Boolean): Pact {
         return FilteredPact(this, predicate)
     }
