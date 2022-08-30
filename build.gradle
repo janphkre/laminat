@@ -3,8 +3,8 @@
 buildscript {
 
     ext {
-        pact_version = '3.5.14'
-        pact_version_code = 14
+        pact_version = '3.5.15'
+        pact_version_code = 15
         library_namespace = 'com.github.janphkre'
         library_id = 'laminat'
 
