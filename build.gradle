@@ -3,8 +3,8 @@
 buildscript {
 
     ext {
-        pact_version = '3.5.15'
-        pact_version_code = 15
+        pact_version = '3.6.0'
+        pact_version_code = 20
         library_namespace = 'com.github.janphkre'
 
         min_sdk_version = 14
