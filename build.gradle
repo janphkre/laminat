@@ -8,7 +8,7 @@ buildscript {
         library_namespace = 'com.github.janphkre'
 
         min_sdk_version = 14
-        target_sdk_version = 30
+        target_sdk_version = 31
         kotlin_version = '1.7.10'
         gson_version = '2.9.0'
         apache_commons_version = '3.12.0'
