@@ -6,7 +6,6 @@ buildscript {
         pact_version = '3.5.15'
         pact_version_code = 15
         library_namespace = 'com.github.janphkre'
-        library_id = 'laminat'
 
         min_sdk_version = 14
         target_sdk_version = 30
@@ -24,6 +23,9 @@ buildscript {
         test_mockito_version = '2.19.0'
 
         ktlint_version = '10.2.0'
+
+        //Retrofit-extension:
+        retrofit_version = '2.9.0'
     }
     repositories {
         google()

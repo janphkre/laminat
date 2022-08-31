@@ -137,5 +137,9 @@ fun pact_merged_NoConflicts() {
 [1]: https://github.com/square/okhttp
 [2]: https://github.com/DiUS/pact-jvm/tree/v3.5.x-jre7
 
+# laminat-retrofit
+Extension for laminat to generate pact requests from retrofit definitons
+
+
 # laminat-retrofit-noop
 Extension for laminat to generate pact requests from retrofit definitons. This is the no op version containing only source level annotations.

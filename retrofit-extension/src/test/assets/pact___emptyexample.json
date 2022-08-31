@@ -1,0 +1,45 @@
+{
+  "provider": {
+    "name": "testretrofitprovider"
+  },
+  "consumer": {
+    "name": "testretrofitconsumer"
+  },
+  "interactions": [
+    {
+      "description": "POST empty example",
+      "request": {
+        "method": "POST",
+        "path": "/api/v1/emptyExample",
+        "headers": {
+          "X-Foo": "Bar"
+        },
+        "matchingRules": {
+          "header": {
+            "X-Foo": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "Bar"
+                }
+              ],
+              "combine": "AND"
+            }
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": {}
+      }
+    }
+  ],
+  "metadata": {
+    "pact-specification": {
+      "version": "3.0.0"
+    },
+    "pact-laminat-android": {
+      "version": "3.5.10"
+    }
+  }
+}
