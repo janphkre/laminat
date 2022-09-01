@@ -5,7 +5,6 @@ import au.com.dius.pact.model.OptionalBody
 import au.com.dius.pact.model.matchingrules.MatchingRules
 import au.com.dius.pact.model.matchingrules.RegexMatcher
 
-// TODO CHECK IF MATCHER NEEDS TO BE MOVED LOGIC WISE
 class PlainTextBodyMatcher : BodyMatcher() {
 
     override fun matchContent(expected: OptionalBody, actual: IncomingRequest, matchers: MatchingRules, allowUnexpectedKeys: Boolean): List<RequestMatchProblem> {
