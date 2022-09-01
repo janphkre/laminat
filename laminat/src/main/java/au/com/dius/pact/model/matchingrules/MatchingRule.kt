@@ -1,5 +1,6 @@
 package au.com.dius.pact.model.matchingrules
 
+import au.com.dius.pact.model.PactSerializationConfig
 import au.com.dius.pact.model.PactSpecVersion
 import java.util.Locale
 
@@ -115,8 +116,8 @@ data class MatchingRuleGroup @JvmOverloads constructor(
     val rules: MutableList<MatchingRule> = mutableListOf(),
     val ruleLogic: RuleLogic = RuleLogic.AND
 ) {
-    fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any?> {
-        if (pactSpecVersion < PactSpecVersion.V3) {
+    fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any?> {
+        if (serializationConfig.specVersion < PactSpecVersion.V3) {
             return rules.first().toMap()
         } else {
             return mapOf("matchers" to rules.map { it.toMap() }, "combine" to ruleLogic.name)

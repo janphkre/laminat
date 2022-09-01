@@ -1,5 +1,6 @@
 package au.com.dius.pact.model.matchingrules
 
+import au.com.dius.pact.model.PactSerializationConfig
 import au.com.dius.pact.model.PactSpecVersion
 
 /**
@@ -75,18 +76,18 @@ data class Category @JvmOverloads constructor(
         }.toMutableMap()
     }
 
-    fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any?> {
-        return if (pactSpecVersion < PactSpecVersion.V3) {
+    fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any?> {
+        return if (serializationConfig.specVersion < PactSpecVersion.V3) {
             matchingRules.entries.associate {
                 val keyBase = "\$.$name"
                 if (it.key.startsWith('$')) {
-                    Pair(keyBase + it.key.substring(1), it.value.toMap(pactSpecVersion))
+                    Pair(keyBase + it.key.substring(1), it.value.toMap(serializationConfig))
                 } else {
-                    Pair(keyBase + it.key, it.value.toMap(pactSpecVersion))
+                    Pair(keyBase + it.key, it.value.toMap(serializationConfig))
                 }
             }
         } else {
-            matchingRules.entries.associate { Pair(it.key, it.value.toMap(pactSpecVersion)) }
+            matchingRules.entries.associate { Pair(it.key, it.value.toMap(serializationConfig)) }
         }
     }
 }

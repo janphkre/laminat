@@ -1,7 +1,7 @@
 package au.com.dius.pact.model.generators
 
 import android.os.Build
-import au.com.dius.pact.model.PactSpecVersion
+import au.com.dius.pact.model.PactSerializationConfig
 import com.mifmif.common.regex.Generex
 import java.math.BigDecimal
 import java.util.Calendar
@@ -15,11 +15,11 @@ import org.apache.commons.lang3.time.FastDateFormat
 
 interface Generator {
     fun generate(base: Any?): Any
-    fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any>
+    fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any>
 }
 
 data class RandomIntGenerator(val min: Int, val max: Int) : Generator {
-    override fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any> {
+    override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
         return mapOf("type" to "RandomInt", "min" to min, "max" to max)
     }
 
@@ -29,7 +29,7 @@ data class RandomIntGenerator(val min: Int, val max: Int) : Generator {
 }
 
 data class RandomDecimalGenerator(val digits: Int) : Generator {
-    override fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any> {
+    override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
         return mapOf("type" to "RandomDecimal", "digits" to digits)
     }
 
@@ -37,7 +37,7 @@ data class RandomDecimalGenerator(val digits: Int) : Generator {
 }
 
 data class RandomHexadecimalGenerator(val digits: Int) : Generator {
-    override fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any> {
+    override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
         return mapOf("type" to "RandomHexadecimal", "digits" to digits)
     }
 
@@ -45,7 +45,7 @@ data class RandomHexadecimalGenerator(val digits: Int) : Generator {
 }
 
 data class RandomStringGenerator(val size: Int = 20) : Generator {
-    override fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any> {
+    override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
         return mapOf("type" to "RandomString", "size" to size)
     }
 
@@ -55,7 +55,7 @@ data class RandomStringGenerator(val size: Int = 20) : Generator {
 }
 
 data class RegexGenerator(val regex: String) : Generator {
-    override fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any> {
+    override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
         return mapOf("type" to "Regex", "regex" to regex)
     }
 
@@ -63,7 +63,7 @@ data class RegexGenerator(val regex: String) : Generator {
 }
 
 class UuidGenerator : Generator {
-    override fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any> {
+    override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
         return mapOf("type" to "Uuid")
     }
 
@@ -79,7 +79,7 @@ class UuidGenerator : Generator {
 }
 
 data class DateGenerator(val format: String? = null) : Generator {
-    override fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any> {
+    override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
         if (format != null) {
             return mapOf("type" to "Date", "format" to this.format)
         }
@@ -97,7 +97,7 @@ data class DateGenerator(val format: String? = null) : Generator {
 }
 
 data class TimeGenerator(val format: String? = null) : Generator {
-    override fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any> {
+    override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
         if (format != null) {
             return mapOf("type" to "Time", "format" to this.format)
         }
@@ -115,7 +115,7 @@ data class TimeGenerator(val format: String? = null) : Generator {
 }
 
 data class DateTimeGenerator(val format: String? = null) : Generator {
-    override fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any> {
+    override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
         if (format != null) {
             return mapOf("type" to "DateTime", "format" to this.format)
         }
@@ -133,7 +133,7 @@ data class DateTimeGenerator(val format: String? = null) : Generator {
 }
 
 object RandomBooleanGenerator : Generator {
-    override fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any> {
+    override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
         return mapOf("type" to "RandomBoolean")
     }
 

@@ -48,9 +48,7 @@ interface Interaction {
     /**
      * Converts this interaction to a Map
      */
-    fun toMap(pactSpecVersion: PactSpecVersion): Map<*, *>
-
-    fun toMap(): Map<*, *>
+    fun toMap(serializationConfig: PactSerializationConfig): Map<*, *>
 
     fun uniqueKey(): String
 }
@@ -85,7 +83,7 @@ interface Pact {
     /**
      * Returns a Map representation of this au.com.dius.pact for the purpose of generating a JSON document.
      */
-    fun toMap(pactSpecVersion: PactSpecVersion): Map<String, *>
+    fun toMap(serializationConfig: PactSerializationConfig): Map<String, *>
 
     /**
      * If this au.com.dius.pact is compatible with the other au.com.dius.pact. Pacts are compatible if they have the

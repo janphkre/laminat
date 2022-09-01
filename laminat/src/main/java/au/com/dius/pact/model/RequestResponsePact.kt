@@ -12,12 +12,12 @@ class RequestResponsePact(override val provider: Provider, override val consumer
         return this
     }
 
-    override fun toMap(pactSpecVersion: PactSpecVersion): Map<String, *> {
+    override fun toMap(serializationConfig: PactSerializationConfig): Map<String, *> {
         return mapOf<String, Any?>(
             Pair("provider", provider.toMap()),
             Pair("consumer", consumer.toMap()),
-            Pair("interactions", interactions.map { it.toMap(pactSpecVersion) }),
-            Pair("metadata", getMetaData(if (pactSpecVersion >= PactSpecVersion.V3) "3.0.0" else "2.0.0"))
+            Pair("interactions", interactions.map { it.toMap(serializationConfig) }),
+            Pair("metadata", getMetaData(serializationConfig))
         )
     }
 

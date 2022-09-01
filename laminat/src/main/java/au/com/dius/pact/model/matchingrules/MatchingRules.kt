@@ -1,5 +1,6 @@
 package au.com.dius.pact.model.matchingrules
 
+import au.com.dius.pact.model.PactSerializationConfig
 import au.com.dius.pact.model.PactSpecVersion
 
 class MatchingRules {
@@ -54,29 +55,29 @@ class MatchingRules {
         return matchingRules
     }
 
-    fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any?> {
-        return if (pactSpecVersion < PactSpecVersion.V3) {
-            toV2Map()
+    fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any?> {
+        return if (serializationConfig.specVersion < PactSpecVersion.V3) {
+            toV2Map(serializationConfig)
         } else {
-            toV3Map()
+            toV3Map(serializationConfig)
         }
     }
 
-    fun toV3Map(): Map<String, Map<String, Any?>> {
+    fun toV3Map(serializationConfig: PactSerializationConfig): Map<String, Map<String, Any?>> {
         val map = HashMap<String, Map<String, Any?>>()
 
         rules.forEach {
-            map[it.key] = it.value.toMap(PactSpecVersion.V3)
+            map[it.key] = it.value.toMap(serializationConfig)
         }
 
         return map
     }
 
-    fun toV2Map(): Map<String, Any?> {
+    fun toV2Map(serializationConfig: PactSerializationConfig): Map<String, Any?> {
         val map = HashMap<String, Any?>()
 
         rules.forEach {
-            it.value.toMap(PactSpecVersion.V2).forEach {
+            it.value.toMap(serializationConfig).forEach {
                 map[it.key] = it.value
             }
         }
@@ -85,6 +86,6 @@ class MatchingRules {
     }
 
     fun getCategory(category: String): Category? {
-        return rules.get(category)
+        return rules[category]
     }
 }

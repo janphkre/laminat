@@ -1,7 +1,9 @@
 package au.com.dius.pact.model
 
+import au.com.dius.pact.matchers.toUtf8String
 import java.net.URLEncoder
 import java.util.Locale
+import kotlin.math.min
 import org.apache.http.Consts
 
 class RequestResponseInteraction(
@@ -38,13 +40,13 @@ class RequestResponseInteraction(
         return false
     }
 
-    override fun toMap(pactSpecVersion: PactSpecVersion): Map<*, *> {
+    override fun toMap(serializationConfig: PactSerializationConfig): Map<*, *> {
         val interactionJson = mutableMapOf<String, Any?>(
             Pair("description", description),
-            Pair("request", requestToMap(request, pactSpecVersion)),
-            Pair("response", responseToMap(response, pactSpecVersion))
+            Pair("request", requestToMap(request, serializationConfig)),
+            Pair("response", responseToMap(response, serializationConfig))
         )
-        if (pactSpecVersion < PactSpecVersion.V3 && !providerStates.isEmpty()) {
+        if (serializationConfig.specVersion < PactSpecVersion.V3 && !providerStates.isEmpty()) {
             interactionJson["providerState"] = providerState
         } else if (!providerStates.isEmpty()) {
             interactionJson["providerStates"] = providerStates.map { it.toMap() }
@@ -52,16 +54,12 @@ class RequestResponseInteraction(
         return interactionJson
     }
 
-    override fun toMap(): Map<*, *> {
-        return toMap(PactSpecVersion.V3)
-    }
-
     override fun uniqueKey(): String {
         return "${displayState()}_$description"
     }
 
     companion object {
-        fun requestToMap(request: Request, pactSpecVersion: PactSpecVersion): Map<*, *> {
+        fun requestToMap(request: Request, serializationConfig: PactSerializationConfig): Map<*, *> {
             val map = mutableMapOf<String, Any?>(
                 Pair("method", request.method.uppercase(Locale.ROOT)),
                 Pair("path", request.path)
@@ -70,21 +68,21 @@ class RequestResponseInteraction(
                 map.set("headers", request.headers)
             }
             if (request.query.isNotEmpty()) {
-                map.set("query", if (pactSpecVersion >= PactSpecVersion.V3) request.query else mapToQueryStr(request.query))
+                map.set("query", if (serializationConfig.specVersion >= PactSpecVersion.V3) request.query else mapToQueryStr(request.query))
             }
             if (request.body !is OptionalBody.MissingBody) {
-                map.set("body", parseBody(request))
+                map.set("body", parseBody(request, serializationConfig.truncateBinaryLength))
             }
             if (request.matchingRules.isNotEmpty()) {
-                map.set("matchingRules", request.matchingRules.toMap(pactSpecVersion))
+                map.set("matchingRules", request.matchingRules.toMap(serializationConfig))
             }
-            if (request.generators.isNotEmpty() && pactSpecVersion >= PactSpecVersion.V3) {
-                map.set("generators", request.generators.toMap(pactSpecVersion))
+            if (request.generators.isNotEmpty() && serializationConfig.specVersion >= PactSpecVersion.V3) {
+                map.set("generators", request.generators.toMap(serializationConfig))
             }
             return map
         }
 
-        fun responseToMap(response: Response, pactSpecVersion: PactSpecVersion): Map<*, *> {
+        fun responseToMap(response: Response, serializationConfig: PactSerializationConfig): Map<*, *> {
             val map = mutableMapOf<String, Any?>(
                 Pair("status", response.status)
             )
@@ -92,13 +90,13 @@ class RequestResponseInteraction(
                 map.set("headers", response.headers)
             }
             if (response.body !is OptionalBody.MissingBody) {
-                map.set("body", parseBody(response))
+                map.set("body", parseBody(response, serializationConfig.truncateBinaryLength))
             }
             if (response.matchingRules.isNotEmpty()) {
-                map.set("matchingRules", response.matchingRules.toMap(pactSpecVersion))
+                map.set("matchingRules", response.matchingRules.toMap(serializationConfig))
             }
-            if (response.generators.isNotEmpty() && pactSpecVersion >= PactSpecVersion.V3) {
-                map.set("generators", response.generators.toMap(pactSpecVersion))
+            if (response.generators.isNotEmpty() && serializationConfig.specVersion >= PactSpecVersion.V3) {
+                map.set("generators", response.generators.toMap(serializationConfig))
             }
             return map
         }
@@ -107,7 +105,7 @@ class RequestResponseInteraction(
             return query.flatMap { entry -> entry.value.map { "${entry.key}=${URLEncoder.encode(it, Consts.UTF_8.name())}" } }.joinToString("&")
         }
 
-        fun parseBody(httpPart: HttpPart): Any? {
+        fun parseBody(httpPart: HttpPart, truncateBinaryLength: Int?): Any? {
             return when (val body = httpPart.body) {
                 is OptionalBody.StringBody -> {
                     if (httpPart.jsonBody()) {
@@ -117,7 +115,12 @@ class RequestResponseInteraction(
                     }
                 }
                 is OptionalBody.BinaryBody -> {
-                    body.unwrap() // TODO: CHECK IF WE WANT THIS IN THE PACT!
+                    var unwrappedBody = body.unwrap()
+                    val truncateBinaryLength = min(unwrappedBody.size, truncateBinaryLength ?: Int.MAX_VALUE)
+                    if (truncateBinaryLength >= 0) {
+                        unwrappedBody = unwrappedBody.sliceArray(0 until truncateBinaryLength)
+                    }
+                    unwrappedBody.toUtf8String()
                 }
                 else -> {
                     null

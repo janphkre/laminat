@@ -3,6 +3,7 @@ package au.com.dius.pact.model.generators
 import au.com.dius.pact.matchers.MatchingConfig
 import au.com.dius.pact.model.InvalidPactException
 import au.com.dius.pact.model.OptionalBody
+import au.com.dius.pact.model.PactSerializationConfig
 import au.com.dius.pact.model.PactSpecVersion
 import java.util.Locale
 import org.apache.http.entity.ContentType
@@ -55,7 +56,7 @@ data class Generators(val categories: MutableMap<Category, MutableMap<String, Ge
                 MatchingConfig.isXml(contentType) -> processBody(body.unwrap(), ContentType.APPLICATION_XML.mimeType)
                 else -> body
             }
-            is OptionalBody.BinaryBody -> body // TODO GENERATE BINARY BODY!
+            is OptionalBody.BinaryBody -> body
         }
     }
 
@@ -80,17 +81,17 @@ data class Generators(val categories: MutableMap<Category, MutableMap<String, Ge
      */
     fun isNotEmpty() = categories.isNotEmpty()
 
-    fun toMap(pactSpecVersion: PactSpecVersion): Map<String, Any> {
-        if (pactSpecVersion < PactSpecVersion.V3) {
+    fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
+        if (serializationConfig.specVersion < PactSpecVersion.V3) {
             throw InvalidPactException("Generators are only supported with au.com.dius.pact specification version 3+")
         }
         return categories.entries.associate { (key, value) ->
             when (key) {
                 Category.METHOD, Category.PATH, Category.STATUS -> key.name.lowercase(Locale.ROOT) to value[""]!!.toMap(
-                    pactSpecVersion
+                    serializationConfig
                 )
                 else -> key.name.lowercase(Locale.ROOT) to value.entries.associate { (genKey, generator) ->
-                    genKey to generator.toMap(pactSpecVersion)
+                    genKey to generator.toMap(serializationConfig)
                 }
             }
         }
