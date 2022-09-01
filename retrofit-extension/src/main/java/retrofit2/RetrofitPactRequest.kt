@@ -1,11 +1,11 @@
 package retrofit2
 
 import au.com.dius.pact.external.PactBuildException
+import java.lang.reflect.Method
 import okhttp3.Headers
 import okhttp3.MediaType
 import okhttp3.RetrofitPactRequestWithParams
 import org.apache.http.entity.ContentType
-import java.lang.reflect.Method
 
 class RetrofitPactRequest(
     private val retrofit: Retrofit,

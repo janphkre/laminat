@@ -1,6 +1,5 @@
 package au.com.dius.pact.model
 
-import au.com.dius.pact.matchers.readJson
 import au.com.dius.pact.model.generators.Generators
 import au.com.dius.pact.model.matchingrules.MatchingRules
 import java.util.Locale

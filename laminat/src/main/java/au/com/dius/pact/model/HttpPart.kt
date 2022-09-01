@@ -37,7 +37,7 @@ abstract class HttpPart {
             } else {
                 ContentType.TEXT_PLAIN.mimeType
             }
-        } else if(body is OptionalBody.BinaryBody) {
+        } else if (body is OptionalBody.BinaryBody) {
             ContentType.DEFAULT_BINARY.mimeType
         } else {
             ContentType.TEXT_PLAIN.mimeType

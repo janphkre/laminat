@@ -37,7 +37,7 @@ object GeneratorsConfig {
     }
 
     fun setDefaultContentTypeHandlers() {
-        contentTypeHandlers[ContentType.APPLICATION_JSON.mimeType] = JsonContentTypeHandler //TODO: XML CONTENT-TYPE HANDLER
+        contentTypeHandlers[ContentType.APPLICATION_JSON.mimeType] = JsonContentTypeHandler // TODO: XML CONTENT-TYPE HANDLER
     }
 
     fun setContentTypeHandler(contentType: String, handler: ContentTypeHandler) {

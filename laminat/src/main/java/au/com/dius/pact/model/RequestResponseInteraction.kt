@@ -1,7 +1,5 @@
 package au.com.dius.pact.model
 
-import au.com.dius.pact.matchers.readJson
-import com.google.gson.JsonParser
 import java.net.URLEncoder
 import java.util.Locale
 import org.apache.http.Consts
@@ -119,7 +117,7 @@ class RequestResponseInteraction(
                     }
                 }
                 is OptionalBody.BinaryBody -> {
-                    body.unwrap() //TODO: CHECK IF WE WANT THIS IN THE PACT!
+                    body.unwrap() // TODO: CHECK IF WE WANT THIS IN THE PACT!
                 }
                 else -> {
                     null
