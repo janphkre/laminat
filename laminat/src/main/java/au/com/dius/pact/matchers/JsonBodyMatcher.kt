@@ -1,12 +1,16 @@
 package au.com.dius.pact.matchers
 
 import au.com.dius.pact.external.IncomingRequest
+import au.com.dius.pact.model.BasePact
 import au.com.dius.pact.model.OptionalBody
 import au.com.dius.pact.model.matchingrules.MatchingRules
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
+import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
+import java.io.Reader
 import java.util.LinkedList
+import kotlin.math.min
 
 class JsonBodyMatcher : BodyMatcher() {
 
@@ -16,11 +20,14 @@ class JsonBodyMatcher : BodyMatcher() {
         matchers: MatchingRules,
         allowUnexpectedKeys: Boolean
     ): List<RequestMatchProblem> {
+        if (expected !is OptionalBody.StringBody) {
+            return listOf(RequestMatchProblem.BodyMismatch("Expected body is not a string body!", "$"))
+        }
 
         val path = listOf("$")
 
         val actualJson = actual.getBodyAsJson()
-        val expectedJson = expected.parsedBodyAsJson
+        val expectedJson = expected.unwrapJson()
 
         return matchJsonElement(path, expectedJson, actualJson, allowUnexpectedKeys, matchers)
     }
@@ -64,7 +71,7 @@ class JsonBodyMatcher : BodyMatcher() {
                 emptyList<RequestMatchProblem>()
             }
             if (expectedValues.size() != 0) {
-                val paddedExpectedValues = Array(Math.min(actualValues.size() - expectedValues.size(), 0)) { expectedValues.first() }
+                val paddedExpectedValues = Array(min(actualValues.size() - expectedValues.size(), 0)) { expectedValues.first() }
                 problems.plus(matchJsonArrayContent(expectedValues.plus(elements = paddedExpectedValues), actualValues, path, allowUnexpectedKeys, matchers))
             } else {
                 problems

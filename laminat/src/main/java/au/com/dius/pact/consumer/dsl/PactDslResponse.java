@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.xml.transform.TransformerException;
 
 import au.com.dius.pact.consumer.ConsumerPactBuilder;
+import au.com.dius.pact.matchers.ByteArrayExtKt;
 import au.com.dius.pact.model.OptionalBody;
 import au.com.dius.pact.model.ProviderState;
 import au.com.dius.pact.model.Request;
@@ -60,34 +61,64 @@ public class PactDslResponse {
     }
 
     /**
-     * Response body to return
+     * String Response body to return
      *
      * @param body Response body in string form
      */
     public PactDslResponse body(String body) {
-        this.responseBody = OptionalBody.body(body);
+        responseBody = OptionalBody.body(body);
         return this;
     }
 
     /**
-     * Response body to return
+     * String Response body to return
      *
      * @param body body in string form
      * @param mimeType the Content-Type response header value
      */
     public PactDslResponse body(String body, String mimeType) {
-        responseBody = OptionalBody.body(body);
         responseHeaders.put(ContentType.CONTENT_TYPE, mimeType);
-        return this;
+        return body(body);
     }
 
     /**
-     * Response body to return
+     * String Response body to return
      *
      * @param body body in string form
      * @param mimeType the Content-Type response header value
      */
     public PactDslResponse body(String body, ContentType mimeType) {
+        return body(body, mimeType.toString());
+    }
+
+    /**
+     * Binary Response body to return
+     *
+     * @param body Response body in string form
+     */
+    public PactDslResponse body(byte[] body) {
+        responseBody = OptionalBody.body(body);
+        return this;
+    }
+
+    /**
+     * Binary Response body to return
+     *
+     * @param body body in string form
+     * @param mimeType the Content-Type response header value
+     */
+    public PactDslResponse body(byte[] body, String mimeType) {
+        responseHeaders.put(ContentType.CONTENT_TYPE, mimeType);
+        return body(body);
+    }
+
+    /**
+     * Binary Response body to return
+     *
+     * @param body body in string form
+     * @param mimeType the Content-Type response header value
+     */
+    public PactDslResponse body(byte[] body, ContentType mimeType) {
         return body(body, mimeType.toString());
     }
 
@@ -135,11 +166,10 @@ public class PactDslResponse {
      * @param body Response body in JSON form
      */
     public PactDslResponse body(JSONObject body) {
-        this.responseBody = OptionalBody.body(body.toString());
         if (!responseHeaders.containsKey(ContentType.CONTENT_TYPE)) {
             responseHeaders.put(ContentType.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
         }
-        return this;
+        return body(body.toString());
     }
 
     /**
@@ -156,15 +186,15 @@ public class PactDslResponse {
 
         responseMatchers.addCategory(parent.getMatchers());
         responseGenerators.addGenerators(parent.generators);
-        if (parent.getBody() != null) {
-            responseBody = OptionalBody.body(parent.getBody().toString());
-        } else {
-            responseBody = OptionalBody.nullBody();
-        }
 
         if (!responseHeaders.containsKey(ContentType.CONTENT_TYPE)) {
             responseHeaders.put(ContentType.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
         }
+
+        if (parent.getBody() != null) {
+            return body(parent.getBody().toString());
+        }
+        responseBody = OptionalBody.nullBody();
         return this;
     }
 
@@ -174,11 +204,10 @@ public class PactDslResponse {
      * @param body Response body as an XML Document
      */
     public PactDslResponse body(Document body) throws TransformerException {
-        responseBody = OptionalBody.body(ConsumerPactBuilder.xmlToString(body));
         if (!responseHeaders.containsKey(ContentType.CONTENT_TYPE)) {
             responseHeaders.put(ContentType.CONTENT_TYPE, ContentType.APPLICATION_XML.toString());
         }
-        return this;
+        return body(ConsumerPactBuilder.xmlToString(body));
     }
 
     /**

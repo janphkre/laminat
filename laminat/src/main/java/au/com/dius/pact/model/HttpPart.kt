@@ -3,6 +3,7 @@ package au.com.dius.pact.model
 import au.com.dius.pact.matchers.MatchingConfig
 import au.com.dius.pact.model.matchingrules.MatchingRules
 import java.util.Locale
+import kotlin.math.min
 import org.apache.http.entity.ContentType
 
 abstract class HttpPart {
@@ -21,8 +22,10 @@ abstract class HttpPart {
     }
 
     private fun detectContentType(): String {
-        return if (body.isPresent()) {
-            val s = body.value!!.substring(0, Math.min(body.value!!.length, 32)).filter { it != '\n' }
+        val body = body
+        return if (body is OptionalBody.StringBody) {
+            val bodyString = body.unwrap()
+            val s = bodyString.substring(0, min(bodyString.length, 32)).filter { it != '\n' }
             if (XMLREGEXP.matches(s)) {
                 ContentType.APPLICATION_XML.mimeType
             } else if (HTMLREGEXP.matches(s.uppercase(Locale.ROOT))) {
@@ -34,6 +37,8 @@ abstract class HttpPart {
             } else {
                 ContentType.TEXT_PLAIN.mimeType
             }
+        } else if(body is OptionalBody.BinaryBody) {
+            ContentType.DEFAULT_BINARY.mimeType
         } else {
             ContentType.TEXT_PLAIN.mimeType
         }

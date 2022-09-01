@@ -1,5 +1,6 @@
 package au.com.dius.pact.model
 
+import au.com.dius.pact.matchers.readJson
 import com.google.gson.JsonParser
 import java.net.URLEncoder
 import java.util.Locale
@@ -73,7 +74,7 @@ class RequestResponseInteraction(
             if (request.query.isNotEmpty()) {
                 map.set("query", if (pactSpecVersion >= PactSpecVersion.V3) request.query else mapToQueryStr(request.query))
             }
-            if (!request.body.isMissing()) {
+            if (request.body !is OptionalBody.MissingBody) {
                 map.set("body", parseBody(request))
             }
             if (request.matchingRules.isNotEmpty()) {
@@ -92,7 +93,7 @@ class RequestResponseInteraction(
             if (response.headers.isNotEmpty()) {
                 map.set("headers", response.headers)
             }
-            if (!response.body.isMissing()) {
+            if (response.body !is OptionalBody.MissingBody) {
                 map.set("body", parseBody(response))
             }
             if (response.matchingRules.isNotEmpty()) {
@@ -109,10 +110,20 @@ class RequestResponseInteraction(
         }
 
         fun parseBody(httpPart: HttpPart): Any? {
-            return if (httpPart.jsonBody() && httpPart.body.isPresent()) {
-                JsonParser().parse(httpPart.body.value)
-            } else {
-                httpPart.body.value
+            return when (val body = httpPart.body) {
+                is OptionalBody.StringBody -> {
+                    if (httpPart.jsonBody()) {
+                        body.unwrapJson()
+                    } else {
+                        body.unwrap()
+                    }
+                }
+                is OptionalBody.BinaryBody -> {
+                    body.unwrap() //TODO: CHECK IF WE WANT THIS IN THE PACT!
+                }
+                else -> {
+                    null
+                }
             }
         }
     }

@@ -26,14 +26,14 @@ val contentTypeHandlers: MutableMap<String, ContentTypeHandler> = mutableMapOf(
 
 fun setupDefaultContentTypeHandlers() {
     contentTypeHandlers.clear()
-    contentTypeHandlers[ContentType.APPLICATION_JSON.mimeType] = JsonContentTypeHandler
+    contentTypeHandlers[ContentType.APPLICATION_JSON.mimeType] = JsonContentTypeHandler //TODO: XML CONTENT-TYPE HANDLER
 }
 
 data class QueryResult(var value: Any, val key: Any? = null, val parent: Any? = null)
 
 object JsonContentTypeHandler : ContentTypeHandler {
     override fun processBody(value: String, fn: (QueryResult) -> Unit): OptionalBody {
-        val bodyJson = QueryResult(JsonParser().parse(value))
+        val bodyJson = QueryResult(JsonParser.parseString(value))
         fn.invoke(bodyJson)
         return OptionalBody.body(bodyJson.value.toString())
     }
@@ -141,13 +141,14 @@ data class Generators(val categories: MutableMap<Category, MutableMap<String, Ge
     }
 
     fun applyBodyGenerators(body: OptionalBody, contentType: String): OptionalBody {
-        return when (body.state) {
-            OptionalBody.State.EMPTY, OptionalBody.State.MISSING, OptionalBody.State.NULL -> body
-            OptionalBody.State.PRESENT -> when {
-                MatchingConfig.isJson(contentType) -> processBody(body.value!!, ContentType.APPLICATION_JSON.mimeType)
-                MatchingConfig.isXml(contentType) -> processBody(body.value!!, ContentType.APPLICATION_XML.mimeType)
+        return when (body) {
+            OptionalBody.EmptyBody, OptionalBody.MissingBody, OptionalBody.NullBody -> body
+            is OptionalBody.StringBody -> when {
+                MatchingConfig.isJson(contentType) -> processBody(body.unwrap(), ContentType.APPLICATION_JSON.mimeType)
+                MatchingConfig.isXml(contentType) -> processBody(body.unwrap(), ContentType.APPLICATION_XML.mimeType)
                 else -> body
             }
+            is OptionalBody.BinaryBody -> body // TODO GENERATE BINARY BODY!
         }
     }
 

@@ -14,6 +14,7 @@ import java.util.Map;
 import javax.xml.transform.TransformerException;
 
 import au.com.dius.pact.consumer.ConsumerPactBuilder;
+import au.com.dius.pact.matchers.ByteArrayExtKt;
 import au.com.dius.pact.model.Consumer;
 import au.com.dius.pact.model.OptionalBody;
 import au.com.dius.pact.model.PactReader;
@@ -129,7 +130,7 @@ public class PactDslRequestWithPath {
     }
 
     /**
-     * The body of the request
+     * The string body of the request
      *
      * @param body Request body in string form
      */
@@ -139,22 +140,51 @@ public class PactDslRequestWithPath {
     }
 
     /**
-     * The body of the request
+     * The string body of the request
      *
      * @param body Request body in string form
      */
     public PactDslRequestWithPath body(String body, String mimeType) {
-        requestBody = OptionalBody.body(body);
         requestHeaders.put(ContentType.CONTENT_TYPE, mimeType);
-        return this;
+        return body(body);
     }
 
     /**
-     * The body of the request
+     * The string body of the request
      *
      * @param body Request body in string form
      */
     public PactDslRequestWithPath body(String body, ContentType mimeType) {
+        return body(body, mimeType.toString());
+    }
+
+
+    /**
+     * The binary body of the request
+     *
+     * @param body Request body in string form
+     */
+    public PactDslRequestWithPath body(byte[] body) {
+        requestBody = OptionalBody.body(body);
+        return this;
+    }
+
+    /**
+     * The binary body of the request
+     *
+     * @param body Request body in string form
+     */
+    public PactDslRequestWithPath body(byte[] body, String mimeType) {
+        requestHeaders.put(ContentType.CONTENT_TYPE, mimeType);
+        return body(body);
+    }
+
+    /**
+     * The binary body of the request
+     *
+     * @param body Request body in string form
+     */
+    public PactDslRequestWithPath body(byte[] body, ContentType mimeType) {
         return body(body, mimeType.toString());
     }
 
@@ -203,11 +233,10 @@ public class PactDslRequestWithPath {
      * @param body Request body in JSON form
      */
     public PactDslRequestWithPath body(JSONObject body) {
-        requestBody = OptionalBody.body(body.toString());
         if (!requestHeaders.containsKey(ContentType.CONTENT_TYPE)) {
             requestHeaders.put(ContentType.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
         }
-        return this;
+        return body(body.toString());
     }
 
     /**
@@ -219,11 +248,10 @@ public class PactDslRequestWithPath {
         DslPart parent = body.close();
         requestMatchers.addCategory(parent.getMatchers());
         requestGenerators.addGenerators(parent.generators);
-        requestBody = OptionalBody.body(parent.toString());
         if (!requestHeaders.containsKey(ContentType.CONTENT_TYPE)) {
             requestHeaders.put(ContentType.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
         }
-        return this;
+        return body(parent.toString());
     }
 
     /**
@@ -232,11 +260,10 @@ public class PactDslRequestWithPath {
      * @param body XML Document
      */
     public PactDslRequestWithPath body(Document body) throws TransformerException {
-        requestBody = OptionalBody.body(ConsumerPactBuilder.xmlToString(body));
         if (!requestHeaders.containsKey(ContentType.CONTENT_TYPE)) {
             requestHeaders.put(ContentType.CONTENT_TYPE, ContentType.APPLICATION_XML.toString());
         }
-        return this;
+        return body(ConsumerPactBuilder.xmlToString(body));
     }
 
     /**

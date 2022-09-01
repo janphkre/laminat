@@ -1,6 +1,6 @@
 package au.com.dius.pact.model
 
-import au.com.dius.pact.model.BasePact.Companion.jsonParser
+import au.com.dius.pact.matchers.readJson
 import au.com.dius.pact.model.generators.Generators
 import au.com.dius.pact.model.matchingrules.MatchingRules
 import java.util.Locale
@@ -63,8 +63,8 @@ class Request(
         }
         if (jsonBody() && other.jsonBody()) {
             try {
-                val jsonModel = jsonParser.parse(body.value)
-                val otherJsonModel = jsonParser.parse(other.body.value)
+                val jsonModel = (body as OptionalBody.StringBody).unwrapJson()
+                val otherJsonModel = (other.body as OptionalBody.StringBody).unwrapJson()
                 return jsonModel == otherJsonModel
             } catch (e: Exception) { }
         }

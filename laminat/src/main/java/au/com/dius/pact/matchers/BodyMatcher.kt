@@ -8,9 +8,9 @@ import au.com.dius.pact.model.matchingrules.MatchingRules
 abstract class BodyMatcher {
 
     fun matchBody(expected: Request, actual: IncomingRequest, allowUnexpectedKeys: Boolean): List<RequestMatchProblem> {
-        return when (expected.body.state) {
-            OptionalBody.State.MISSING -> listOf(RequestMatchProblem.None)
-            OptionalBody.State.NULL, OptionalBody.State.EMPTY -> {
+        return when (expected.body) {
+            OptionalBody.MissingBody -> listOf(RequestMatchProblem.None)
+            OptionalBody.NullBody, OptionalBody.EmptyBody -> {
                 if (actual.getBodySize() > 0) {
                     val actualBodyString = actual.getBody()
                     listOf(RequestMatchProblem.BodyMismatch("Expected empty body but received '$actualBodyString'"))
@@ -20,7 +20,7 @@ abstract class BodyMatcher {
             }
             else -> {
                 if (actual.getBodySize() <= 0) {
-                    listOf(RequestMatchProblem.BodyMismatch("Expected body '${expected.body.value}' but was missing"))
+                    listOf(RequestMatchProblem.BodyMismatch("Expected body '${expected.body}' but was missing"))
                 } else {
                     matchContent(expected.body, actual, expected.matchingRules, allowUnexpectedKeys)
                 }

@@ -1,36 +1,108 @@
 package au.com.dius.pact.model
 
-import au.com.dius.pact.model.BasePact.Companion.jsonParser
+import au.com.dius.pact.matchers.toUtf8ByteArray
 import com.google.gson.JsonElement
+import com.google.gson.JsonParser
 
 /**
  * Class to represent missing, empty, null and present bodies
  */
-data class OptionalBody(val state: State, val value: String? = null) {
+sealed interface OptionalBody {
 
-    val parsedBodyAsJson: JsonElement by lazy {
-        jsonParser.parse(unwrap())
+    object MissingBody : OptionalBody {
+        override fun orEmptyBinary(): ByteArray {
+            return ByteArray(0)
+        }
     }
 
-    enum class State {
-        MISSING, EMPTY, NULL, PRESENT
+    object NullBody : OptionalBody {
+        override fun orEmptyBinary(): ByteArray {
+            return ByteArray(0)
+        }
+    }
+
+    object EmptyBody : OptionalBody {
+
+        override fun orEmptyBinary(): ByteArray {
+            return ByteArray(0)
+        }
+    }
+
+    data class StringBody(
+        private val value: String
+    ) : OptionalBody {
+
+        private val parsedBodyAsJson: JsonElement by lazy {
+            JsonParser.parseString(value)
+        }
+
+        override fun orEmptyBinary(): ByteArray {
+            return unwrap().toUtf8ByteArray()
+        }
+
+        fun unwrap(): String {
+            return value
+        }
+
+        fun unwrapJson(): JsonElement {
+            return parsedBodyAsJson
+        }
+    }
+
+    data class BinaryBody(
+        private val value: ByteArray
+    ) : OptionalBody {
+
+        override fun orEmptyBinary(): ByteArray {
+            return unwrap()
+        }
+
+        fun unwrap(): ByteArray {
+            return value
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as BinaryBody
+
+            if (!value.contentEquals(other.value)) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return value.contentHashCode()
+        }
     }
 
     companion object {
 
         @JvmStatic
         fun missing(): OptionalBody {
-            return OptionalBody(State.MISSING)
+            return MissingBody
         }
 
         @JvmStatic
         fun empty(): OptionalBody {
-            return OptionalBody(State.EMPTY, "")
+            return EmptyBody
         }
 
         @JvmStatic
         fun nullBody(): OptionalBody {
-            return OptionalBody(State.NULL)
+            return NullBody
+        }
+
+        @JvmStatic
+        fun body(body: ByteArray?): OptionalBody {
+            return if (body == null) {
+                nullBody()
+            } else if (body.isEmpty()) {
+                empty()
+            } else {
+                BinaryBody(body)
+            }
         }
 
         @JvmStatic
@@ -40,48 +112,14 @@ data class OptionalBody(val state: State, val value: String? = null) {
             } else if (body.isEmpty()) {
                 empty()
             } else {
-                OptionalBody(State.PRESENT, body)
+                StringBody(body)
             }
         }
     }
 
-    fun isMissing(): Boolean {
-        return state == State.MISSING
-    }
-
-    fun isEmpty(): Boolean {
-        return state == State.EMPTY
-    }
-
-    fun isNull(): Boolean {
-        return state == State.NULL
-    }
-
     fun isPresent(): Boolean {
-        return state == State.PRESENT
+        return this is StringBody || this is BinaryBody
     }
 
-    fun orElse(defaultValue: String): String {
-        return if (state == State.EMPTY || state == State.PRESENT) {
-            value!!
-        } else {
-            defaultValue
-        }
-    }
-
-    fun unwrap(): String {
-        if (isPresent()) {
-            return value!!
-        } else {
-            throw UnwrapMissingBodyException("Failed to unwrap value from a $state body")
-        }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (other !is OptionalBody) {
-            return false
-        }
-        return this.state == other.state &&
-            this.value == other.value
-    }
+    fun orEmptyBinary(): ByteArray
 }

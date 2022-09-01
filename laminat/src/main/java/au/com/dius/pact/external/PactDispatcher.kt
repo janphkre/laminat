@@ -11,6 +11,7 @@ import okhttp3.Headers.Companion.toHeaders
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
+import okio.Buffer
 import org.apache.http.Consts
 
 /**
@@ -82,10 +83,12 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
     }
 
     private fun Response.mapToMockResponse(): MockResponse {
+        val buffer = Buffer()
+        buffer.read(this.body.orEmptyBinary())
         return MockResponse()
             .setResponseCode(this.status)
             .setHeaders(this.headers.mapToMockHeaders())
-            .setBody(this.body.value ?: "")
+            .setBody(buffer)
     }
 
     private fun Map<String, String>?.mapToMockHeaders(): Headers {
