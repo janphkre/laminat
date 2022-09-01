@@ -2,7 +2,7 @@ package au.com.dius.pact.model.generators
 
 import au.com.dius.pact.model.OptionalBody
 
-object BinaryContentTypeHandler: ContentTypeHandler {
+object BinaryContentTypeHandler : ContentTypeHandler {
     override fun processBody(value: String, fn: (QueryResult) -> Unit): OptionalBody {
         val bodyBinary = QueryResult(ByteArray(0))
         fn.invoke(bodyBinary)
