@@ -8,15 +8,11 @@ object MatchingConfig {
     private val jsonRegex = Regex("application/.*json.*")
     private val imageRegex = Regex("image/.*")
 
-    private var bodyMatchers = mapOf<Regex, BodyMatcher>(
-        // TODO: Pair(xmlRegex, XmlBodyMatcher()),
-        Pair(jsonRegex, JsonBodyMatcher()),
-        Pair(Regex(ContentType.APPLICATION_JSON_RPC.mimeType), JsonBodyMatcher()),
-        Pair(Regex(ContentType.APPLICATION_JSONREQUEST.mimeType), JsonBodyMatcher()),
-        Pair(Regex(ContentType.TEXT_PLAIN.mimeType), PlainTextBodyMatcher()),
-        Pair(Regex(ContentType.DEFAULT_BINARY.mimeType), BinaryBodyMatcher()),
-        Pair(imageRegex, BinaryBodyMatcher())
-    )
+    private var bodyMatchers = mutableMapOf<Regex, BodyMatcher>()
+
+    init {
+        setDefaultBodyMatchers()
+    }
 
     fun lookupBodyMatcher(mimeType: String): BodyMatcher {
         return bodyMatchers.entries.firstOrNull { entry -> mimeType.matches(entry.key) }?.value ?: PlainTextBodyMatcher()
@@ -28,5 +24,23 @@ object MatchingConfig {
 
     fun isXml(contentType: String): Boolean {
         return xmlRegex.matches(contentType)
+    }
+
+    fun clearBodyMatchers() {
+        bodyMatchers.clear()
+    }
+
+    fun setDefaultBodyMatchers() {
+        // TODO: bodyMatchers[xmlRegex] = XmlBodyMatcher()
+        bodyMatchers[jsonRegex] = JsonBodyMatcher()
+        bodyMatchers[Regex(ContentType.APPLICATION_JSON_RPC.mimeType)] = JsonBodyMatcher()
+        bodyMatchers[Regex(ContentType.APPLICATION_JSONREQUEST.mimeType)] = JsonBodyMatcher()
+        bodyMatchers[Regex(ContentType.TEXT_PLAIN.mimeType)] = PlainTextBodyMatcher()
+        bodyMatchers[Regex(ContentType.DEFAULT_BINARY.mimeType)] = BinaryBodyMatcher()
+        bodyMatchers[imageRegex] = BinaryBodyMatcher()
+    }
+
+    fun setBodyMatcher(mimeTypeRegex: Regex, matcher: BodyMatcher) {
+        bodyMatchers[mimeTypeRegex] = matcher
     }
 }

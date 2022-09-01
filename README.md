@@ -134,6 +134,14 @@ fun pact_merged_NoConflicts() {
 }
 ```
 
+### Custom Generators and Matchers
+If you are want to define a custom Generator or Matcher you can do this like so:
+```kotlin
+MatchingConfig.setBodyMatcher(Regex("application/custom-content-type"), CustomBodyMatcher())
+
+GeneratorsConfig.setContentTypeHandler("application/custom-content-type", CustomContentTypeHandler())
+```
+
 [1]: https://github.com/square/okhttp
 [2]: https://github.com/DiUS/pact-jvm/tree/v3.5.x-jre7
 

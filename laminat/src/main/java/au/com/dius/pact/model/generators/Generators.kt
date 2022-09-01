@@ -20,13 +20,29 @@ interface ContentTypeHandler {
     fun applyKey(body: QueryResult, key: String, generator: Generator)
 }
 
-val contentTypeHandlers: MutableMap<String, ContentTypeHandler> = mutableMapOf(
-    ContentType.APPLICATION_JSON.mimeType to JsonContentTypeHandler
-)
+object GeneratorsConfig {
 
-fun setupDefaultContentTypeHandlers() {
-    contentTypeHandlers.clear()
-    contentTypeHandlers[ContentType.APPLICATION_JSON.mimeType] = JsonContentTypeHandler //TODO: XML CONTENT-TYPE HANDLER
+    private val contentTypeHandlers: MutableMap<String, ContentTypeHandler> = mutableMapOf()
+
+    init {
+        setDefaultContentTypeHandlers()
+    }
+
+    fun lookupContentTypeHandler(contentType: String): ContentTypeHandler? {
+        return contentTypeHandlers[contentType]
+    }
+
+    fun clearContentTypeHandlers() {
+        contentTypeHandlers.clear()
+    }
+
+    fun setDefaultContentTypeHandlers() {
+        contentTypeHandlers[ContentType.APPLICATION_JSON.mimeType] = JsonContentTypeHandler //TODO: XML CONTENT-TYPE HANDLER
+    }
+
+    fun setContentTypeHandler(contentType: String, handler: ContentTypeHandler) {
+        contentTypeHandlers[contentType] = handler
+    }
 }
 
 data class QueryResult(var value: Any, val key: Any? = null, val parent: Any? = null)
@@ -153,7 +169,7 @@ data class Generators(val categories: MutableMap<Category, MutableMap<String, Ge
     }
 
     private fun processBody(value: String, contentType: String): OptionalBody {
-        val handler = contentTypeHandlers[contentType]
+        val handler = GeneratorsConfig.lookupContentTypeHandler(contentType)
         return handler?.processBody(value) { body: QueryResult ->
             applyGenerator(Category.BODY) { key: String, generator: Generator? ->
                 if (generator != null) {
