@@ -21,6 +21,7 @@ import org.junit.Test
 class PactTest {
 
     private val expectedPact = "testconsumer___testproducer.json"
+    private val expectedBinaryPact = "testbinaryconsumer___testproducer.json"
 
     private val defaultRequestHeaders = hashMapOf(
         Pair("We", "will have to see about this!")
@@ -79,6 +80,22 @@ class PactTest {
                 .status(200)
                 .headers(defaultResponseHeaders)
                 .body("{}")
+                .toPact()
+        )
+    }
+
+    private fun getBinaryPacts(): List<RequestResponsePact> {
+        return listOf(
+            ConsumerPactBuilder("TestBinaryConsumer").hasPactWith("TestProducer")
+                .uponReceiving("POST testRequest")
+                .method("POST")
+                .path("test/path")
+                .headers(defaultRequestHeaders)
+                .body(ByteArray(15) { it.toByte() })
+                .willRespondWith()
+                .status(200)
+                .headers(defaultResponseHeaders)
+                .body(ByteArray(128) { it.toByte() })
                 .toPact()
         )
     }
@@ -146,4 +163,30 @@ class PactTest {
             }
         }
     }
+
+    @Test
+    fun pact_buildBinary_correctlyBuilt() {
+        PactJsonifier.generateJson(getBinaryPacts(), File("pacts"))
+        val outputPactFile = File("pacts/$expectedBinaryPact")
+        Assert.assertTrue("Pact was not generated!", outputPactFile.exists())
+
+        val outputPact = outputPactFile.readText()
+        val expectedPactJson = File("src/test/assets/$expectedBinaryPact").readText()
+        val gson = GsonBuilder()
+            .setPrettyPrinting()
+            .create()
+        val expectedPactTree = gson.fromJson<JsonObject>(expectedPactJson, JsonObject::class.java)
+        expectedPactTree.getAsJsonObject("metadata").getAsJsonObject("pact-laminat-android").addProperty("version", BuildConfig.VERSION_NAME)
+        val expectedPactString = gson.toJson(expectedPactTree)
+
+        Assert.assertEquals("Generated pact does not match expectations!", expectedPactString, outputPact)
+    }
+
+    @Test
+    fun pact_buildBinary_hasCorrectResponse() {
+        val responseBody = getBinaryPacts().first().requestResponseInteractions.first().response.generateResponse().body.orEmptyBinary()
+
+        Assert.assertArrayEquals("Generated pact does not match expectations!", ByteArray(128) { it.toByte() }, responseBody)
+    }
+
 }

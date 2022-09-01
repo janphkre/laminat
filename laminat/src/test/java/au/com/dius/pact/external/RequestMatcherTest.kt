@@ -155,6 +155,24 @@ class RequestMatcherTest {
             .toPact()
     }
 
+    private val testPostBinary by lazy {
+        ConsumerPactBuilder("TestBinaryConsumer").hasPactWith("TestProducer")
+            .uponReceiving("POST testRequest")
+            .method("POST")
+            .path("/test/path")
+            .headers(
+                hashMapOf(
+                    Pair("Content-Type", "application/octet-stream")
+                )
+            )
+            .body(ByteArray(15) { it.toByte() })
+            .willRespondWith()
+            .status(200)
+            .headers(hashMapOf(Pair("Content-Type", "application/octet-stream")))
+            .body(ByteArray(128) { it.toByte() })
+            .toPact()
+    }
+
     private fun getMockSocket(): Socket {
         val mockInetAddress = mock(InetAddress::class.java)
         doReturn("mockhost").`when`(mockInetAddress).hostName
@@ -167,11 +185,16 @@ class RequestMatcherTest {
         return mockSocket
     }
 
-    private fun getIncomingRequest(requestBody: ByteArray, method: String = "POST", authorization: String = ""): IncomingRequest {
+    private fun getIncomingRequest(
+        requestBody: ByteArray,
+        method: String = "POST",
+        authorization: String = "",
+        contentType: String = "application/json"
+    ): IncomingRequest {
         val mockSocket = getMockSocket()
         val headers = Headers.Builder()
             .add("Authorization: $authorization")
-            .add("Content-Type: application/json")
+            .add("Content-Type: $contentType")
             .add("Content-Length: ${requestBody.size}")
             .add("Host: localhost:41163")
             .add("Connection: Keep-Alive")
@@ -277,7 +300,6 @@ class RequestMatcherTest {
 
     @Test
     fun pactDispatcher_LongGetRequest_MatchingCorrectly() {
-
         val matcher = RequestMatcher(false)
 
         val recordedRequest = getIncomingRequest(ByteArray(0), "GET", hugeAuthorization)
@@ -298,5 +320,27 @@ class RequestMatcherTest {
     @Test
     fun pactDispatcher_Serialize_Pact() {
         PactJsonifier.generateJson(listOf(testPostArray), File("build/outputs/pact"))
+    }
+
+    @Test
+    fun pactDispatcher_PostBinaryRequest_MatchingCorrectly() {
+        val matcher = RequestMatcher(false)
+
+        val recordedRequest = getIncomingRequest(
+            ByteArray(15) { it.toByte() },
+            contentType = "application/octet-stream"
+        )
+
+        val interactions = testPostBinary.interactions.map { it as RequestResponseInteraction }
+
+        when (val match = matcher.findInteraction(interactions, recordedRequest)) {
+            is RequestMatch.FullRequestMatch -> return
+            is RequestMatch.PartialRequestMatch -> {
+                Assert.fail("Match is only a Partial Request Match: \n${match.problems.joinToString("\n")}")
+            }
+            is RequestMatch.RequestMismatch -> {
+                Assert.fail("Match is only a Request Mismatch: \n${match.problems?.joinToString("\n")}")
+            }
+        }
     }
 }
