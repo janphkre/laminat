@@ -19,8 +19,8 @@ import au.com.dius.pact.model.RequestResponseInteraction;
 
 public class ConsumerPactBuilder {
 
-    private String consumerName;
-    private List<RequestResponseInteraction> interactions = new ArrayList<RequestResponseInteraction>();
+    private final String consumerName;
+    private final List<RequestResponseInteraction> interactions = new ArrayList<RequestResponseInteraction>();
 
     public ConsumerPactBuilder(String consumer) {
         this.consumerName = consumer;

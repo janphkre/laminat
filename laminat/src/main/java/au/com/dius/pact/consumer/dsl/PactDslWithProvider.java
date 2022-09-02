@@ -7,8 +7,8 @@ import au.com.dius.pact.consumer.ConsumerPactBuilder;
 import au.com.dius.pact.model.ProviderState;
 
 public class PactDslWithProvider {
-    private ConsumerPactBuilder consumerPactBuilder;
-    private String providerName;
+    private final ConsumerPactBuilder consumerPactBuilder;
+    private final String providerName;
 
     public PactDslWithProvider(ConsumerPactBuilder consumerPactBuilder, String provider) {
         this.consumerPactBuilder = consumerPactBuilder;

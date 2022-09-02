@@ -37,7 +37,7 @@ public class PactDslJsonArray extends DslPart {
 
     private static final String EXAMPLE = "Example \"";
     private final JSONArray body;
-    private boolean wildCard;
+    private final boolean wildCard;
     private int numberExamples = 1;
 
     public PactDslJsonArray() {

@@ -22,16 +22,16 @@ import au.com.dius.pact.model.matchingrules.RegexMatcher;
 
 public class PactDslRequestWithoutPath {
     private final ConsumerPactBuilder consumerPactBuilder;
-    private PactDslWithState pactDslWithState;
-    private String description;
+    private final PactDslWithState pactDslWithState;
+    private final String description;
     private String requestMethod;
     private Map<String, String> requestHeaders = new HashMap<>();
     private Map<String, List<String>> query = new HashMap<>();
     private OptionalBody requestBody = OptionalBody.missing();
-    private MatchingRules requestMatchers = new MatchingRules();
-    private Generators requestGenerators = new Generators();
-    private String consumerName;
-    private String providerName;
+    private final MatchingRules requestMatchers = new MatchingRules();
+    private final Generators requestGenerators = new Generators();
+    private final String consumerName;
+    private final String providerName;
 
     public PactDslRequestWithoutPath(ConsumerPactBuilder consumerPactBuilder,
                                      PactDslWithState pactDslWithState,
@@ -258,7 +258,19 @@ public class PactDslRequestWithoutPath {
      */
     public PactDslRequestWithPath matchPath(String pathRegex, String path) {
         requestMatchers.addCategory("path").addRule(new RegexMatcher(pathRegex));
-        return new PactDslRequestWithPath(consumerPactBuilder, consumerName, providerName, pactDslWithState.state, description, path,
-                requestMethod, requestHeaders, query, requestBody, requestMatchers, requestGenerators);
+        return new PactDslRequestWithPath(
+                consumerPactBuilder,
+                consumerName,
+                providerName,
+                pactDslWithState.state,
+                description,
+                path,
+                requestMethod,
+                requestHeaders,
+                query,
+                requestBody,
+                requestMatchers,
+                requestGenerators
+        );
     }
 }

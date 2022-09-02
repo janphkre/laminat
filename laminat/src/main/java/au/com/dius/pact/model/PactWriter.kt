@@ -12,7 +12,7 @@ object PactWriter {
      * Writes out the au.com.dius.pact to the provided au.com.dius.pact file
      * @param pact Pact to write
      * @param writer Writer to write out with
-     * @param pactSpecVersion Pact version to use to control writing
+     * @param serializationConfig Configuration to use to control writing
      */
     @JvmStatic
     @JvmOverloads

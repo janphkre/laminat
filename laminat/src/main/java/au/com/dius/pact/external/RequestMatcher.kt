@@ -38,7 +38,7 @@ class RequestMatcher(private val allowUnexpectedKeys: Boolean) {
                     bestResult
                 }
             } else if (current is RequestMatch.RequestMismatch && bestResult is RequestMatch.RequestMismatch) {
-                if (current.problems?.size ?: Int.MAX_VALUE < bestResult.problems?.size ?: Int.MAX_VALUE) {
+                if ((current.problems?.size ?: Int.MAX_VALUE) < (bestResult.problems?.size ?: Int.MAX_VALUE)) {
                     current
                 } else {
                     bestResult

@@ -20,7 +20,8 @@ class Request(
 
     fun copy(): Request {
         return Request(
-            method, path,
+            method,
+            path,
             HashMap<String, List<String>>(query),
             HashMap<String, String>(headers),
             body,
@@ -68,6 +69,15 @@ class Request(
             } catch (e: Exception) { }
         }
         return body == other.body
+    }
+
+    override fun hashCode(): Int {
+        var result = method.hashCode()
+        result = 31 * result + path.hashCode()
+        result = 31 * result + query.hashCode()
+        result = 31 * result + headers.hashCode()
+        result = 31 * result + body.hashCode()
+        return result
     }
 
     companion object {

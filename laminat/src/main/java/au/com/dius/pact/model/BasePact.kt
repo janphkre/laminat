@@ -14,7 +14,7 @@ abstract class BasePact : Pact {
             return mapOf(
                 Pair("pact-specification", mapOf(Pair("version", version))),
                 Pair("pact-laminat-android", mapOf(Pair("version", BuildConfig.VERSION_NAME))),
-                Pair("pact-laminat-binary-truncation", mapOf(Pair("maxLength",serializationConfig.truncateBinaryLength)))
+                Pair("pact-laminat-binary-truncation", mapOf(Pair("maxLength", serializationConfig.truncateBinaryLength)))
             )
         }
     }

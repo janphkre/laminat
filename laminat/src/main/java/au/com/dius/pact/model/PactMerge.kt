@@ -18,11 +18,11 @@ object PactMerge {
         }
 
         val conflicts = existing.conflictsWith(newPact)
-        if (conflicts.isEmpty()) {
+        return if (conflicts.isEmpty()) {
             existing.mergeInteractions(newPact.interactions)
-            return MergeResult(true, "", existing)
+            MergeResult(true, "", existing)
         } else {
-            return MergeResult(
+            MergeResult(
                 false,
                 "Cannot merge pacts as there were ${conflicts.size} conflict(s) " +
                     "between the interactions - ${conflicts.joinToString("\n")}"

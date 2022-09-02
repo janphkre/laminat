@@ -65,19 +65,19 @@ class RequestResponseInteraction(
                 Pair("path", request.path)
             )
             if (request.headers.isNotEmpty()) {
-                map.set("headers", request.headers)
+                map["headers"] = request.headers
             }
             if (request.query.isNotEmpty()) {
-                map.set("query", if (serializationConfig.specVersion >= PactSpecVersion.V3) request.query else mapToQueryStr(request.query))
+                map["query"] = if (serializationConfig.specVersion >= PactSpecVersion.V3) request.query else mapToQueryStr(request.query)
             }
             if (request.body !is OptionalBody.MissingBody) {
-                map.set("body", parseBody(request, serializationConfig.truncateBinaryLength))
+                map["body"] = parseBody(request, serializationConfig)
             }
             if (request.matchingRules.isNotEmpty()) {
-                map.set("matchingRules", request.matchingRules.toMap(serializationConfig))
+                map["matchingRules"] = request.matchingRules.toMap(serializationConfig)
             }
             if (request.generators.isNotEmpty() && serializationConfig.specVersion >= PactSpecVersion.V3) {
-                map.set("generators", request.generators.toMap(serializationConfig))
+                map["generators"] = request.generators.toMap(serializationConfig)
             }
             return map
         }
@@ -87,16 +87,16 @@ class RequestResponseInteraction(
                 Pair("status", response.status)
             )
             if (response.headers.isNotEmpty()) {
-                map.set("headers", response.headers)
+                map["headers"] = response.headers
             }
             if (response.body !is OptionalBody.MissingBody) {
-                map.set("body", parseBody(response, serializationConfig.truncateBinaryLength))
+                map["body"] = parseBody(response, serializationConfig)
             }
             if (response.matchingRules.isNotEmpty()) {
-                map.set("matchingRules", response.matchingRules.toMap(serializationConfig))
+                map["matchingRules"] = response.matchingRules.toMap(serializationConfig)
             }
             if (response.generators.isNotEmpty() && serializationConfig.specVersion >= PactSpecVersion.V3) {
-                map.set("generators", response.generators.toMap(serializationConfig))
+                map["generators"] = response.generators.toMap(serializationConfig)
             }
             return map
         }
@@ -105,7 +105,7 @@ class RequestResponseInteraction(
             return query.flatMap { entry -> entry.value.map { "${entry.key}=${URLEncoder.encode(it, Consts.UTF_8.name())}" } }.joinToString("&")
         }
 
-        fun parseBody(httpPart: HttpPart, truncateBinaryLength: Int?): Any? {
+        fun parseBody(httpPart: HttpPart, serializationConfig: PactSerializationConfig): Any? {
             return when (val body = httpPart.body) {
                 is OptionalBody.StringBody -> {
                     if (httpPart.jsonBody()) {
@@ -116,7 +116,7 @@ class RequestResponseInteraction(
                 }
                 is OptionalBody.BinaryBody -> {
                     var unwrappedBody = body.unwrap()
-                    val truncateBinaryLength = min(unwrappedBody.size, truncateBinaryLength ?: Int.MAX_VALUE)
+                    val truncateBinaryLength = min(unwrappedBody.size, serializationConfig.truncateBinaryLength ?: Int.MAX_VALUE)
                     if (truncateBinaryLength >= 0) {
                         unwrappedBody = unwrappedBody.sliceArray(0 until truncateBinaryLength)
                     }

@@ -1,14 +1,19 @@
 package au.com.dius.pact.model
 
-class RequestResponsePact(override val provider: Provider, override val consumer: Consumer, var requestResponseInteractions: List<RequestResponseInteraction>) : BasePact() {
+class RequestResponsePact(
+    override val provider: Provider,
+    override val consumer: Consumer,
+    var requestResponseInteractions: List<RequestResponseInteraction>
+) : BasePact() {
 
     override val interactions: List<Interaction>
         get() = requestResponseInteractions
 
     override fun sortInteractions(): Pact {
-        requestResponseInteractions = ArrayList(requestResponseInteractions).sortedBy {
-            it.providerState + it.description
-        }
+        requestResponseInteractions = requestResponseInteractions.map { interaction ->
+            Pair(interaction.providerStates.map { it.name }.sorted().joinToString() + interaction.description, interaction)
+        }.sortedBy { it.first }
+            .map { it.second }
         return this
     }
 
@@ -22,7 +27,11 @@ class RequestResponsePact(override val provider: Provider, override val consumer
     }
 
     override fun mergeInteractions(interactions: List<Interaction>) {
+        if(interactions.any { it !is RequestResponseInteraction }) {
+            throw IllegalArgumentException("Can only merge RequestResponseInteraction into a RequestResponsePact!")
+        }
         requestResponseInteractions = ArrayList(requestResponseInteractions).apply {
+            @Suppress("UNCHECKED_CAST")
             addAll(interactions as List<RequestResponseInteraction>)
         }.distinctBy { it.uniqueKey() }
     }

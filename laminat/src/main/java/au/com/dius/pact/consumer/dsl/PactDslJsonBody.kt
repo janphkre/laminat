@@ -657,7 +657,8 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
             throw IllegalArgumentException(
                 String.format(
                     "Number of example %d is less than the minimum size of %d",
-                    numberExamples, size
+                    numberExamples,
+                    size
                 )
             )
         }
@@ -693,7 +694,8 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
             throw IllegalArgumentException(
                 String.format(
                     "Number of example %d is less than the minimum size of %d",
-                    numberExamples, size
+                    numberExamples,
+                    size
                 )
             )
         }
@@ -728,7 +730,8 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
             throw IllegalArgumentException(
                 String.format(
                     "Number of example %d is more than the maximum size of %d",
-                    numberExamples, size
+                    numberExamples,
+                    size
                 )
             )
         }
@@ -764,7 +767,8 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
             throw IllegalArgumentException(
                 String.format(
                     "Number of example %d is more than the maximum size of %d",
-                    numberExamples, size
+                    numberExamples,
+                    size
                 )
             )
         }
@@ -929,7 +933,8 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
             throw IllegalArgumentException(
                 String.format(
                     "Number of example %d is more than the maximum size of %d",
-                    numberExamples, size
+                    numberExamples,
+                    size
                 )
             )
         }
@@ -956,7 +961,8 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
             throw IllegalArgumentException(
                 String.format(
                     "Number of example %d is less than the minimum size of %d",
-                    numberExamples, size
+                    numberExamples,
+                    size
                 )
             )
         }

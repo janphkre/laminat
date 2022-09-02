@@ -61,10 +61,12 @@ interface Pact {
      * Returns the provider of the service for the au.com.dius.pact
      */
     val provider: Provider
+
     /**
      * Returns the consumer of the service for the au.com.dius.pact
      */
     val consumer: Consumer
+
     /**
      * Returns all the interactions of the au.com.dius.pact
      */

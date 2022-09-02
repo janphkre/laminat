@@ -76,8 +76,8 @@ class MatchingRules {
     fun toV2Map(serializationConfig: PactSerializationConfig): Map<String, Any?> {
         val map = HashMap<String, Any?>()
 
-        rules.forEach {
-            it.value.toMap(serializationConfig).forEach {
+        rules.forEach { entry ->
+            entry.value.toMap(serializationConfig).forEach {
                 map[it.key] = it.value
             }
         }

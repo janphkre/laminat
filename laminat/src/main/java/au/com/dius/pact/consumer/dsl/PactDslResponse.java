@@ -25,13 +25,13 @@ import au.com.dius.pact.model.matchingrules.RegexMatcher;
 
 public class PactDslResponse {
     private final ConsumerPactBuilder consumerPactBuilder;
-    private PactDslRequestWithPath request;
+    private final PactDslRequestWithPath request;
 
     private int responseStatus = 200;
-    private Map<String, String> responseHeaders = new HashMap<String, String>();
+    private final Map<String, String> responseHeaders = new HashMap<>();
     private OptionalBody responseBody = OptionalBody.missing();
-    private MatchingRules responseMatchers = new MatchingRules();
-    private Generators responseGenerators = new Generators();
+    private final MatchingRules responseMatchers = new MatchingRules();
+    private final Generators responseGenerators = new Generators();
 
     public PactDslResponse(ConsumerPactBuilder consumerPactBuilder, PactDslRequestWithPath request) {
         this.consumerPactBuilder = consumerPactBuilder;

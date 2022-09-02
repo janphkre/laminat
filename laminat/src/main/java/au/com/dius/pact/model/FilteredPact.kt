@@ -1,6 +1,9 @@
 package au.com.dius.pact.model
 
-class FilteredPact(val pact: Pact, private val interactionPredicate: (Interaction) -> Boolean) : Pact by pact {
+class FilteredPact(
+    val pact: Pact,
+    private val interactionPredicate: (Interaction) -> Boolean
+) : Pact by pact {
     override val interactions: List<Interaction>
         get() = pact.interactions.filter { interactionPredicate.invoke(it) }
 
