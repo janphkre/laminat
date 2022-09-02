@@ -144,12 +144,17 @@ MatchingConfig.setBodyMatcher(Regex("application/custom-content-type"), CustomBo
 GeneratorsConfig.setContentTypeHandler("application/custom-content-type", CustomContentTypeHandler())
 ```
 
-[1]: https://github.com/square/okhttp
-[2]: https://github.com/DiUS/pact-jvm/tree/v3.5.x-jre7
-
 # laminat-retrofit
-Extension for laminat to generate pact requests from retrofit definitons
+Extension for laminat to generate pact requests from retrofit definitons. 
+Check out the [unit test]{3] for an example usage.
 
 
 # laminat-retrofit-noop
 Extension for laminat to generate pact requests from retrofit definitons. This is the no op version containing only source level annotations.
+
+By using only source level annotations, the annotations can be used on the main / release api client without publishing the additional metadata in the release apk.
+
+
+[1]: https://github.com/square/okhttp
+[2]: https://github.com/DiUS/pact-jvm/tree/v3.5.x-jre7
+[3]: https://github.com/janphkre/laminat/blob/3.6.0-alpha-1/retrofit-extension/src/test/java/com/janphkre/laminat/retrofit/RetrofitDslTest.kt
