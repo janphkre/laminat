@@ -1,0 +1,37 @@
+{
+  "provider": {
+    "name": "TestProducer"
+  },
+  "consumer": {
+    "name": "TestBinaryConsumer"
+  },
+  "interactions": [
+    {
+      "description": "POST testRequest",
+      "request": {
+        "method": "POST",
+        "path": "test/path",
+        "headers": {
+          "We": "will have to see about this!"
+        },
+        "body": "\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r\u000e"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "We": "will have to see about this as well."
+        },
+        "body": "\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r\u000e\u000f\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f !\"#$%\u0026\u0027()*+,-./0123456789:;\u003c\u003d\u003e?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+      }
+    }
+  ],
+  "metadata": {
+    "pact-specification": {
+      "version": "3.0.0"
+    },
+    "pact-laminat-android": {
+      "version": "3.6.0"
+    },
+    "pact-laminat-serialization-config": {}
+  }
+}
