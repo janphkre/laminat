@@ -20,7 +20,9 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 dependencies {
-    implementation "com.github.janphkre:laminat:$laminat_version"
+    mockImplementation "com.github.janphkre.laminat:laminat-retrofit-noop:$laminat_version"
+    prodImplementation "com.github.janphkre.laminat:laminat-retrofit:$laminat_version"
+    mockImplementation "com.github.janphkre.laminat:laminat:$laminat_version"
 }
 ```
 
