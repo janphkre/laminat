@@ -4,8 +4,8 @@ import org.apache.http.entity.ContentType
 
 object MatchingConfig {
 
-    private val xmlRegex = Regex("application/.*xml.*")
-    private val jsonRegex = Regex("application/.*json.*")
+    private val xmlRegex = Regex("application/.*(xml|XML).*")
+    private val jsonRegex = Regex("application/.*(json|JSON).*")
     private val imageRegex = Regex("image/.*")
 
     private var bodyMatchers = mutableMapOf<Regex, BodyMatcher>()
