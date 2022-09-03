@@ -1,3 +1,3 @@
 package au.com.dius.pact.model.generators
 
-data class QueryResult(var value: Any, val key: Any? = null, val parent: Any? = null)
+data class QueryResult<T>(var value: T, val key: Any? = null, val parent: T? = null)

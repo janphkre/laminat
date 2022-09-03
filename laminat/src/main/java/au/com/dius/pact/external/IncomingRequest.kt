@@ -1,6 +1,7 @@
 package au.com.dius.pact.external
 
-import au.com.dius.pact.matchers.readJson
+import au.com.dius.pact.external.json.Json
+import au.com.dius.pact.matchers.toUtf8Reader
 import au.com.dius.pact.matchers.toUtf8String
 import com.google.gson.JsonElement
 import okhttp3.mockwebserver.RecordedRequest
@@ -24,8 +25,8 @@ class IncomingRequest(
         internalRequest.body.readByteArray()
     }
 
-    private val lazyJson: JsonElement by lazy {
-        getBody().readJson()
+    private val lazyJson: Json by lazy {
+        Json.parse(getBody()?.toUtf8Reader())
     }
 
     private val lazyBodyString: String? by lazy {
@@ -68,7 +69,7 @@ class IncomingRequest(
         return lazyBody
     }
 
-    fun getBodyAsJson(): JsonElement {
+    fun getBodyAsJson(): Json {
         return lazyJson
     }
 

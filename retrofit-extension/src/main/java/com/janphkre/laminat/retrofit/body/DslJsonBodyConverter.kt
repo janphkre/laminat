@@ -5,82 +5,75 @@ import au.com.dius.pact.consumer.dsl.PactDslJsonArray
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody
 import au.com.dius.pact.consumer.dsl.PactDslJsonRootValue
 import au.com.dius.pact.external.PactBuildException
+import au.com.dius.pact.external.json.Json
 import au.com.dius.pact.model.matchingrules.MaxTypeMatcher
 import au.com.dius.pact.model.matchingrules.MinTypeMatcher
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonNull
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
-import com.google.gson.JsonPrimitive
 import okio.Buffer
 
 object DslJsonBodyConverter : DslBodyConverter {
 
     override fun toPactDsl(retrofitBody: Buffer, bodyMatches: BodyMatchElement?): DslPart {
-        val jsonBody = retrofitBody.inputStream().use { JsonParser.parseReader(it.reader()) }
+        val jsonBody = retrofitBody.inputStream().use { Json.parse(it.reader()) }
         return jsonRootToDsl(jsonBody, bodyMatches)
     }
 
-    private fun jsonRootToDsl(jsonElement: JsonElement, bodyMatches: BodyMatchElement?): DslPart {
-        return when {
-            jsonElement.isJsonObject -> {
-                jsonObjectToDsl("", jsonElement.asJsonObject, null, bodyMatches?.asObject())
+    private fun jsonRootToDsl(jsonElement: Json, bodyMatches: BodyMatchElement?): DslPart {
+        return when (jsonElement) {
+            is Json.Object -> {
+                jsonObjectToDsl("", jsonElement, null, bodyMatches?.asObject())
             }
-            jsonElement.isJsonArray -> {
-                jsonArrayToDsl("", jsonElement.asJsonArray, null, bodyMatches?.asArray())
+            is Json.Array -> {
+                jsonArrayToDsl("", jsonElement, null, bodyMatches?.asArray())
             }
-            jsonElement.isJsonPrimitive -> {
-                jsonPrimitiveToDslRoot(jsonElement.asJsonPrimitive, bodyMatches?.asString())
+            is Json.Primitive -> {
+                jsonPrimitiveToDslRoot(jsonElement, bodyMatches?.asString())
             }
-            jsonElement.isJsonNull -> {
+            Json.Null -> {
                 PactDslJsonRootValue.matchNull()
             }
-            else -> raiseException(jsonElement)
         }
     }
 
     private fun jsonElementToDsl(
         keyInParent: String?,
-        jsonElement: JsonElement,
+        jsonElement: Json,
         parent: DslPart,
         bodyMatches: BodyMatchElement?
     ): DslPart? {
-        return when {
-            jsonElement.isJsonObject -> {
+        return when(jsonElement) {
+            is Json.Object -> {
                 jsonObjectToDsl(
                     keyInParent,
-                    jsonElement.asJsonObject,
+                    jsonElement,
                     parent,
                     bodyMatches?.asObject()
                 )
             }
-            jsonElement.isJsonArray -> {
+            is Json.Array -> {
                 jsonArrayToDsl(
                     keyInParent,
-                    jsonElement.asJsonArray,
+                    jsonElement,
                     parent,
                     bodyMatches?.asArray()
                 )
             }
-            jsonElement.isJsonPrimitive -> {
+            is Json.Primitive -> {
                 jsonPrimitiveToDsl(
                     keyInParent,
-                    jsonElement.asJsonPrimitive,
+                    jsonElement,
                     parent,
                     bodyMatches?.asString()
                 )
             }
-            jsonElement.isJsonNull -> {
+            Json.Null -> {
                 jsonNullToDsl(keyInParent, parent)
             }
-            else -> raiseException(jsonElement)
         }
     }
 
     private fun jsonObjectToDsl(
         keyInParent: String?,
-        jsonObject: JsonObject,
+        jsonObject: Json.Object,
         parent: DslPart?,
         bodyMatches: BodyMatchElement.BodyMatchObject?
     ): DslPart {
@@ -96,7 +89,7 @@ object DslJsonBodyConverter : DslBodyConverter {
 
     private fun jsonArrayToDsl(
         keyInParent: String?,
-        jsonArray: JsonArray,
+        jsonArray: Json.Array,
         parent: DslPart?,
         bodyMatches: BodyMatchElement.BodyMatchArray?
     ): DslPart {
@@ -145,11 +138,11 @@ object DslJsonBodyConverter : DslBodyConverter {
     }
 
     private fun jsonArrayToDirectDsl(
-        jsonArrayElement: JsonElement,
+        jsonArrayElement: Json,
         dslArrayElement: PactDslJsonBody,
         arrayElementMatches: BodyMatchElement?
     ): DslPart {
-        if (!jsonArrayElement.isJsonObject) {
+        if (jsonArrayElement !is Json.Object) {
             throw PactBuildException(
                 "arrayLike of ${jsonArrayElement.javaClass.name} is not supported by pact dsl!"
             )
@@ -159,24 +152,24 @@ object DslJsonBodyConverter : DslBodyConverter {
                 "arrayLike of ${arrayElementMatches?.javaClass?.name} is not supported by pact dsl!"
             )
         }
-        jsonObjectToDirectDsl(jsonArrayElement.asJsonObject, dslArrayElement, arrayElementMatches)
+        jsonObjectToDirectDsl(jsonArrayElement, dslArrayElement, arrayElementMatches)
         return dslArrayElement.closeObject()
             ?: throw PactBuildException("Closing the inner object of an JsonArray returned null!")
     }
 
     private fun jsonObjectToDirectDsl(
-        jsonObject: JsonObject,
+        jsonObject: Json.Object,
         dslObject: PactDslJsonBody,
         bodyMatches: BodyMatchElement.BodyMatchObject?
     ) {
-        jsonObject.entrySet().forEach {
+        jsonObject.forEach {
             jsonElementToDsl(it.key, it.value, dslObject, bodyMatches?.entry(it.key))
         }
     }
 
     private fun jsonPrimitiveToDsl(
         keyInParent: String?,
-        jsonPrimitive: JsonPrimitive,
+        jsonPrimitive: Json.Primitive,
         parent: DslPart,
         bodyMatches: BodyMatchElement.BodyMatchString?
     ): DslPart {
@@ -193,22 +186,22 @@ object DslJsonBodyConverter : DslBodyConverter {
     }
 
     private fun jsonPrimitiveToDslArray(
-        jsonPrimitive: JsonPrimitive,
+        jsonPrimitive: Json.Primitive,
         parent: PactDslJsonArray,
         bodyMatches: BodyMatchElement.BodyMatchString?
     ): DslPart {
         return when {
-            jsonPrimitive.isBoolean && bodyMatches == null -> {
-                parent.booleanType(jsonPrimitive.asBoolean)
+            jsonPrimitive.isBoolean() && bodyMatches == null -> {
+                parent.booleanType(jsonPrimitive.asBoolean())
             }
-            jsonPrimitive.isNumber && bodyMatches == null -> {
-                parent.numberType(jsonPrimitive.asNumber)
+            jsonPrimitive.isNumber() && bodyMatches == null -> {
+                parent.numberType(jsonPrimitive.asNumber())
             }
-            jsonPrimitive.isString && bodyMatches == null -> {
-                parent.stringType(jsonPrimitive.asString)
+            jsonPrimitive.isString() && bodyMatches == null -> {
+                parent.stringType(jsonPrimitive.asString())
             }
-            jsonPrimitive.isString && bodyMatches != null -> {
-                parent.stringMatcher(bodyMatches.regex, jsonPrimitive.asString)
+            jsonPrimitive.isString() && bodyMatches != null -> {
+                parent.stringMatcher(bodyMatches.regex, jsonPrimitive.asString())
             }
             else -> raiseException(jsonPrimitive)
         }
@@ -216,43 +209,43 @@ object DslJsonBodyConverter : DslBodyConverter {
 
     private fun jsonPrimitiveToDslObject(
         keyInParent: String,
-        jsonPrimitive: JsonPrimitive,
+        jsonPrimitive: Json.Primitive,
         parent: PactDslJsonBody,
         bodyMatches: BodyMatchElement.BodyMatchString?
     ): DslPart {
         return when {
-            jsonPrimitive.isBoolean && bodyMatches == null -> {
-                parent.booleanType(keyInParent, jsonPrimitive.asBoolean)
+            jsonPrimitive.isBoolean() && bodyMatches == null -> {
+                parent.booleanType(keyInParent, jsonPrimitive.asBoolean())
             }
-            jsonPrimitive.isNumber && bodyMatches == null -> {
-                parent.numberType(keyInParent, jsonPrimitive.asNumber)
+            jsonPrimitive.isNumber() && bodyMatches == null -> {
+                parent.numberType(keyInParent, jsonPrimitive.asNumber())
             }
-            jsonPrimitive.isString && bodyMatches == null -> {
-                parent.stringType(keyInParent, jsonPrimitive.asString)
+            jsonPrimitive.isString() && bodyMatches == null -> {
+                parent.stringType(keyInParent, jsonPrimitive.asString())
             }
-            jsonPrimitive.isString && bodyMatches != null -> {
-                parent.stringMatcher(keyInParent, bodyMatches.regex, jsonPrimitive.asString)
+            jsonPrimitive.isString() && bodyMatches != null -> {
+                parent.stringMatcher(keyInParent, bodyMatches.regex, jsonPrimitive.asString())
             }
             else -> raiseException(jsonPrimitive)
         }
     }
 
     private fun jsonPrimitiveToDslRoot(
-        jsonPrimitive: JsonPrimitive,
+        jsonPrimitive: Json.Primitive,
         bodyMatches: BodyMatchElement.BodyMatchString?
     ): DslPart {
         return when {
-            jsonPrimitive.isBoolean && bodyMatches == null -> {
-                PactDslJsonRootValue.booleanType(jsonPrimitive.asBoolean)
+            jsonPrimitive.isBoolean() && bodyMatches == null -> {
+                PactDslJsonRootValue.booleanType(jsonPrimitive.asBoolean())
             }
-            jsonPrimitive.isNumber && bodyMatches == null -> {
-                PactDslJsonRootValue.numberType(jsonPrimitive.asNumber)
+            jsonPrimitive.isNumber() && bodyMatches == null -> {
+                PactDslJsonRootValue.numberType(jsonPrimitive.asNumber())
             }
-            jsonPrimitive.isString && bodyMatches == null -> {
-                PactDslJsonRootValue.stringType(jsonPrimitive.asString)
+            jsonPrimitive.isString() && bodyMatches == null -> {
+                PactDslJsonRootValue.stringType(jsonPrimitive.asString())
             }
-            jsonPrimitive.isString && bodyMatches != null -> {
-                PactDslJsonRootValue.stringMatcher(bodyMatches.regex, jsonPrimitive.asString)
+            jsonPrimitive.isString() && bodyMatches != null -> {
+                PactDslJsonRootValue.stringMatcher(bodyMatches.regex, jsonPrimitive.asString())
             }
             else -> raiseException(jsonPrimitive)
         }
@@ -260,13 +253,13 @@ object DslJsonBodyConverter : DslBodyConverter {
 
     private fun jsonNullToDsl(keyInParent: String?, parent: DslPart): DslPart {
         return when (parent) {
-            is PactDslJsonBody -> parent.nullValue(keyInParent ?: raiseException(JsonNull.INSTANCE))
+            is PactDslJsonBody -> parent.nullValue(keyInParent ?: raiseException(Json.Null))
             is PactDslJsonArray -> parent.nullValue()
-            else -> raiseException(JsonNull.INSTANCE)
+            else -> raiseException(Json.Null)
         }
     }
 
-    private fun raiseException(jsonElement: JsonElement): Nothing {
+    private fun raiseException(jsonElement: Json): Nothing {
         throw PactBuildException("Unsupported json found in $jsonElement")
     }
 }

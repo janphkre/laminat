@@ -16,14 +16,6 @@ fun ByteArray.toUtf8String(): String {
     return toUtf8Reader().readText()
 }
 
-fun Reader?.readJson(): JsonElement {
-    return JsonParser.parseReader(this)
-}
-
-fun ByteArray?.readJson(): JsonElement {
-    return this?.toUtf8Reader().readJson()
-}
-
 fun String.toUtf8ByteArray(): ByteArray {
     return this.toByteArray(Charsets.UTF_8)
 }

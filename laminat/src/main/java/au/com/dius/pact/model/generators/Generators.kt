@@ -61,14 +61,9 @@ data class Generators(val categories: MutableMap<Category, MutableMap<String, Ge
     }
 
     private fun processBody(value: String, contentType: String): OptionalBody {
-        val handler = GeneratorsConfig.lookupContentTypeHandler(contentType)
-        return handler?.processBody(value) { body: QueryResult ->
-            applyGenerator(Category.BODY) { key: String, generator: Generator? ->
-                if (generator != null) {
-                    handler.applyKey(body, key, generator)
-                }
-            }
-        } ?: OptionalBody.body(value)
+        val handler = GeneratorsConfig.lookupContentTypeHandler(contentType) ?: return OptionalBody.body(value)
+        val generators = categories.getOrElse(Category.BODY) { emptyMap() }
+        return handler.generateBody(value, generators)
     }
 
     /**

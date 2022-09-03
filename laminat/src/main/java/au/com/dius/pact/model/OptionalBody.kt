@@ -1,8 +1,7 @@
 package au.com.dius.pact.model
 
+import au.com.dius.pact.external.json.Json
 import au.com.dius.pact.matchers.toUtf8ByteArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonParser
 
 /**
  * Class to represent missing, empty, null and present bodies
@@ -32,8 +31,8 @@ sealed interface OptionalBody {
         private val value: String
     ) : OptionalBody {
 
-        private val parsedBodyAsJson: JsonElement by lazy {
-            JsonParser.parseString(value)
+        private val parsedBodyAsJson: Json by lazy {
+            Json.parse(value)
         }
 
         override fun orEmptyBinary(): ByteArray {
@@ -44,7 +43,7 @@ sealed interface OptionalBody {
             return value
         }
 
-        fun unwrapJson(): JsonElement {
+        fun unwrapJson(): Json {
             return parsedBodyAsJson
         }
     }

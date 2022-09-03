@@ -1,11 +1,9 @@
 package au.com.dius.pact.matchers
 
 import au.com.dius.pact.external.IncomingRequest
+import au.com.dius.pact.external.json.Json
 import au.com.dius.pact.model.OptionalBody
 import au.com.dius.pact.model.matchingrules.MatchingRules
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonPrimitive
 import java.util.LinkedList
 import kotlin.math.min
 
@@ -31,18 +29,18 @@ class JsonBodyMatcher : BodyMatcher() {
 
     private fun matchJsonElement(
         path: List<String>,
-        expectedJson: JsonElement?,
-        actualJson: JsonElement?,
+        expectedJson: Json?,
+        actualJson: Json?,
         allowUnexpectedKeys: Boolean,
         matchers: MatchingRules
     ): List<RequestMatchProblem> {
-        return if (expectedJson?.isJsonArray == true && actualJson?.isJsonArray == true) {
+        return if (expectedJson is Json.Array && actualJson is Json.Array) {
             matchJsonArray(path, expectedJson, actualJson, allowUnexpectedKeys, matchers)
-        } else if (expectedJson?.isJsonObject == true && actualJson?.isJsonObject == true) {
+        } else if (expectedJson is Json.Object && actualJson is Json.Object) {
             matchJsonObject(path, expectedJson, actualJson, allowUnexpectedKeys, matchers)
-        } else if (expectedJson?.isJsonPrimitive == true && actualJson?.isJsonPrimitive == true) {
+        } else if (expectedJson is Json.Primitive && actualJson is Json.Primitive) {
             matchJsonPrimitive(path, expectedJson, actualJson, matchers)
-        } else if (expectedJson?.isJsonNull == true && actualJson?.isJsonNull != false) {
+        } else if (expectedJson is Json.Null && actualJson is Json.Null) {
             matchJsonNull()
         } else if (expectedJson == null && actualJson != null && !allowUnexpectedKeys) {
             listOf(RequestMatchProblem.BodyMismatch("Received unexpected element $actualJson"))
@@ -53,40 +51,38 @@ class JsonBodyMatcher : BodyMatcher() {
 
     private fun matchJsonArray(
         path: List<String>,
-        expectedJson: JsonElement,
-        actualJson: JsonElement,
+        expectedJson: Json.Array,
+        actualJson: Json.Array,
         allowUnexpectedKeys: Boolean,
         matchers: MatchingRules
     ): List<RequestMatchProblem> {
-        val expectedValues = expectedJson.asJsonArray
-        val actualValues = actualJson.asJsonArray
         val category = Matchers.definedMatchers("body", path, matchers)
         return if (category?.isNotEmpty() == true) {
             val problems = if (Matchers.definedWildcardMatchers("body", path.plus("any"), matchers)) {
-                Matchers.doMatch(category, path, expectedValues, actualValues, MismatchFactory.BodyMismatchFactory)
+                Matchers.doMatch(category, path, expectedJson, actualJson, MismatchFactory.BodyMismatchFactory)
             } else {
-                emptyList<RequestMatchProblem>()
+                emptyList()
             }
-            if (expectedValues.size() != 0) {
-                val paddedExpectedValues = Array(min(actualValues.size() - expectedValues.size(), 0)) { expectedValues.first() }
-                problems.plus(matchJsonArrayContent(expectedValues.plus(elements = paddedExpectedValues), actualValues, path, allowUnexpectedKeys, matchers))
+            if (expectedJson.size != 0) {
+                val paddedExpectedValues = Array(min(actualJson.size - expectedJson.size, 0)) { expectedJson.first() }
+                problems.plus(matchJsonArrayContent(expectedJson.plus(elements = paddedExpectedValues), actualJson, path, allowUnexpectedKeys, matchers))
             } else {
                 problems
             }
         } else {
-            if (expectedValues.size() != 0 && actualValues.size() == 0) {
+            if (expectedJson.size != 0 && actualJson.size == 0) {
                 listOf(
                     RequestMatchProblem.BodyMismatch(
-                        "Expected an empty List but received $actualValues",
+                        "Expected an empty List but received $actualJson",
                         path.joinToString(".")
                     )
                 )
             } else {
-                var problems = matchJsonArrayContent(expectedValues, actualValues, path, allowUnexpectedKeys, matchers)
-                if (expectedValues.size() != actualValues.size()) {
+                var problems = matchJsonArrayContent(expectedJson, actualJson, path, allowUnexpectedKeys, matchers)
+                if (expectedJson.size != actualJson.size) {
                     problems = problems.plus(
                         RequestMatchProblem.BodyMismatch(
-                            "Expected a List with ${expectedValues.size()} elements but received ${actualValues.size()} elements",
+                            "Expected a List with ${expectedJson.size} elements but received ${actualJson.size} elements",
                             path.joinToString(".")
                         )
                     )
@@ -97,16 +93,16 @@ class JsonBodyMatcher : BodyMatcher() {
     }
 
     private fun matchJsonArrayContent(
-        expectedJson: Iterable<JsonElement>,
-        actualJson: JsonArray,
+        expectedJson: Iterable<Json>,
+        actualJson: Json.Array,
         path: List<String>,
         allowUnexpectedKeys: Boolean,
         matchers: MatchingRules
     ): List<RequestMatchProblem> {
         val problems = LinkedList<RequestMatchProblem>()
         expectedJson.forEachIndexed { index, expectedElement ->
-            if (index < actualJson.size()) {
-                problems.addAll(matchJsonElement(path.plus(index.toString()), expectedElement, actualJson.get(index), allowUnexpectedKeys, matchers))
+            if (index < actualJson.size) {
+                problems.addAll(matchJsonElement(path.plus(index.toString()), expectedElement, actualJson[index], allowUnexpectedKeys, matchers))
             } else if (Matchers.definedMatchers("body", path, matchers)?.isNotEmpty() != true) {
                 problems.add(
                     RequestMatchProblem.BodyMismatch(
@@ -121,16 +117,12 @@ class JsonBodyMatcher : BodyMatcher() {
 
     private fun matchJsonObject(
         path: List<String>,
-        expectedJson: JsonElement,
-        actualJson: JsonElement,
+        expectedJson: Json.Object,
+        actualJson: Json.Object,
         allowUnexpectedKeys: Boolean,
         matchers: MatchingRules
     ): List<RequestMatchProblem> {
-        val expectedObject = expectedJson.asJsonObject
-        val actualObject = actualJson.asJsonObject
-        val expectedEntrySet = expectedObject.entrySet()
-        val actualEntrySet = actualObject.entrySet()
-        return if (expectedEntrySet.isEmpty() && actualEntrySet.isNotEmpty()) {
+        return if (expectedJson.isEmpty() && actualJson.isNotEmpty()) {
             listOf(
                 RequestMatchProblem.BodyMismatch(
                     "Expected an empty Map but received '$actualJson'",
@@ -139,31 +131,31 @@ class JsonBodyMatcher : BodyMatcher() {
             )
         } else {
             val problems = LinkedList<RequestMatchProblem>()
-            if (allowUnexpectedKeys && expectedEntrySet.size > actualEntrySet.size) {
+            if (allowUnexpectedKeys && expectedJson.size > actualJson.size) {
                 problems.add(
                     RequestMatchProblem.BodyMismatch(
-                        "Expected a Map with at least ${expectedEntrySet.size} elements but received ${actualEntrySet.size} elements",
+                        "Expected a Map with at least ${expectedJson.size} elements but received ${actualJson.size} elements",
                         path.joinToString(".")
                     )
                 )
-            } else if (!allowUnexpectedKeys && expectedEntrySet.size != actualEntrySet.size) {
+            } else if (!allowUnexpectedKeys && expectedJson.size != actualJson.size) {
                 problems.add(
                     RequestMatchProblem.BodyMismatch(
-                        "Expected a Map with ${expectedEntrySet.size} elements but received ${actualEntrySet.size} elements",
+                        "Expected a Map with ${expectedJson.size} elements but received ${actualJson.size} elements",
                         path.joinToString(".")
                     )
                 )
             }
             if (Matchers.definedWildcardMatchers("body", path.plus("any"), matchers)) {
-                actualEntrySet.forEach { entry ->
-                    val expectedValue = expectedObject.get(entry.key)
+                actualJson.forEach { entry ->
+                    val expectedValue = expectedJson[entry.key]
                     if (expectedValue != null || !allowUnexpectedKeys) {
                         problems.addAll(matchJsonElement(path.plus(entry.key), expectedValue, entry.value, allowUnexpectedKeys, matchers))
                     }
                 }
             } else {
-                expectedEntrySet.forEach { entry ->
-                    val actualValue = actualObject.get(entry.key)
+                expectedJson.forEach { entry ->
+                    val actualValue = actualJson[entry.key]
                     if (actualValue != null) {
                         problems.addAll(matchJsonElement(path.plus(entry.key), entry.value, actualValue, allowUnexpectedKeys, matchers))
                     } else {
@@ -182,12 +174,12 @@ class JsonBodyMatcher : BodyMatcher() {
 
     private fun matchJsonPrimitive(
         path: List<String>,
-        expectedJson: JsonElement,
-        actualJson: JsonElement,
+        expectedJson: Json.Primitive,
+        actualJson: Json.Primitive,
         matchers: MatchingRules
     ): List<RequestMatchProblem> {
-        val expectedValue = expectedJson.asJsonPrimitive.getValue()
-        val actualValue = actualJson.asJsonPrimitive.getValue()
+        val expectedValue = expectedJson.getValue()
+        val actualValue = actualJson.getValue()
         val category = Matchers.definedMatchers("body", path, matchers)
         return if (category?.isNotEmpty() == true) {
             Matchers.doMatch(category, path, expectedValue, actualValue, MismatchFactory.BodyMismatchFactory)
@@ -202,15 +194,6 @@ class JsonBodyMatcher : BodyMatcher() {
                     )
                 )
             }
-        }
-    }
-
-    private fun JsonPrimitive.getValue(): Any? {
-        return when {
-            isBoolean -> asBoolean
-            isString -> asString
-            isNumber -> asNumber
-            else -> throw UnsupportedOperationException("Unknown Json Primitive Type!")
         }
     }
 
