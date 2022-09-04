@@ -1,5 +1,7 @@
 package au.com.dius.pact.model
 
+import au.com.dius.pact.external.json.Json
+import au.com.dius.pact.external.json.JsonGsonAdapter
 import com.google.gson.GsonBuilder
 import java.io.PrintWriter
 
@@ -19,7 +21,10 @@ object PactWriter {
     fun writePact(pact: Pact, writer: PrintWriter, serializationConfig: PactSerializationConfig = PactSerializationConfig(PactSpecVersion.V3, null)) {
         val sortedPact = pact.sortInteractions()
         val jsonData = sortedPact.toMap(serializationConfig)
-        val gson = GsonBuilder().setPrettyPrinting().create()
+        val gson = GsonBuilder()
+            .setPrettyPrinting()
+            .registerTypeHierarchyAdapter(Json::class.java, JsonGsonAdapter())
+            .create()
         gson.toJson(jsonData, writer)
     }
 }

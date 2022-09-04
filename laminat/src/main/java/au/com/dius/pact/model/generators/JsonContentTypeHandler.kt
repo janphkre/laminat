@@ -20,7 +20,7 @@ object JsonContentTypeHandler : ContentTypeHandler {
         val pathExp = parsePath(key)
         queryObjectGraph(pathExp.iterator(), body) { (value, valueKey, parent) ->
             @Suppress("UNCHECKED_CAST")
-            val generatedValue = Json.convertToJson(generator.generate(value))
+            val generatedValue = Json.wrapInJson(generator.generate(value))
             when (parent) {
                 is Json.Object -> parent[valueKey.toString()] = generatedValue
                 is Json.Array -> parent[valueKey as Int] = generatedValue

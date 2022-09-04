@@ -24,6 +24,7 @@
     },
     "pact-laminat-android": {
       "version": "3.5.14"
-    }
+    },
+    "pact-laminat-serialization-config": {}
   }
 }

@@ -54,6 +54,10 @@ sealed interface Json {
             override fun serialize(writer: JsonWriter) {
                 writer.value(value)
             }
+
+            override fun toString(): String {
+                return serialize(this)
+            }
         }
 
         data class StringPrimitive(
@@ -79,6 +83,10 @@ sealed interface Json {
 
             override fun serialize(writer: JsonWriter) {
                 writer.value(value)
+            }
+
+            override fun toString(): String {
+                return serialize(this)
             }
         }
 
@@ -106,6 +114,10 @@ sealed interface Json {
             override fun serialize(writer: JsonWriter) {
                 writer.value(value)
             }
+
+            override fun toString(): String {
+                return serialize(this)
+            }
         }
     }
 
@@ -121,6 +133,10 @@ sealed interface Json {
             }
             writer.endObject()
         }
+
+        override fun toString(): String {
+            return serialize(this)
+        }
     }
 
     data class Array(
@@ -134,6 +150,10 @@ sealed interface Json {
             }
             writer.endArray()
         }
+
+        override fun toString(): String {
+            return serialize(this)
+        }
     }
 
     object Null : Json {
@@ -141,12 +161,17 @@ sealed interface Json {
         override fun serialize(writer: JsonWriter) {
             writer.nullValue()
         }
+
+        override fun toString(): String {
+            return serialize(this)
+        }
     }
 
     companion object {
 
-        private fun convertToJson(gson: JsonElement): Json {
+        fun convertToJson(gson: JsonElement?): Json {
             return when (gson) {
+                null -> Null
                 is JsonNull -> Null
                 is JsonArray -> Array(gson.mapTo(ArrayList(gson.size())) { convertToJson(it) })
                 is JsonObject -> {
@@ -171,6 +196,26 @@ sealed interface Json {
             }
         }
 
+        fun convertToGson(json: Json?): JsonElement {
+            return when(json) {
+                null -> JsonNull.INSTANCE
+                Null -> JsonNull.INSTANCE
+                is Array -> JsonArray().apply {
+                    json.forEach { entry ->
+                        this.add(convertToGson(entry))
+                    }
+                }
+                is Object -> JsonObject().apply {
+                    json.forEach { (key, value) ->
+                        this.add(key, convertToGson(value))
+                    }
+                }
+                is Primitive.BooleanPrimitive -> JsonPrimitive(json.asBoolean())
+                is Primitive.NumberPrimitive -> JsonPrimitive(json.asNumber())
+                is Primitive.StringPrimitive -> JsonPrimitive(json.asString())
+            }
+        }
+
         fun parse(string: String): Json {
             val gsonElement = JsonParser.parseString(string)
             return convertToJson(gsonElement)
@@ -188,7 +233,7 @@ sealed interface Json {
             return stringWriter.toString()
         }
 
-        fun convertToJson(element: Any?): Json {
+        fun wrapInJson(element: Any?): Json {
             if (element === null) {
                 return Null
             }
