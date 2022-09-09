@@ -20,7 +20,7 @@ import org.mockito.Mockito.mock
  * @see RequestMatcher
  * @author Jan Phillip Kretzschmar
  */
-class RequestMatcherTest {
+class RequestMatcherTest : AbstractRequestTest() {
 
     private val unusedPOST by lazy {
         ConsumerPactBuilder("TestConsumer").hasPactWith("TestProducer")
@@ -173,45 +173,8 @@ class RequestMatcherTest {
             .toPact()
     }
 
-    private fun getMockSocket(): Socket {
-        val mockInetAddress = mock(InetAddress::class.java)
-        doReturn("mockhost").`when`(mockInetAddress).hostName
-
-        val mockSocket = mock(Socket::class.java)
-        doReturn(mockInetAddress).`when`(mockSocket).inetAddress
-        doReturn(mockInetAddress).`when`(mockSocket).localAddress
-        doReturn(1234).`when`(mockSocket).localPort
-
-        return mockSocket
-    }
-
-    private fun getIncomingRequest(
-        requestBody: ByteArray,
-        method: String = "POST",
-        authorization: String = "",
-        contentType: String = "application/json"
-    ): IncomingRequest {
-        val mockSocket = getMockSocket()
-        val headers = Headers.Builder()
-            .add("Authorization: $authorization")
-            .add("Content-Type: $contentType")
-            .add("Content-Length: ${requestBody.size}")
-            .add("Host: localhost:41163")
-            .add("Connection: Keep-Alive")
-            .add("Accept-Encoding: gzip")
-            .add("User-Agent: okhttp/3.9.0")
-            .add("Accept-Language: de")
-            .build()
-        val body = Buffer()
-        body.outputStream().use {
-            it.write(requestBody)
-        }
-        val recordedRequest = RecordedRequest("$method /test/path HTTP/1.1", headers, ArrayList(), body.size, body, 0, mockSocket)
-        return IncomingRequest(recordedRequest)
-    }
-
     @Test
-    fun pactDispatcher_PostRequest_MatchingCorrectly() {
+    fun pactMatcher_PostRequest_MatchingCorrectly() {
         val request = "{ \"regex1\": \"123456789\", \"regex2\": \"abcd\", \"decimal1\": 50.99234}".toByteArray()
 
         val matcher = RequestMatcher(false)
@@ -231,7 +194,7 @@ class RequestMatcherTest {
     }
 
     @Test
-    fun pactDispatcher_PostRequestMultipleInteractions_MatchingCorrectly() {
+    fun pactMatcher_PostRequestMultipleInteractions_MatchingCorrectly() {
         val request = "{ \"regex1\": \"123456789\", \"regex2\": \"abcd\", \"decimal1\": 50.99234}".toByteArray()
 
         val matcher = RequestMatcher(false)
@@ -251,7 +214,7 @@ class RequestMatcherTest {
     }
 
     @Test
-    fun pactDispatcher_PostRequest_NotMatching() {
+    fun pactMatcher_PostRequest_NotMatching() {
         val request = "{ \"regex1\": \"1\", \"decimal1\": 50.999234, \"unexpected\":\"skdfskjdf\"}".toByteArray()
 
         val matcher = RequestMatcher(false)
@@ -274,7 +237,7 @@ class RequestMatcherTest {
     }
 
     @Test
-    fun pactDispatcher_PostArrayRequest_MatchingCorrectly() {
+    fun pactMatcher_PostArrayRequest_MatchingCorrectly() {
         val arrayObject = "{ \"regex1\": \"123456789\", \"regex2\": \"abcd\", \"decimal1\": 50.99234}"
         val nestedArrayObject = "{ \"nestedArray\": [ { \"regex5\": \"123456789\" }, { \"regex5\": \"987654321\" } ] }"
         val request = "{ \"array\": [$arrayObject,$arrayObject,$nestedArrayObject]}".toByteArray()
@@ -299,7 +262,7 @@ class RequestMatcherTest {
     }
 
     @Test
-    fun pactDispatcher_LongGetRequest_MatchingCorrectly() {
+    fun pactMatcher_LongGetRequest_MatchingCorrectly() {
         val matcher = RequestMatcher(false)
 
         val recordedRequest = getIncomingRequest(ByteArray(0), "GET", hugeAuthorization)
@@ -318,12 +281,12 @@ class RequestMatcherTest {
     }
 
     @Test
-    fun pactDispatcher_Serialize_Pact() {
+    fun pactMatcher_Serialize_Pact() {
         PactJsonifier.generateJson(listOf(testPostArray), File("build/outputs/pact"))
     }
 
     @Test
-    fun pactDispatcher_PostBinaryRequest_MatchingCorrectly() {
+    fun pactMatcher_PostBinaryRequest_MatchingCorrectly() {
         val matcher = RequestMatcher(false)
 
         val recordedRequest = getIncomingRequest(
