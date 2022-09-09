@@ -50,4 +50,35 @@ class PactDispatcherTest : AbstractRequestTest() {
         val responseBody = String(response.getBody()?.readByteArray() ?: ByteArray(0))
         Assert.assertEquals("{\"regex3\":\"12345\",\"regex4\":\"abc\"}", responseBody)
     }
+
+    @Test
+    fun pactDispatcher_PostRequestEmpty_NotMatching() {
+        val request = "{ \"regex1\": \"123456789\", \"regex2\": \"abcd\", \"decimal1\": 50.99234}".toByteArray()
+
+        val dispatcher = PactDispatcher(false, 998)
+        val incomingRequest = getRecordedRequest(request)
+
+        dispatcher.setInteractions(emptyList())
+
+        val response = dispatcher.dispatch(incomingRequest)
+        Assert.assertEquals("HTTP/1.1 998 PactError", response.status)
+        val responseBody = String(response.getBody()?.readByteArray() ?: ByteArray(0))
+        Assert.assertEquals("Failed to match request at all! Best match was with null:\nnull", responseBody)
+    }
+
+    @Test
+    fun pactDispatcher_PostRequestUnmatched_PartialMatching() {
+        val request = "{ \"regex1\": \"123456789\", \"regex2\": \"abcd\"}".toByteArray()
+
+        val dispatcher = PactDispatcher(false, 998)
+        val incomingRequest = getRecordedRequest(request)
+
+        @Suppress("UNCHECKED_CAST")
+        dispatcher.setInteractions(testPost.interactions as List<RequestResponseInteraction>)
+
+        val response = dispatcher.dispatch(incomingRequest)
+        Assert.assertEquals("HTTP/1.1 998 PactError", response.status)
+        val responseBody = String(response.getBody()?.readByteArray() ?: ByteArray(0))
+        Assert.assertTrue(responseBody.startsWith("Partially matched None_POST testRequest:"))
+    }
 }

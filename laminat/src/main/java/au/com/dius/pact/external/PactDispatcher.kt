@@ -100,6 +100,6 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
 
     private fun notFoundMockResponse(): MockResponse {
         unmatchedRequestsCount++
-        return MockResponse().setResponseCode(pactErrorCode)
+        return MockResponse().setStatus("HTTP/1.1 $pactErrorCode PactError")
     }
 }
