@@ -4,7 +4,7 @@ import au.com.dius.pact.model.generators.Category
 import au.com.dius.pact.model.generators.Generators
 import au.com.dius.pact.model.matchingrules.MatchingRules
 
-class Response(
+data class Response(
     var status: Int = DEFAULT_STATUS,
     override var headers: Map<String, String> = emptyMap(),
     override var body: OptionalBody = OptionalBody.missing(),

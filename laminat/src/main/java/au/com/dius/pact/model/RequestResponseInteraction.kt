@@ -6,7 +6,7 @@ import java.util.Locale
 import kotlin.math.min
 import org.apache.http.Consts
 
-class RequestResponseInteraction(
+data class RequestResponseInteraction(
     override val description: String,
     override val providerStates: List<ProviderState>,
     val request: Request,

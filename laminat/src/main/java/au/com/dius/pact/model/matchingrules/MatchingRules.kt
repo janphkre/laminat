@@ -88,4 +88,8 @@ class MatchingRules {
     fun getCategory(category: String): Category? {
         return rules[category]
     }
+
+    override fun equals(other: Any?): Boolean {
+        return other is MatchingRules && rules == other.rules
+    }
 }

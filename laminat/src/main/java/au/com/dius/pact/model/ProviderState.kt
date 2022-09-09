@@ -6,9 +6,12 @@ package au.com.dius.pact.model
  * name - The provider state description
  * params - Provider state parameters as key value pairs
  */
-data class ProviderState(val name: String, val params: Map<String, Any> = mapOf()) {
+data class ProviderState(
+    val name: String,
+    val params: Map<String, Any>
+) {
 
-    constructor(name: String?) : this(name ?: "None")
+    constructor(name: String?) : this(nonNullName(name), mapOf())
 
     fun toMap(): Map<String, Any> {
         val map = mutableMapOf<String, Any>("name" to name)
@@ -25,5 +28,17 @@ data class ProviderState(val name: String, val params: Map<String, Any> = mapOf(
             return false
         }
         return other.name == this.name
+    }
+
+    companion object {
+
+        private const val NONE = "None"
+
+        fun nonNullName(name: String?): String {
+            if(name.isNullOrEmpty()) {
+                return NONE
+            }
+            return name
+        }
     }
 }
