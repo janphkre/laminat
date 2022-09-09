@@ -1,7 +1,7 @@
 package au.com.dius.pact.model
 
 import au.com.dius.pact.external.json.Json
-import au.com.dius.pact.matchers.toUtf8ByteArray
+import au.com.dius.pact.external.util.toUtf8ByteArray
 
 /**
  * Class to represent missing, empty, null and present bodies

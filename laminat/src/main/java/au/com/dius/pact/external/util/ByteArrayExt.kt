@@ -1,7 +1,5 @@
-package au.com.dius.pact.matchers
+package au.com.dius.pact.external.util
 
-import com.google.gson.JsonElement
-import com.google.gson.JsonParser
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 import java.io.Reader

@@ -1,9 +1,8 @@
 package au.com.dius.pact.external
 
 import au.com.dius.pact.external.json.Json
-import au.com.dius.pact.matchers.toUtf8Reader
-import au.com.dius.pact.matchers.toUtf8String
-import com.google.gson.JsonElement
+import au.com.dius.pact.external.util.toUtf8Reader
+import au.com.dius.pact.external.util.toUtf8String
 import okhttp3.mockwebserver.RecordedRequest
 import org.apache.http.entity.ContentType
 

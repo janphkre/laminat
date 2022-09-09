@@ -1,6 +1,6 @@
 package au.com.dius.pact.model
 
-import au.com.dius.pact.matchers.toUtf8String
+import au.com.dius.pact.external.util.toUtf8String
 import java.net.URLEncoder
 import java.util.Locale
 import kotlin.math.min

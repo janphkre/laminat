@@ -84,7 +84,7 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
 
     private fun Response.mapToMockResponse(): MockResponse {
         val buffer = Buffer()
-        buffer.read(this.body.orEmptyBinary())
+        buffer.write(this.body.orEmptyBinary())
         return MockResponse()
             .setResponseCode(this.status)
             .setHeaders(this.headers.mapToMockHeaders())
