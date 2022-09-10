@@ -1,7 +1,7 @@
 package au.com.dius.pact.model
 
 import au.com.dius.pact.external.json.Json
-import au.com.dius.pact.external.util.toUtf8ByteArray
+import java.nio.charset.Charset
 
 /**
  * Class to represent missing, empty, null and present bodies
@@ -9,20 +9,20 @@ import au.com.dius.pact.external.util.toUtf8ByteArray
 sealed interface OptionalBody {
 
     object MissingBody : OptionalBody {
-        override fun orEmptyBinary(): ByteArray {
+        override fun asBinary(charset: Charset): ByteArray {
             return ByteArray(0)
         }
     }
 
     object NullBody : OptionalBody {
-        override fun orEmptyBinary(): ByteArray {
+        override fun asBinary(charset: Charset): ByteArray {
             return ByteArray(0)
         }
     }
 
     object EmptyBody : OptionalBody {
 
-        override fun orEmptyBinary(): ByteArray {
+        override fun asBinary(charset: Charset): ByteArray {
             return ByteArray(0)
         }
     }
@@ -35,8 +35,8 @@ sealed interface OptionalBody {
             Json.parse(value)
         }
 
-        override fun orEmptyBinary(): ByteArray {
-            return unwrap().toUtf8ByteArray()
+        override fun asBinary(charset: Charset): ByteArray {
+            return unwrap().toByteArray(charset)
         }
 
         fun unwrap(): String {
@@ -52,7 +52,7 @@ sealed interface OptionalBody {
         private val value: ByteArray
     ) : OptionalBody {
 
-        override fun orEmptyBinary(): ByteArray {
+        override fun asBinary(charset: Charset): ByteArray {
             return unwrap()
         }
 
@@ -120,5 +120,5 @@ sealed interface OptionalBody {
         return this is StringBody || this is BinaryBody
     }
 
-    fun orEmptyBinary(): ByteArray
+    fun asBinary(charset: Charset): ByteArray
 }

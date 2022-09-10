@@ -7,34 +7,74 @@ import org.apache.http.Consts
 import java.util.Locale
 import kotlin.math.min
 import org.apache.http.entity.ContentType
+import java.nio.charset.Charset
 
 abstract class HttpPart {
 
     abstract val body: OptionalBody
-    abstract var headers: Map<String, String>
+    abstract val headers: Map<String, String>
     abstract val matchingRules: MatchingRules
 
-    fun charset(): String? {// TODO: use charset in other parts of the code!
-        val contentTypeKey = headers.keys.find { ContentType.CONTENT_TYPE.equals(it, true) }
-        if (contentTypeKey != null) {
-            val entryList = headers[contentTypeKey]!!.split(';').drop(1)
-            for (entry in entryList) {
-                val entryKeyValue= entry.split("=")
-                if (entryKeyValue.first().contains("charset")) {
-                    return entryKeyValue.last()
-                }
+    fun charset(): Charset {
+        val contentTypeKey = contentTypeHeaderKey()
+        if(contentTypeKey != null) {
+            val contentType = headers[contentTypeKey]!!
+
+            val explicitCharset = try {
+                Charset.forName(explicitCharsetStringFromHeader(contentType))
+            } catch(e: Exception) {
+                null
+            }
+
+            if (explicitCharset != null) {
+                return explicitCharset
+            }
+            return contentType.mapToCharset()
+        }
+        return detectContentType().mapToCharset()
+
+    }
+
+    private fun String.mapToCharset(): Charset {
+        return when {
+            startsWith(ContentType.APPLICATION_ATOM_XML.mimeType, ignoreCase = true) -> ContentType.APPLICATION_ATOM_XML.charset
+            startsWith(ContentType.APPLICATION_FORM_URLENCODED.mimeType, ignoreCase = true) -> ContentType.APPLICATION_FORM_URLENCODED.charset
+            startsWith(ContentType.APPLICATION_JSON.mimeType, ignoreCase = true) -> ContentType.APPLICATION_JSON.charset
+            startsWith(ContentType.APPLICATION_JSON_RPC.mimeType, ignoreCase = true) -> ContentType.APPLICATION_JSON_RPC.charset
+            startsWith(ContentType.APPLICATION_JSONREQUEST.mimeType, ignoreCase = true) -> ContentType.APPLICATION_JSONREQUEST.charset
+            startsWith(ContentType.APPLICATION_SVG_XML.mimeType, ignoreCase = true) -> ContentType.APPLICATION_SVG_XML.charset
+            startsWith(ContentType.APPLICATION_XHTML_XML.mimeType, ignoreCase = true) -> ContentType.APPLICATION_XHTML_XML.charset
+            startsWith(ContentType.APPLICATION_XML.mimeType, ignoreCase = true) -> ContentType.APPLICATION_XML.charset
+            startsWith(ContentType.MULTIPART_FORM_DATA.mimeType, ignoreCase = true) -> ContentType.MULTIPART_FORM_DATA.charset
+            startsWith(ContentType.TEXT_HTML.mimeType, ignoreCase = true) -> ContentType.TEXT_HTML.charset
+            startsWith(ContentType.TEXT_PLAIN.mimeType, ignoreCase = true) -> ContentType.TEXT_PLAIN.charset
+            startsWith(ContentType.TEXT_XML.mimeType, ignoreCase = true) -> ContentType.TEXT_XML.charset
+            else -> null
+        } ?: Charsets.UTF_8
+    }
+
+    private fun explicitCharsetStringFromHeader(header: String): String? {
+        val entryList = header.split(';').drop(1)
+        for (entry in entryList) {
+            val entryKeyValue= entry.split("=")
+            if (entryKeyValue.first().contains("charset")) {
+                return entryKeyValue.last()
             }
         }
         return null
     }
 
     fun mimeType(): String {
-        val contentTypeKey = headers.keys.find { ContentType.CONTENT_TYPE.equals(it, true) }
+        val contentTypeKey = contentTypeHeaderKey()
         return if (contentTypeKey != null) {
             headers[contentTypeKey]!!.split(';').first()
         } else {
             detectContentType()
         }
+    }
+
+    private fun contentTypeHeaderKey(): String? {
+        return headers.keys.find { ContentType.CONTENT_TYPE.equals(it, true) }
     }
 
     private fun detectContentType(): String {

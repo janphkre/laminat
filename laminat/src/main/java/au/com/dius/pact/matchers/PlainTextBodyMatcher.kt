@@ -21,7 +21,7 @@ class PlainTextBodyMatcher : BodyMatcher() {
             } else {
                 listOf(RequestMatchProblem.BodyMismatch("Expected body '$expected' to match '$actual' using equality but did not match"))
             }
-        } else if (actual.getBodyAsString()?.matches((regex.rules[0] as RegexMatcher).regex) == true) {
+        } else if (actualBody?.matches((regex.rules[0] as RegexMatcher).regex) == true) {
             listOf(RequestMatchProblem.None)
         } else {
             listOf(RequestMatchProblem.BodyMismatch("Expected body '$expected' to match '$actual' using regex '$regex' but did not match"))

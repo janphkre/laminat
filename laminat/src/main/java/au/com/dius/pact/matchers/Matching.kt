@@ -62,7 +62,7 @@ internal object Matching {
     fun matchRequestHeaders(expected: Request, actual: IncomingRequest): List<RequestMatchProblem> {
         val problems = LinkedList<RequestMatchProblem>()
         val expectedWithoutCookies = expected.headersWithoutCookie()
-        val actualWithoutCookies = actual.getHeaders().filterKeys { it.lowercase(Locale.ROOT) != "cookie" }
+        val actualWithoutCookies = actual.getCompleteHeaders().filterKeys { it.lowercase(Locale.ROOT) != "cookie" }
         expectedWithoutCookies.forEach { expectedEntry ->
             val actualValue = actualWithoutCookies[expectedEntry.key.lowercase(Locale.ROOT)]
             if (actualValue == null) {

@@ -8,9 +8,9 @@ import au.com.dius.pact.model.PactMergeException
 import au.com.dius.pact.model.RequestResponsePact
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
-import java.io.File
 import org.junit.Assert
 import org.junit.Test
+import java.io.File
 
 /**
  * this is a larger test that checks the pact dsl and its json generation
@@ -184,7 +184,7 @@ class PactTest {
 
     @Test
     fun pact_buildBinary_hasCorrectResponse() {
-        val responseBody = getBinaryPacts().first().requestResponseInteractions.first().response.generateResponse().body.orEmptyBinary()
+        val responseBody = getBinaryPacts().first().requestResponseInteractions.first().response.generateResponse().body.asBinary(Charsets.UTF_8)
 
         Assert.assertArrayEquals("Generated pact does not match expectations!", ByteArray(128) { it.toByte() }, responseBody)
     }

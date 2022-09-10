@@ -46,10 +46,12 @@ data class RequestResponseInteraction(
             Pair("request", requestToMap(request, serializationConfig)),
             Pair("response", responseToMap(response, serializationConfig))
         )
-        if (serializationConfig.specVersion < PactSpecVersion.V3 && !providerStates.isEmpty()) {
-            interactionJson["providerState"] = providerState
-        } else if (!providerStates.isEmpty()) {
-            interactionJson["providerStates"] = providerStates.map { it.toMap() }
+        if (providerStates.isNotEmpty()) {
+            if(serializationConfig.specVersion < PactSpecVersion.V3) {
+                interactionJson["providerState"] = providerState
+            } else {
+                interactionJson["providerStates"] = providerStates.map { it.toMap() }
+            }
         }
         return interactionJson
     }

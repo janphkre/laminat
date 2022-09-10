@@ -7,10 +7,10 @@ import java.nio.charset.Charset
 
 class OptionalBodySpec : StringSpec() {
 
-    val missingBody = OptionalBody.missing()
-    val nullBody = OptionalBody.nullBody()
-    val emptyBody = OptionalBody.empty()
-    val presentBody = OptionalBody.body("present".toByteArray())
+    private val missingBody = OptionalBody.missing()
+    private val nullBody = OptionalBody.nullBody()
+    private val emptyBody = OptionalBody.empty()
+    private val presentBody = OptionalBody.body("present".toByteArray())
 
     init {
 
@@ -79,19 +79,19 @@ class OptionalBodySpec : StringSpec() {
         }
 
         "a missing body or else returns the else" {
-            missingBody.orEmptyBinary().toString(Charset.defaultCharset()) shouldEqual ""
+            missingBody.asBinary(Charsets.UTF_8).toString(Charset.defaultCharset()) shouldEqual ""
         }
 
         "a body that contains a null or else returns the else" {
-            nullBody.orEmptyBinary().toString(Charset.defaultCharset()) shouldEqual ""
+            nullBody.asBinary(Charsets.UTF_8).toString(Charset.defaultCharset()) shouldEqual ""
         }
 
         "an empty body or else returns empty" {
-            emptyBody.orEmptyBinary().toString(Charset.defaultCharset()) shouldEqual ""
+            emptyBody.asBinary(Charsets.UTF_8).toString(Charset.defaultCharset()) shouldEqual ""
         }
 
         "a present body or else returns the body" {
-            presentBody.orEmptyBinary().toString(Charset.defaultCharset()) shouldEqual "present"
+            presentBody.asBinary(Charsets.UTF_8).toString(Charset.defaultCharset()) shouldEqual "present"
         }
     }
 }

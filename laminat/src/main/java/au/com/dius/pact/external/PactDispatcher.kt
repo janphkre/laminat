@@ -3,8 +3,6 @@ package au.com.dius.pact.external
 import au.com.dius.pact.model.PactMergeException
 import au.com.dius.pact.model.RequestResponseInteraction
 import au.com.dius.pact.model.Response
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 import okhttp3.Headers
 import okhttp3.Headers.Companion.headersOf
 import okhttp3.Headers.Companion.toHeaders
@@ -13,6 +11,9 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 import okio.Buffer
 import org.apache.http.Consts
+import org.apache.http.entity.ContentType
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 
 /**
  * An okhttp dispatcher that creates matches based on the list of interactions through an OkHttpRequestMatcher.
@@ -52,7 +53,7 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
 
     override fun dispatch(request: RecordedRequest): MockResponse {
         try {
-            val incomingRequest = IncomingRequest(request)
+            val incomingRequest = IncomingRequestImpl(request)
             val requestMatch = pactMatcher.findInteraction(interactionList, incomingRequest)
             matchObserver?.invoke(incomingRequest, requestMatch)
             return when (requestMatch) {
@@ -83,8 +84,9 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
     }
 
     private fun Response.mapToMockResponse(): MockResponse {
+        val charset = this.charset()
         val buffer = Buffer()
-        buffer.write(this.body.orEmptyBinary())
+        buffer.write(this.body.asBinary(charset))
         return MockResponse()
             .setResponseCode(this.status)
             .setHeaders(this.headers.mapToMockHeaders())
@@ -101,5 +103,6 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
     private fun notFoundMockResponse(): MockResponse {
         unmatchedRequestsCount++
         return MockResponse().setStatus("HTTP/1.1 $pactErrorCode PactError")
+            .addHeader(ContentType.CONTENT_TYPE, "${ContentType.DEFAULT_TEXT.mimeType}; charset=${Charsets.UTF_8.name()}")
     }
 }

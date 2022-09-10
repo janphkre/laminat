@@ -1,10 +1,7 @@
 package au.com.dius.pact.external
 
 import au.com.dius.pact.external.json.Json
-import au.com.dius.pact.external.util.toUtf8Reader
-import au.com.dius.pact.external.util.toUtf8String
 import okhttp3.mockwebserver.RecordedRequest
-import org.apache.http.entity.ContentType
 
 /**
  * An incoming request is created by the server and passed into the PactDispatcher and RequestMatcher.
@@ -16,63 +13,27 @@ import org.apache.http.entity.ContentType
  * @see RecordedRequest
  * @author Jan Phillip Kretzschmar
  */
-class IncomingRequest(
-    private val internalRequest: RecordedRequest
-) {
+interface IncomingRequest {
 
-    private val lazyBody: ByteArray? by lazy {
-        internalRequest.body.readByteArray()
-    }
+    fun getMethod(): String?
 
-    private val lazyJson: Json by lazy {
-        Json.parse(getBody()?.toUtf8Reader())
-    }
+    fun getEncodedPath(): String?
 
-    private val lazyBodyString: String? by lazy {
-        getBody()?.toUtf8String()
-    }
+    fun queryParameterValues(key: String): List<String?>
 
-    fun getMethod(): String? {
-        return internalRequest.method
-    }
+    fun queryParameterNames(): Set<String>
 
-    fun getEncodedPath(): String? {
-        return internalRequest.requestUrl?.encodedPath
-    }
+    fun getCompleteHeaders(): Map<String, List<String>>
 
-    fun queryParameterValues(key: String): List<String?> {
-        return internalRequest.requestUrl?.queryParameterValues(key) ?: emptyList()
-    }
+    fun getCookie(): List<String>
 
-    fun queryParameterNames(): Set<String> {
-        return internalRequest.requestUrl?.queryParameterNames ?: emptySet()
-    }
+    fun getContentType(): String
 
-    fun getHeaders(): Map<String, List<String>> {
-        return internalRequest.headers.toMultimap()
-    }
+    fun getBodySize(): Long
 
-    fun getCookie(): List<String> {
-        return internalRequest.headers.values("cookie")
-    }
+    fun getBody(): ByteArray?
 
-    fun getContentType(): String {
-        return internalRequest.getHeader(ContentType.CONTENT_TYPE) ?: ""
-    }
+    fun getBodyAsJson(): Json
 
-    fun getBodySize(): Long {
-        return internalRequest.bodySize
-    }
-
-    fun getBody(): ByteArray? {
-        return lazyBody
-    }
-
-    fun getBodyAsJson(): Json {
-        return lazyJson
-    }
-
-    fun getBodyAsString(): String? {
-        return lazyBodyString
-    }
+    fun getBodyAsString(): String?
 }

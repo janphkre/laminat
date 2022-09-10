@@ -54,9 +54,9 @@ class HttpPartSpec : StringSpec({
         forAll(
             table(
                 headers("request", "charset"),
-                row(Request("Get", ""), null),
-                row(Request("Get", "", emptyMap(), mapOf("Content-Type" to "text/html")), null),
-                row(Request("Get", "", emptyMap(), mapOf("Content-Type" to "application/json; charset=UTF-8")) , Consts.UTF_8.name())
+                row(Request("Get", ""), Consts.ISO_8859_1),
+                row(Request("Get", "", emptyMap(), mapOf("Content-Type" to "text/html")), Consts.ISO_8859_1),
+                row(Request("Get", "", emptyMap(), mapOf("Content-Type" to "application/json; charset=UTF-8")) , Consts.UTF_8)
         )
         ) { request, charset ->
             request.charset() shouldBe charset

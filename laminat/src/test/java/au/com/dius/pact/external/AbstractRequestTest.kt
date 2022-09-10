@@ -52,6 +52,6 @@ abstract class AbstractRequestTest {
         contentType: String = "application/json"
     ): IncomingRequest {
         val recordedRequest = getRecordedRequest(requestBody, method, authorization, contentType)
-        return IncomingRequest(recordedRequest)
+        return IncomingRequestImpl(recordedRequest)
     }
 }
