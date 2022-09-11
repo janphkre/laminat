@@ -7,7 +7,6 @@ import io.kotlintest.properties.row
 import io.kotlintest.properties.table
 import io.kotlintest.specs.StringSpec
 import org.apache.http.Consts
-import java.nio.charset.Charset
 
 class HttpPartSpec : StringSpec({
 
