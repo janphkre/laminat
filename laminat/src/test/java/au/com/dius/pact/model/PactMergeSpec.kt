@@ -1,5 +1,8 @@
 package au.com.dius.pact.model
 
+import au.com.dius.pact.StringSpecExt
+import au.com.dius.pact.external.features.Feature
+import au.com.dius.pact.external.features.FeatureFlags
 import io.kotlintest.matchers.containsAll
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
@@ -9,8 +12,9 @@ import io.kotlintest.properties.headers
 import io.kotlintest.properties.row
 import io.kotlintest.properties.table
 import io.kotlintest.specs.StringSpec
+import java.nio.file.Files
 
-class PactMergeSpec: StringSpec() {
+class PactMergeSpec: StringSpecExt() {
 
     
     private val consumer =  Consumer("test_consumer")
@@ -24,7 +28,7 @@ class PactMergeSpec: StringSpec() {
     listOf(ProviderState("test state")), request, response)
     private val pact =  RequestResponsePact(provider, consumer, listOf(interaction))
 
-    val anonymousPact = object: Pact {
+    private val anonymousPact = object: Pact {
         override val provider: Provider = provider2
         override val consumer: Consumer
             get() = throw NotImplementedError()
@@ -63,6 +67,16 @@ class PactMergeSpec: StringSpec() {
     }
 
     init {
+
+        beforeTest {
+            FeatureFlags.restoreDefault(Feature.MERGE_REMOVE_EXACT_DUPLICATES)
+        }
+
+        afterSpec {
+            FeatureFlags.restoreDefault(Feature.MERGE_REMOVE_EXACT_DUPLICATES)
+
+        }
+
         "Pacts with different consumers are compatible for #type" {
             // TODO: ADD MESSAGE PACTs once implemented
             forAll(
@@ -203,7 +217,7 @@ class PactMergeSpec: StringSpec() {
             }
         }
 
-        //Different from pact-jvm 3.6.0: Duplicates cause error, not automatically removed. Check InteractionSpec.
+        //Different from pact-jvm 3.6.0: Duplicates cause error by default.
         "pact merge does not remove duplicates for #type" {
             // TODO: ADD MESSAGE PACTs once implemented
             forAll(
@@ -223,6 +237,29 @@ class PactMergeSpec: StringSpec() {
                 val result = PactMerge.merge(newPact, existingPact)
                 result.ok shouldBe false
                 result.result shouldBe null
+            }
+        }
+
+        "pact merge removes exact duplicates for #type" {
+            FeatureFlags.enableFeature(Feature.MERGE_REMOVE_EXACT_DUPLICATES)
+            // TODO: ADD MESSAGE PACTs once implemented
+            forAll(
+                table(
+                    headers("type", "newPact", "existingPact"),
+                    row(
+                        RequestResponsePact::class,
+                        RequestResponsePact(provider, consumer, listOf(
+                            RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
+                        )),
+                        RequestResponsePact(provider, consumer, listOf(
+                            RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
+                        ))
+                    ),
+                )
+            ) { _, newPact, existingPact ->
+                val result = PactMerge.merge(newPact, existingPact)
+                result.ok shouldBe true
+                result.result shouldNotBe null
             }
         }
 

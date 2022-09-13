@@ -141,7 +141,7 @@ class PactWriterSpec : StringSpecExt( {
             result.exceptionOrNull() should { it is PactMergeException }
         }
 
-    // different from pact-jvm 3.6.x: Requests are mergable if they have any criteria to differntiate incoming requests
+    // different from pact-jvm 3.6.x: Requests are mergable if they have any criteria to differentiate incoming requests
         "when writing a pact file to disk, merge the pact with any existin one successfully" {
             // given:
             FeatureFlags.enableFeature(Feature.MERGE_EXISTING_PACTS_FILE)

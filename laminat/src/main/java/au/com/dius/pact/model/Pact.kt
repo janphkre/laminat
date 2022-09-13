@@ -61,6 +61,11 @@ interface Interaction {
     fun conflictsWith(other: Interaction): Boolean
 
     /**
+     * Checks if this interaction is an exact duplicate of the other one. Used for merging au.com.dius.pact files.
+     */
+    fun conflictsExactlyWith(other: Interaction): Boolean
+
+    /**
      * Converts this interaction to a Map
      */
     fun toMap(serializationConfig: PactSerializationConfig): Map<*, *>

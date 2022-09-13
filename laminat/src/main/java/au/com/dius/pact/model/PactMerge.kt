@@ -1,5 +1,8 @@
 package au.com.dius.pact.model
 
+import au.com.dius.pact.external.features.Feature
+import au.com.dius.pact.external.features.FeatureFlags
+
 data class MergeResult(val ok: Boolean, val message: String, val result: Pact? = null)
 
 /**
@@ -17,9 +20,20 @@ object PactMerge {
             return MergeResult(true, "", existing)
         }
 
-        val conflicts = existing.conflictsWith(newPact)
+        var conflicts = existing.conflictsWith(newPact)
+        var adaptedNewPact = newPact
+        if (FeatureFlags.isFeatureEnabled(Feature.MERGE_REMOVE_EXACT_DUPLICATES)) {
+            val exactMatches = conflicts.filter { (first, second) ->
+                first.conflictsExactlyWith(second)
+            }.toSet()
+            adaptedNewPact = FilteredPact(adaptedNewPact) { interaction ->
+                !exactMatches.any { it.second === interaction }
+            }
+
+            conflicts = conflicts.minus(exactMatches)
+        }
         return if (conflicts.isEmpty()) {
-            existing.mergeInteractions(newPact.interactions)
+            existing.mergeInteractions(adaptedNewPact.interactions)
             MergeResult(true, "", existing)
         } else {
             MergeResult(

@@ -45,6 +45,16 @@ data class RequestResponseInteraction(
         return false
     }
 
+    override fun conflictsExactlyWith(other: Interaction): Boolean {
+        if (providerStates.containsAll(other.providerStates) && other.providerStates.containsAll(providerStates)) {
+            if (other !is RequestResponseInteraction) {
+                return false
+            }
+            return request == other.request && response == other.response
+        }
+        return false
+    }
+
     override fun toMap(serializationConfig: PactSerializationConfig): Map<*, *> {
         val interactionJson = mutableMapOf<String, Any?>(
             Pair(SerializationConstants.DESCRIPTION_KEY, description),
