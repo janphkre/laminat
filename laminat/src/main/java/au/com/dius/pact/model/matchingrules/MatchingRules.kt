@@ -3,9 +3,9 @@ package au.com.dius.pact.model.matchingrules
 import au.com.dius.pact.model.PactSerializationConfig
 import au.com.dius.pact.model.PactSpecVersion
 
-class MatchingRules {
-
-    private val rules = HashMap<String, Category>()
+class MatchingRules(
+    private val rules: MutableMap<String, Category> = HashMap()
+) {
 
     fun addCategory(category: String): Category {
         if (!rules.containsKey(category)) {
@@ -91,5 +91,9 @@ class MatchingRules {
 
     override fun equals(other: Any?): Boolean {
         return other is MatchingRules && rules == other.rules
+    }
+
+    override fun hashCode(): Int {
+        return rules.hashCode()
     }
 }

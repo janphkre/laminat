@@ -17,13 +17,13 @@ object PactWriter {
      * @param serializationConfig Configuration to use to control writing
      */
     @JvmStatic
-    @JvmOverloads
-    fun writePact(pact: Pact, writer: PrintWriter, serializationConfig: PactSerializationConfig = PactSerializationConfig(PactSpecVersion.V3, null)) {
+    fun writePact(pact: Pact, writer: PrintWriter, serializationConfig: PactSerializationConfig) {
         val sortedPact = pact.sortInteractions()
         val jsonData = sortedPact.toMap(serializationConfig)
         val gson = GsonBuilder()
             .setPrettyPrinting()
             .registerTypeHierarchyAdapter(Json::class.java, JsonGsonAdapter())
+            .serializeNulls()
             .create()
         gson.toJson(jsonData, writer)
     }

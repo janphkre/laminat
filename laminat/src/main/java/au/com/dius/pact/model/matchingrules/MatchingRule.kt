@@ -2,6 +2,7 @@ package au.com.dius.pact.model.matchingrules
 
 import au.com.dius.pact.model.PactSerializationConfig
 import au.com.dius.pact.model.PactSpecVersion
+import au.com.dius.pact.model.serialization.SerializationConstants
 import java.util.Locale
 
 /**
@@ -22,55 +23,71 @@ interface MatchingRule {
  * Matching Rule for dates
  */
 data class DateMatcher @JvmOverloads constructor(val format: String = "yyyy-MM-dd") : MatchingRule {
-    override fun toMap() = mapOf("match" to "date", "date" to format)
+    override fun toMap() = mapOf(
+        SerializationConstants.MATCH_KEY to MatchingRulesSerialization.DATE.type,
+        SerializationConstants.DATE_KEY to format
+    )
 }
 
 /**
  * Matching rule for equality
  */
 object EqualsMatcher : MatchingRule {
-    override fun toMap() = mapOf("match" to "equality")
+    override fun toMap() = mapOf(SerializationConstants.MATCH_KEY to MatchingRulesSerialization.EQUALS.type)
 }
 
 /**
  * Matcher for a substring in a string
  */
 data class IncludeMatcher(val value: String) : MatchingRule {
-    override fun toMap() = mapOf("match" to "include", "value" to value)
+    override fun toMap() = mapOf(
+        SerializationConstants.MATCH_KEY to MatchingRulesSerialization.INCLUDE.type,
+        SerializationConstants.VALUE_KEY to value
+    )
 }
 
 /**
  * Type matching with a maximum size
  */
 data class MaxTypeMatcher(val max: Int) : MatchingRule {
-    override fun toMap() = mapOf("match" to "type", "max" to max)
+    override fun toMap() = mapOf(
+        SerializationConstants.MATCH_KEY to MatchingRulesSerialization.TYPE.type,
+        SerializationConstants.MAX_KEY to max
+    )
 }
 
 /**
  * Type matcher with a minimum size and maximum size
  */
 data class MinMaxTypeMatcher(val min: Int, val max: Int) : MatchingRule {
-    override fun toMap() = mapOf("match" to "type", "min" to min, "max" to max)
+    override fun toMap() = mapOf(
+        SerializationConstants.MATCH_KEY to MatchingRulesSerialization.TYPE.type,
+        SerializationConstants.MIN_KEY to min,
+        SerializationConstants.MAX_KEY to max
+    )
 }
 
 /**
  * Type matcher with a minimum size
  */
 data class MinTypeMatcher(val min: Int) : MatchingRule {
-    override fun toMap() = mapOf("match" to "type", "min" to min)
+    override fun toMap() = mapOf(
+        SerializationConstants.MATCH_KEY to MatchingRulesSerialization.TYPE.type,
+        SerializationConstants.MIN_KEY to min
+    )
 }
 
 /**
  * Type matching for numbers
  */
 data class NumberTypeMatcher(val numberType: NumberType) : MatchingRule {
-    enum class NumberType {
-        NUMBER,
-        INTEGER,
-        DECIMAL
+    enum class NumberType(val serialization: MatchingRulesSerialization) {
+        NUMBER(MatchingRulesSerialization.NUMBER),
+        INTEGER(MatchingRulesSerialization.INTEGER),
+        DECIMAL(MatchingRulesSerialization.DECIMAL)
     }
 
-    override fun toMap() = mapOf("match" to numberType.name.lowercase(Locale.ROOT))
+    override fun toMap() = mapOf(SerializationConstants.MATCH_KEY to numberType.serialization.type)
 }
 
 /**
@@ -81,35 +98,44 @@ data class RegexMatcher @JvmOverloads constructor(val regex: Regex, val example:
     @JvmOverloads
     constructor(regex: String, example: String? = null) : this(Regex(regex), example)
 
-    override fun toMap() = mapOf("match" to "regex", "regex" to regex.toString())
+    override fun toMap() = mapOf(
+        SerializationConstants.MATCH_KEY to MatchingRulesSerialization.REGEX.type,
+        SerializationConstants.REGEX_KEY to regex.toString()
+    )
 }
 
 /**
  * Matcher for time values
  */
 data class TimeMatcher @JvmOverloads constructor(val format: String = "HH:mm:ss") : MatchingRule {
-    override fun toMap() = mapOf("match" to "time", "time" to format)
+    override fun toMap() = mapOf(
+        SerializationConstants.MATCH_KEY to MatchingRulesSerialization.TIME.type,
+        SerializationConstants.TIME_KEY to format
+    )
 }
 
 /**
  * Matcher for time values
  */
 data class TimestampMatcher @JvmOverloads constructor(val format: String = "yyyy-MM-dd HH:mm:ssZZZ") : MatchingRule {
-    override fun toMap() = mapOf("match" to "timestamp", "timestamp" to format)
+    override fun toMap() = mapOf(
+        SerializationConstants.MATCH_KEY to MatchingRulesSerialization.TIMESTAMP.type,
+        SerializationConstants.TIMESTAMP_KEY to format
+    )
 }
 
 /**
  * Matcher for types
  */
 object TypeMatcher : MatchingRule {
-    override fun toMap() = mapOf("match" to "type")
+    override fun toMap() = mapOf(SerializationConstants.MATCH_KEY to MatchingRulesSerialization.TYPE.type)
 }
 
 /**
  * Matcher for null values
  */
 object NullMatcher : MatchingRule {
-    override fun toMap() = mapOf("match" to "null")
+    override fun toMap() = mapOf(SerializationConstants.MATCH_KEY to MatchingRulesSerialization.NULL.type)
 }
 
 data class MatchingRuleGroup @JvmOverloads constructor(
@@ -117,10 +143,13 @@ data class MatchingRuleGroup @JvmOverloads constructor(
     val ruleLogic: RuleLogic = RuleLogic.AND
 ) {
     fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any?> {
-        if (serializationConfig.specVersion < PactSpecVersion.V3) {
-            return rules.first().toMap()
+        return if (serializationConfig.specVersion < PactSpecVersion.V3) {
+            rules.first().toMap()
         } else {
-            return mapOf("matchers" to rules.map { it.toMap() }, "combine" to ruleLogic.name)
+            mapOf(
+                SerializationConstants.MATCHERS_KEY to rules.map { it.toMap() },
+                SerializationConstants.COMBINE_KEY to ruleLogic.name
+            )
         }
     }
 }

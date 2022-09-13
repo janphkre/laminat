@@ -6,6 +6,7 @@ import au.com.dius.pact.model.PactSpecVersion
 /**
  * Matching rules category
  */
+//TODO RENAME TO MATCHING CATEGORY
 data class Category @JvmOverloads constructor(
     val name: String,
     var matchingRules: MutableMap<String, MatchingRuleGroup> =

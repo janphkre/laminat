@@ -1,6 +1,7 @@
 package au.com.dius.pact.model
 
 import au.com.dius.pact.external.util.toUtf8String
+import au.com.dius.pact.model.serialization.SerializationConstants
 import java.net.URLEncoder
 import java.util.Locale
 import kotlin.math.min
@@ -25,9 +26,13 @@ data class RequestResponseInteraction(
         }
     }
 
+    @Deprecated(
+        "Use getProviderStates()",
+        ReplaceWith("providerStates.firstOrNull()?.name ?: \"\"")
+    )
     override val providerState: String
         get() {
-            return if (providerStates.isEmpty()) "" else providerStates.first().name
+            return providerStates.firstOrNull()?.name ?: ""
         }
 
     override fun conflictsWith(other: Interaction): Boolean {
@@ -42,15 +47,15 @@ data class RequestResponseInteraction(
 
     override fun toMap(serializationConfig: PactSerializationConfig): Map<*, *> {
         val interactionJson = mutableMapOf<String, Any?>(
-            Pair("description", description),
-            Pair("request", requestToMap(request, serializationConfig)),
-            Pair("response", responseToMap(response, serializationConfig))
+            Pair(SerializationConstants.DESCRIPTION_KEY, description),
+            Pair(SerializationConstants.REQUEST_KEY, requestToMap(request, serializationConfig)),
+            Pair(SerializationConstants.RESPONSE_KEY, responseToMap(response, serializationConfig))
         )
         if (providerStates.isNotEmpty()) {
             if(serializationConfig.specVersion < PactSpecVersion.V3) {
-                interactionJson["providerState"] = providerState
+                interactionJson[SerializationConstants.PROVIDER_STATE_KEY] = providerState
             } else {
-                interactionJson["providerStates"] = providerStates.map { it.toMap() }
+                interactionJson[SerializationConstants.PROVIDER_STATES_KEY] = providerStates.map { it.toMap() }
             }
         }
         return interactionJson
@@ -63,42 +68,42 @@ data class RequestResponseInteraction(
     companion object {
         fun requestToMap(request: Request, serializationConfig: PactSerializationConfig): Map<*, *> {
             val map = mutableMapOf<String, Any?>(
-                Pair("method", request.method.uppercase(Locale.ROOT)),
-                Pair("path", request.path)
+                Pair(SerializationConstants.METHOD_KEY, request.method.uppercase(Locale.ROOT)),
+                Pair(SerializationConstants.PATH_KEY, request.path)
             )
             if (request.headers.isNotEmpty()) {
-                map["headers"] = request.headers
+                map[SerializationConstants.HEADERS_KEY] = request.headers
             }
             if (request.query.isNotEmpty()) {
-                map["query"] = if (serializationConfig.specVersion >= PactSpecVersion.V3) request.query else mapToQueryStr(request.query)
+                map[SerializationConstants.QUERY_KEY] = if (serializationConfig.specVersion >= PactSpecVersion.V3) request.query else mapToQueryStr(request.query)
             }
             if (request.body !is OptionalBody.MissingBody) {
-                map["body"] = parseBody(request, serializationConfig)
+                map[SerializationConstants.BODY_KEY] = parseBody(request, serializationConfig)
             }
             if (request.matchingRules.isNotEmpty()) {
-                map["matchingRules"] = request.matchingRules.toMap(serializationConfig)
+                map[SerializationConstants.MATCHING_RULES_KEY] = request.matchingRules.toMap(serializationConfig)
             }
             if (request.generators.isNotEmpty() && serializationConfig.specVersion >= PactSpecVersion.V3) {
-                map["generators"] = request.generators.toMap(serializationConfig)
+                map[SerializationConstants.GENERATORS_KEY] = request.generators.toMap(serializationConfig)
             }
             return map
         }
 
         fun responseToMap(response: Response, serializationConfig: PactSerializationConfig): Map<*, *> {
             val map = mutableMapOf<String, Any?>(
-                Pair("status", response.status)
+                Pair(SerializationConstants.STATUS_KEY, response.status)
             )
             if (response.headers.isNotEmpty()) {
-                map["headers"] = response.headers
+                map[SerializationConstants.HEADERS_KEY] = response.headers
             }
             if (response.body !is OptionalBody.MissingBody) {
-                map["body"] = parseBody(response, serializationConfig)
+                map[SerializationConstants.BODY_KEY] = parseBody(response, serializationConfig)
             }
             if (response.matchingRules.isNotEmpty()) {
-                map["matchingRules"] = response.matchingRules.toMap(serializationConfig)
+                map[SerializationConstants.MATCHING_RULES_KEY] = response.matchingRules.toMap(serializationConfig)
             }
             if (response.generators.isNotEmpty() && serializationConfig.specVersion >= PactSpecVersion.V3) {
-                map["generators"] = response.generators.toMap(serializationConfig)
+                map[SerializationConstants.GENERATORS_KEY] = response.generators.toMap(serializationConfig)
             }
             return map
         }

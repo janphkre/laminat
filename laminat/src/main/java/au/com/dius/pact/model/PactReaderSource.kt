@@ -1,0 +1,65 @@
+package au.com.dius.pact.model
+
+import au.com.dius.pact.external.json.Json
+import java.io.*
+
+sealed class PactReaderSource {
+
+    abstract fun loadPact(): Pair<Json, PactSource>
+
+    protected fun parseJson(reader: Reader): Json {
+        return Json.parse(reader)
+    }
+
+    data class FileSource(
+        val file: File
+    ) : PactReaderSource() {
+
+        override fun loadPact(): Pair<Json, PactSource> {
+            val pactData = parseJson(FileReader(file))
+            return Pair(pactData, PactSource.InputStreamPactSource)
+        }
+    }
+
+    data class InputStreamPactSource(
+        private val inputStream: InputStream
+    ) : PactReaderSource() {
+
+        override fun loadPact(): Pair<Json, PactSource> {
+            val pactData = parseJson(InputStreamReader(inputStream))
+            return Pair(pactData, PactSource.InputStreamPactSource)
+        }
+    }
+
+    class ReaderPactSource(
+        private val reader: Reader
+    ) : PactReaderSource() {
+
+        override fun loadPact(): Pair<Json, PactSource> {
+            val pactData = Json.parse(reader)
+            return Pair(pactData, PactSource.ReaderPactSource)
+        }
+    }
+
+    data class ClosurePactSource(
+        private val closure: () -> PactReaderSource
+    ) : PactReaderSource() {
+
+        override fun loadPact(): Pair<Json, PactSource> {
+            return closure.invoke().loadPact()
+        }
+    }
+
+    data class ClassPathPactSource(
+        private val url: String
+    ): PactReaderSource() {
+
+        override fun loadPact(): Pair<Json, PactSource> {
+            val inputStream = Thread.currentThread().contextClassLoader?.getResourceAsStream(url) ?: throw IllegalStateException("not found on classpath: $url")
+            return inputStream.use {
+                val pactData = Json.parse(InputStreamReader(it))
+                Pair(pactData, PactSource.UrlSource("classpath:${url}"))
+            }
+        }
+    }
+}

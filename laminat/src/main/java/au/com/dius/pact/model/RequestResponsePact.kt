@@ -1,5 +1,7 @@
 package au.com.dius.pact.model
 
+import au.com.dius.pact.model.serialization.SerializationConstants
+
 class RequestResponsePact(
     override val provider: Provider,
     override val consumer: Consumer,
@@ -19,10 +21,10 @@ class RequestResponsePact(
 
     override fun toMap(serializationConfig: PactSerializationConfig): Map<String, *> {
         return mapOf<String, Any?>(
-            Pair("provider", provider.toMap()),
-            Pair("consumer", consumer.toMap()),
-            Pair("interactions", interactions.map { it.toMap(serializationConfig) }),
-            Pair("metadata", getMetaData(serializationConfig))
+            Pair(SerializationConstants.PROVIDER_KEY, provider.toMap()),
+            Pair(SerializationConstants.CONSUMER_KEY, consumer.toMap()),
+            Pair(SerializationConstants.INTERACTIONS_KEY, interactions.map { it.toMap(serializationConfig) }),
+            Pair(SerializationConstants.METADATA_KEY, getMetaData(serializationConfig))
         )
     }
 

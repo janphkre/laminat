@@ -6,9 +6,9 @@ import au.com.dius.pact.external.PactJsonifier
 import au.com.dius.pact.external.features.Feature
 import au.com.dius.pact.external.features.FeatureFlags
 import au.com.dius.pact.external.json.Json
+import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
 import java.io.File
-import java.io.StringWriter
 import java.nio.file.Files
 
 class PactWriterSpec : StringSpecExt( {
@@ -16,7 +16,6 @@ class PactWriterSpec : StringSpecExt( {
         lateinit var pactDir: File
 
         beforeTest {
-            println("setup")
             FeatureFlags.restoreDefault(Feature.MERGE_EXISTING_PACTS_FILE)
             pactDir = Files.createTempDirectory("PactWriterSpec").toFile()
         }
@@ -112,6 +111,7 @@ class PactWriterSpec : StringSpecExt( {
             responseJson["body"].toString() shouldBe "\"This is a string with letters ä, ü, ö and ß\""
         }
 
+    // different from pact-jvm 3.6.x: Requests need to be differentiatable, not just by description
         "when writing a pact file to disk, merge the pact with any existing one" {
             // given:
             FeatureFlags.enableFeature(Feature.MERGE_EXISTING_PACTS_FILE)
@@ -134,15 +134,47 @@ class PactWriterSpec : StringSpecExt( {
             // when:
             PactJsonifier.generateJson(pact, pactDir)
             pact.requestResponseInteractions = listOf(interaction2)
+            val result = runCatching { PactJsonifier.generateJson(pact, pactDir) }
+
+            // then:
+            result.isFailure shouldBe true
+            result.exceptionOrNull() should { it is PactMergeException }
+        }
+
+    // different from pact-jvm 3.6.x: Requests are mergable if they have any criteria to differntiate incoming requests
+        "when writing a pact file to disk, merge the pact with any existin one successfully" {
+            // given:
+            FeatureFlags.enableFeature(Feature.MERGE_EXISTING_PACTS_FILE)
+
+            val request = Request()
+            val request2 = Request(path="/secondary/path")
+            val response = Response()
+            val interaction = RequestResponseInteraction(
+                "test interaction",
+                emptyList(), request, response
+            )
+            val interaction2 = RequestResponseInteraction(
+                "test interaction two",
+                emptyList(), request2, response
+            )
+            val pact = RequestResponsePact(
+                Provider("PactWriterSpecProvider"),
+                Consumer("PactWriterSpecConsumer"), listOf(interaction)
+            )
+
+            // when:
             PactJsonifier.generateJson(pact, pactDir)
+            pact.requestResponseInteractions = listOf(interaction2)
+            PactJsonifier.generateJson(pact, pactDir)
+
+            // then:
             val pactFile = File(pactDir, "pactwriterspecconsumer___pactwriterspecprovider.json")
             val json = PactParsingUtil.parseContentToJson(pactFile.readText(Charsets.UTF_8))
             val interactionsJson = ((json as Json.Object)["interactions"] as Json.Array)
-
-            // then:
             interactionsJson.map {
                 (it as Json.Object)["description"].toString()
             } shouldBe listOf("\"test interaction\"", "\"test interaction two\"")
+
         }
 
         "overwrite any existing pact file if the pact.writer.overwrite property is set" {

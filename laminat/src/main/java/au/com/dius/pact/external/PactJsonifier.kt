@@ -1,12 +1,9 @@
 package au.com.dius.pact.external
 
-import au.com.dius.pact.model.Pact
-import au.com.dius.pact.model.PactMerge
-import au.com.dius.pact.model.PactMergeException
-import au.com.dius.pact.model.PactWriter
-import au.com.dius.pact.model.RequestResponsePact
-import java.io.File
-import java.io.PrintWriter
+import au.com.dius.pact.external.features.Feature
+import au.com.dius.pact.external.features.FeatureFlags
+import au.com.dius.pact.model.*
+import java.io.*
 import java.util.Locale
 
 /**
@@ -20,7 +17,11 @@ import java.util.Locale
  */
 object PactJsonifier {
 
-    fun generateJson(pacts: Collection<RequestResponsePact>, baseDir: File) {
+    fun generateJson(pact: RequestResponsePact, baseDir: File, serializationConfig: PactSerializationConfig = PactSerializationConfig(PactSpecVersion.V3, null)) {
+        generateJson(listOf(pact), baseDir, serializationConfig)
+    }
+
+    fun generateJson(pacts: Collection<RequestResponsePact>, baseDir: File, serializationConfig: PactSerializationConfig = PactSerializationConfig(PactSpecVersion.V3, null)) {
         baseDir.mkdir()
         pacts.forEach {
             val conflicts = it.conflictsWithSelf()
@@ -32,24 +33,42 @@ object PactJsonifier {
             }
         }
         val firstPact = pacts.first()
-        val mergedPact = (
-            pacts.fold(RequestResponsePact(firstPact.provider, firstPact.consumer, emptyList())) { left, current ->
-                val result = PactMerge.merge(current, left)
+        var mergedPact = RequestResponsePact(firstPact.provider, firstPact.consumer, emptyList())
+            pacts.forEach { current ->
+                val result = PactMerge.merge(current, mergedPact)
                 if (!result.ok) {
                     throw PactMergeException(result.message)
                 }
-                left
             }
-            ).sortInteractions()
 
-        val file = getEmptyFileFor(mergedPact, baseDir)
-        PrintWriter(file).use { printWriter ->
-            PactWriter.writePact(mergedPact, printWriter)
+
+        val file = getFileFor(mergedPact, baseDir)
+        if (FeatureFlags.isFeatureEnabled(Feature.MERGE_EXISTING_PACTS_FILE) && file.exists()) {
+            val source = PactReaderSource.FileSource(file)
+            val originalPact = PactReader.readPact(source) as RequestResponsePact
+            val result = PactMerge.merge(mergedPact, originalPact)
+            if (!result.ok) {
+                throw PactMergeException(result.message)
+            }
+            mergedPact = originalPact
         }
+        mergedPact.sortInteractions()
+        saveToPactFile(file, mergedPact, serializationConfig)
     }
 
-    private fun getEmptyFileFor(pact: Pact, baseDir: File): File {
+    private fun getFileFor(pact: Pact, baseDir: File): File {
         val name = "${pact.consumer.name.lowercase(Locale.ROOT).replace(' ','_')}___${pact.provider.name.lowercase(Locale.ROOT).replace(' ','_')}.json"
         return File(baseDir, name)
+    }
+
+    private fun saveToPactFile(file: File, pact: Pact, serializationConfig: PactSerializationConfig) {
+        PrintWriter(
+            OutputStreamWriter(
+                FileOutputStream(file),
+                Charsets.UTF_8
+            )
+        ).use { printWriter ->
+            PactWriter.writePact(pact, printWriter, serializationConfig)
+        }
     }
 }

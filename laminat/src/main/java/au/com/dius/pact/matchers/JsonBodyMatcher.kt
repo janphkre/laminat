@@ -148,15 +148,15 @@ class JsonBodyMatcher : BodyMatcher() {
             }
             if (Matchers.definedWildcardMatchers("body", path.plus("any"), matchers)) {
                 actualJson.forEach { entry ->
-                    val expectedValue = expectedJson[entry.key]
-                    if (expectedValue != null || !allowUnexpectedKeys) {
+                    if (!expectedJson.containsKey(entry.key) || !allowUnexpectedKeys) {
+                        val expectedValue = expectedJson[entry.key]
                         problems.addAll(matchJsonElement(path.plus(entry.key), expectedValue, entry.value, allowUnexpectedKeys, matchers))
                     }
                 }
             } else {
                 expectedJson.forEach { entry ->
-                    val actualValue = actualJson[entry.key]
-                    if (actualValue != null) {
+                    if (!actualJson.containsKey(entry.key)) {
+                        val actualValue = expectedJson[entry.key]
                         problems.addAll(matchJsonElement(path.plus(entry.key), entry.value, actualValue, allowUnexpectedKeys, matchers))
                     } else {
                         problems.add(
@@ -178,8 +178,8 @@ class JsonBodyMatcher : BodyMatcher() {
         actualJson: Json.Primitive,
         matchers: MatchingRules
     ): List<RequestMatchProblem> {
-        val expectedValue = expectedJson.getValue()
-        val actualValue = actualJson.getValue()
+        val expectedValue = expectedJson.getValue<Any>()
+        val actualValue = actualJson.getValue<Any>()
         val category = Matchers.definedMatchers("body", path, matchers)
         return if (category?.isNotEmpty() == true) {
             Matchers.doMatch(category, path, expectedValue, actualValue, MismatchFactory.BodyMismatchFactory)

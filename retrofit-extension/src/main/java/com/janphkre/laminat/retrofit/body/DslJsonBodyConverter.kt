@@ -8,6 +8,7 @@ import au.com.dius.pact.external.PactBuildException
 import au.com.dius.pact.external.json.Json
 import au.com.dius.pact.model.matchingrules.MaxTypeMatcher
 import au.com.dius.pact.model.matchingrules.MinTypeMatcher
+import com.google.gson.JsonPrimitive
 import okio.Buffer
 
 object DslJsonBodyConverter : DslBodyConverter {
@@ -39,7 +40,7 @@ object DslJsonBodyConverter : DslBodyConverter {
         jsonElement: Json,
         parent: DslPart,
         bodyMatches: BodyMatchElement?
-    ): DslPart? {
+    ): DslPart {
         return when(jsonElement) {
             is Json.Object -> {
                 jsonObjectToDsl(
@@ -191,16 +192,16 @@ object DslJsonBodyConverter : DslBodyConverter {
         bodyMatches: BodyMatchElement.BodyMatchString?
     ): DslPart {
         return when {
-            jsonPrimitive.isBoolean() && bodyMatches == null -> {
+            jsonPrimitive is Json.BooleanPrimitive && bodyMatches == null -> {
                 parent.booleanType(jsonPrimitive.asBoolean())
             }
-            jsonPrimitive.isNumber() && bodyMatches == null -> {
+            jsonPrimitive is Json.NumberPrimitive && bodyMatches == null -> {
                 parent.numberType(jsonPrimitive.asNumber())
             }
-            jsonPrimitive.isString() && bodyMatches == null -> {
+            jsonPrimitive is Json.StringPrimitive && bodyMatches == null -> {
                 parent.stringType(jsonPrimitive.asString())
             }
-            jsonPrimitive.isString() && bodyMatches != null -> {
+            jsonPrimitive is Json.StringPrimitive && bodyMatches != null -> {
                 parent.stringMatcher(bodyMatches.regex, jsonPrimitive.asString())
             }
             else -> raiseException(jsonPrimitive)
@@ -214,16 +215,16 @@ object DslJsonBodyConverter : DslBodyConverter {
         bodyMatches: BodyMatchElement.BodyMatchString?
     ): DslPart {
         return when {
-            jsonPrimitive.isBoolean() && bodyMatches == null -> {
+            jsonPrimitive is Json.BooleanPrimitive && bodyMatches == null -> {
                 parent.booleanType(keyInParent, jsonPrimitive.asBoolean())
             }
-            jsonPrimitive.isNumber() && bodyMatches == null -> {
+            jsonPrimitive is Json.NumberPrimitive && bodyMatches == null -> {
                 parent.numberType(keyInParent, jsonPrimitive.asNumber())
             }
-            jsonPrimitive.isString() && bodyMatches == null -> {
+            jsonPrimitive is Json.StringPrimitive && bodyMatches == null -> {
                 parent.stringType(keyInParent, jsonPrimitive.asString())
             }
-            jsonPrimitive.isString() && bodyMatches != null -> {
+            jsonPrimitive is Json.StringPrimitive && bodyMatches != null -> {
                 parent.stringMatcher(keyInParent, bodyMatches.regex, jsonPrimitive.asString())
             }
             else -> raiseException(jsonPrimitive)
@@ -235,16 +236,16 @@ object DslJsonBodyConverter : DslBodyConverter {
         bodyMatches: BodyMatchElement.BodyMatchString?
     ): DslPart {
         return when {
-            jsonPrimitive.isBoolean() && bodyMatches == null -> {
+            jsonPrimitive is Json.BooleanPrimitive && bodyMatches == null -> {
                 PactDslJsonRootValue.booleanType(jsonPrimitive.asBoolean())
             }
-            jsonPrimitive.isNumber() && bodyMatches == null -> {
+            jsonPrimitive is Json.NumberPrimitive && bodyMatches == null -> {
                 PactDslJsonRootValue.numberType(jsonPrimitive.asNumber())
             }
-            jsonPrimitive.isString() && bodyMatches == null -> {
+            jsonPrimitive is Json.StringPrimitive && bodyMatches == null -> {
                 PactDslJsonRootValue.stringType(jsonPrimitive.asString())
             }
-            jsonPrimitive.isString() && bodyMatches != null -> {
+            jsonPrimitive is Json.StringPrimitive && bodyMatches != null -> {
                 PactDslJsonRootValue.stringMatcher(bodyMatches.regex, jsonPrimitive.asString())
             }
             else -> raiseException(jsonPrimitive)

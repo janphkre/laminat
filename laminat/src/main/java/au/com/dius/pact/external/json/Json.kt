@@ -14,116 +14,115 @@ sealed interface Json {
 
     fun serialize(writer: JsonWriter)
 
-    sealed interface Primitive : Json {
+    operator fun get(key: String): Json
 
-        fun isBoolean(): Boolean
+    operator fun get(index: Int): Json
 
-        fun isString(): Boolean
+    fun <T> getValue(): T
+    fun <T> getValueOrNull(): T?
 
-        fun isNumber(): Boolean
+    sealed interface Primitive : Json
 
-        fun asBoolean(): Boolean
+    data class BooleanPrimitive(
+        private val value: Boolean
+    ) : Primitive {
 
-        fun asString(): String
-
-        fun asNumber(): Number
-
-        fun getValue(): Any
-
-        data class BooleanPrimitive(
-            private val value: Boolean
-        ) : Primitive {
-            override fun isBoolean(): Boolean = true
-
-            override fun isString(): Boolean = false
-
-            override fun isNumber(): Boolean = false
-
-            override fun asBoolean(): Boolean = value
-
-            override fun asString(): String {
-                throw UnsupportedOperationException("Primitive is not a string!")
-            }
-
-            override fun asNumber(): Number {
-                throw UnsupportedOperationException("Primitive is not a number!")
-            }
-
-            override fun getValue(): Any = value
-
-            override fun serialize(writer: JsonWriter) {
-                writer.value(value)
-            }
-
-            override fun toString(): String {
-                return serialize(this)
-            }
+        override fun get(index: Int): Json {
+            throw UnsupportedOperationException("Primitive is not an array!")
         }
 
-        data class StringPrimitive(
-            private val value: String
-        ) : Primitive {
-            override fun isBoolean(): Boolean = false
-
-            override fun isString(): Boolean = true
-
-            override fun isNumber(): Boolean = false
-
-            override fun asBoolean(): Boolean {
-                throw UnsupportedOperationException("Primitive is not a boolean!")
-            }
-
-            override fun asString(): String = value
-
-            override fun asNumber(): Number {
-                throw UnsupportedOperationException("Primitive is not a number!")
-            }
-
-            override fun getValue(): Any = value
-
-            override fun serialize(writer: JsonWriter) {
-                writer.value(value)
-            }
-
-            override fun toString(): String {
-                return serialize(this)
-            }
+        override fun get(key: String): Json {
+            throw UnsupportedOperationException("Primitive is not an object!")
         }
 
-        data class NumberPrimitive(
-            private val value: Number
-        ) : Primitive {
-            override fun isBoolean(): Boolean = false
+        fun asBoolean(): Boolean = value
 
-            override fun isString(): Boolean = false
+        @Suppress("UNCHECKED_CAST")
+        override fun <T> getValue(): T = value as T
+        override fun <T> getValueOrNull(): T? = getValue()
 
-            override fun isNumber(): Boolean = true
+        override fun serialize(writer: JsonWriter) {
+            writer.value(value)
+        }
 
-            override fun asBoolean(): Boolean {
-                throw UnsupportedOperationException("Primitive is not a boolean!")
-            }
+        override fun toString(): String {
+            return Companion.serialize(this)
+        }
+    }
 
-            override fun asString(): String {
-                throw UnsupportedOperationException("Primitive is not a string!")
-            }
+    data class StringPrimitive(
+        private val value: String
+    ) : Primitive {
 
-            override fun asNumber(): Number = value
+        override fun get(index: Int): Json {
+            throw UnsupportedOperationException("Primitive is not an array!")
+        }
 
-            override fun getValue(): Any = value
+        override fun get(key: String): Json {
+            throw UnsupportedOperationException("Primitive is not an object!")
+        }
 
-            override fun serialize(writer: JsonWriter) {
-                writer.value(value)
-            }
+        fun asString(): String = value
 
-            override fun toString(): String {
-                return serialize(this)
-            }
+        @Suppress("UNCHECKED_CAST")
+        override fun <T> getValue(): T = value as T
+        override fun <T> getValueOrNull(): T? = getValue()
+
+        override fun serialize(writer: JsonWriter) {
+            writer.value(value)
+        }
+
+        override fun toString(): String {
+            return Companion.serialize(this)
+        }
+    }
+
+    data class NumberPrimitive(
+        private val value: Number
+    ) : Primitive {
+
+        override fun get(index: Int): Json {
+            throw UnsupportedOperationException("Primitive is not an array!")
+        }
+
+        override fun get(key: String): Json {
+            throw UnsupportedOperationException("Primitive is not an object!")
+        }
+
+        fun asNumber(): Number = value
+
+        @Suppress("UNCHECKED_CAST")
+        override fun <T > getValue(): T = value as T
+        override fun <T> getValueOrNull(): T? = getValue()
+
+        override fun serialize(writer: JsonWriter) {
+            writer.value(value)
+        }
+
+        override fun toString(): String {
+            return Companion.serialize(this)
         }
     }
 
     data class Object(
         private val elements: MutableMap<String, Json>
     ) : Json, MutableMap<String, Json> by elements {
+
+        constructor(vararg elementPairs: Pair<String,Json>): this(mutableMapOf(*elementPairs))
+
+        override fun get(index: Int): Json {
+            throw UnsupportedOperationException("Object is not an array!")
+        }
+
+        override fun get(key: String): Json {
+            return elements[key] ?: Null
+        }
+
+        override fun <T> getValue(): T {
+            throw UnsupportedOperationException("Object is not a primitive!")
+        }
+
+        override fun <T> getValueOrNull(): T? = getValue()
 
         override fun serialize(writer: JsonWriter) {
             writer.beginObject()
@@ -143,6 +142,23 @@ sealed interface Json {
         private val elements: MutableList<Json>
     ) : Json, MutableList<Json> by elements {
 
+        constructor(vararg elementList: Json): this(mutableListOf(*elementList))
+
+
+        override fun get(index: Int): Json {
+            return elements[index]
+        }
+
+        override fun get(key: String): Json {
+            throw UnsupportedOperationException("Array is not an object!")
+        }
+
+        override fun <T > getValue(): T {
+            throw UnsupportedOperationException("Array is not a primitive!")
+        }
+
+        override fun <T> getValueOrNull(): T? = getValue()
+
         override fun serialize(writer: JsonWriter) {
             writer.beginArray()
             elements.forEach { value ->
@@ -157,6 +173,20 @@ sealed interface Json {
     }
 
     object Null : Json {
+
+        override fun get(index: Int): Json {
+            throw UnsupportedOperationException("Null is not an array!")
+        }
+
+        override fun get(key: String): Json {
+            throw UnsupportedOperationException("Null is not an object!")
+        }
+
+        override fun <T> getValue(): T {
+            throw UnsupportedOperationException("Null is not a primitive!")
+        }
+
+        override fun <T> getValueOrNull(): T? = null
 
         override fun serialize(writer: JsonWriter) {
             writer.nullValue()
@@ -184,9 +214,9 @@ sealed interface Json {
                 }
                 is JsonPrimitive -> {
                     when {
-                        gson.isBoolean -> Primitive.BooleanPrimitive(gson.asBoolean)
-                        gson.isNumber -> Primitive.NumberPrimitive(gson.asNumber)
-                        gson.isString -> Primitive.StringPrimitive(gson.asString)
+                        gson.isBoolean -> BooleanPrimitive(gson.asBoolean)
+                        gson.isNumber -> NumberPrimitive(gson.asNumber)
+                        gson.isString -> StringPrimitive(gson.asString)
                         else -> throw IllegalArgumentException("Received unknown Gson primitive: $gson")
                     }
                 }
@@ -210,9 +240,9 @@ sealed interface Json {
                         this.add(key, convertToGson(value))
                     }
                 }
-                is Primitive.BooleanPrimitive -> JsonPrimitive(json.asBoolean())
-                is Primitive.NumberPrimitive -> JsonPrimitive(json.asNumber())
-                is Primitive.StringPrimitive -> JsonPrimitive(json.asString())
+                is BooleanPrimitive -> JsonPrimitive(json.asBoolean())
+                is NumberPrimitive -> JsonPrimitive(json.asNumber())
+                is StringPrimitive -> JsonPrimitive(json.asString())
             }
         }
 
@@ -239,9 +269,9 @@ sealed interface Json {
             }
             return when (element) {
                 is Json -> element
-                is Boolean -> Primitive.BooleanPrimitive(element)
-                is Number -> Primitive.NumberPrimitive(element)
-                is String -> Primitive.StringPrimitive(element)
+                is Boolean -> BooleanPrimitive(element)
+                is Number -> NumberPrimitive(element)
+                is String -> StringPrimitive(element)
                 else -> throw java.lang.IllegalArgumentException("Can not convert $element to json!")
             }
         }

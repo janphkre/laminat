@@ -1,12 +1,21 @@
 package au.com.dius.pact.model
 
+import au.com.dius.pact.external.json.Json
+import au.com.dius.pact.model.serialization.SerializationConstants
+
 /**
  * Pact Provider
  */
 data class Provider @JvmOverloads constructor(val name: String = "provider") {
 
     fun toMap(): Map<String, Any?> {
-        return mapOf(Pair("name", name))
+        return mapOf(Pair(SerializationConstants.NAME_KEY, name))
+    }
+
+    companion object {
+        fun fromJson(json: Json): Provider {
+            return Provider(json[SerializationConstants.NAME_KEY].getValue())
+        }
     }
 }
 
@@ -16,7 +25,13 @@ data class Provider @JvmOverloads constructor(val name: String = "provider") {
 data class Consumer @JvmOverloads constructor(val name: String = "consumer") {
 
     fun toMap(): Map<String, Any?> {
-        return mapOf(Pair("name", name))
+        return mapOf(Pair(SerializationConstants.NAME_KEY, name))
+    }
+
+    companion object {
+        fun fromJson(json: Json): Consumer {
+            return Consumer(json[SerializationConstants.NAME_KEY].getValue())
+        }
     }
 }
 

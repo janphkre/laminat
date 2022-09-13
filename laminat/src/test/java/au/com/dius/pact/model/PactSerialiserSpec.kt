@@ -194,7 +194,7 @@ class PactSerialiserSpec : StringSpec() {
             val pactJson = resultWriter.buffer.toString()
 
             // then:
-            pactJson.contains("This is a string with letters ä, ü, ö and ß")
+            pactJson.contains("This is a string with letters ä, ü, ö and ß") shouldBe true
         }
     }
 }

@@ -12,11 +12,36 @@ sealed interface OptionalBody {
         override fun asBinary(charset: Charset): ByteArray {
             return ByteArray(0)
         }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+            if (other !is OptionalBody) {
+                return false
+            }
+
+            return true
+        }
     }
 
     object NullBody : OptionalBody {
         override fun asBinary(charset: Charset): ByteArray {
             return ByteArray(0)
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+            if (other !is OptionalBody) {
+                return false
+            }
+            if (!asBinary(Charsets.UTF_8).contentEquals(other.asBinary(Charsets.UTF_8))) {
+                return false
+            }
+
+            return true
         }
     }
 
@@ -24,6 +49,20 @@ sealed interface OptionalBody {
 
         override fun asBinary(charset: Charset): ByteArray {
             return ByteArray(0)
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+            if (other !is OptionalBody) {
+                return false
+            }
+            if (!asBinary(Charsets.UTF_8).contentEquals(other.asBinary(Charsets.UTF_8))) {
+                return false
+            }
+
+            return true
         }
     }
 
@@ -46,6 +85,24 @@ sealed interface OptionalBody {
         fun unwrapJson(): Json {
             return parsedBodyAsJson
         }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+            if (other !is OptionalBody) {
+                return false
+            }
+            if (!asBinary(Charsets.UTF_8).contentEquals(other.asBinary(Charsets.UTF_8))) {
+                return false
+            }
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return asBinary(Charsets.UTF_8).contentHashCode()
+        }
     }
 
     data class BinaryBody(
@@ -61,12 +118,15 @@ sealed interface OptionalBody {
         }
 
         override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as BinaryBody
-
-            if (!value.contentEquals(other.value)) return false
+            if (this === other) {
+                return true
+            }
+            if (other !is OptionalBody) {
+                return false
+            }
+            if (!asBinary(Charsets.UTF_8).contentEquals(other.asBinary(Charsets.UTF_8))) {
+                return false
+            }
 
             return true
         }

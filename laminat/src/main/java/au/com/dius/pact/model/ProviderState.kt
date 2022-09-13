@@ -1,5 +1,8 @@
 package au.com.dius.pact.model
 
+import au.com.dius.pact.external.json.Json
+import au.com.dius.pact.model.serialization.SerializationConstants
+
 /**
  * Class that encapsulates all the info about a provider state
  *
@@ -14,9 +17,9 @@ data class ProviderState(
     constructor(name: String?) : this(nonNullName(name), mapOf())
 
     fun toMap(): Map<String, Any> {
-        val map = mutableMapOf<String, Any>("name" to name)
+        val map = mutableMapOf<String, Any>(SerializationConstants.NAME_KEY to name)
         if (params.isNotEmpty()) {
-            map["params"] = params
+            map[SerializationConstants.PARAMS_KEY] = params
         }
         return map
     }
@@ -30,6 +33,10 @@ data class ProviderState(
         return other.name == this.name
     }
 
+    override fun hashCode(): Int {
+        return name.hashCode()
+    }
+
     companion object {
 
         private const val NONE = "None"
@@ -39,6 +46,13 @@ data class ProviderState(
                 return NONE
             }
             return name
+        }
+
+        fun fromJson(json: Json): ProviderState {
+            return ProviderState(
+                json[SerializationConstants.NAME_KEY].getValue() as String
+
+            )
         }
     }
 }

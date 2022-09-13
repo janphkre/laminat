@@ -2,6 +2,7 @@ package au.com.dius.pact.model.generators
 
 import android.os.Build
 import au.com.dius.pact.model.PactSerializationConfig
+import au.com.dius.pact.model.serialization.SerializationConstants
 import com.mifmif.common.regex.Generex
 import java.math.BigDecimal
 import java.util.Calendar
@@ -20,7 +21,11 @@ interface Generator {
 
 data class RandomIntGenerator(val min: Int, val max: Int) : Generator {
     override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
-        return mapOf("type" to "RandomInt", "min" to min, "max" to max)
+        return mapOf(
+            SerializationConstants.TYPE_KEY to GeneratorSerialization.RANDOM_INT.type,
+            SerializationConstants.MIN_KEY to min,
+            SerializationConstants.MAX_KEY to max
+        )
     }
 
     override fun generate(base: Any?): Any {
@@ -30,7 +35,10 @@ data class RandomIntGenerator(val min: Int, val max: Int) : Generator {
 
 data class RandomDecimalGenerator(val digits: Int) : Generator {
     override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
-        return mapOf("type" to "RandomDecimal", "digits" to digits)
+        return mapOf(
+            SerializationConstants.TYPE_KEY to GeneratorSerialization.RANDOM_DECIMAL.type,
+            SerializationConstants.DIGITS_KEY to digits
+        )
     }
 
     override fun generate(base: Any?): Any = BigDecimal(RandomStringUtils.randomNumeric(digits))
@@ -38,7 +46,10 @@ data class RandomDecimalGenerator(val digits: Int) : Generator {
 
 data class RandomHexadecimalGenerator(val digits: Int) : Generator {
     override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
-        return mapOf("type" to "RandomHexadecimal", "digits" to digits)
+        return mapOf(
+            SerializationConstants.TYPE_KEY to GeneratorSerialization.RANDOM_HEXADECIMAL.type,
+            SerializationConstants.DIGITS_KEY to digits
+        )
     }
 
     override fun generate(base: Any?): Any = RandomStringUtils.random(digits, "0123456789abcdef")
@@ -46,7 +57,10 @@ data class RandomHexadecimalGenerator(val digits: Int) : Generator {
 
 data class RandomStringGenerator(val size: Int = 20) : Generator {
     override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
-        return mapOf("type" to "RandomString", "size" to size)
+        return mapOf(
+            SerializationConstants.TYPE_KEY to GeneratorSerialization.RANDOM_STRING.type,
+            SerializationConstants.SIZE_KEY to size
+        )
     }
 
     override fun generate(base: Any?): Any {
@@ -56,7 +70,10 @@ data class RandomStringGenerator(val size: Int = 20) : Generator {
 
 data class RegexGenerator(val regex: String) : Generator {
     override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
-        return mapOf("type" to "Regex", "regex" to regex)
+        return mapOf(
+            SerializationConstants.TYPE_KEY to GeneratorSerialization.REGEX.type,
+            SerializationConstants.REGEX_KEY to regex
+        )
     }
 
     override fun generate(base: Any?): Any = Generex(regex).random()
@@ -64,7 +81,7 @@ data class RegexGenerator(val regex: String) : Generator {
 
 class UuidGenerator : Generator {
     override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
-        return mapOf("type" to "Uuid")
+        return mapOf(SerializationConstants.TYPE_KEY to GeneratorSerialization.UUID.type)
     }
 
     override fun generate(base: Any?): Any {
@@ -81,9 +98,12 @@ class UuidGenerator : Generator {
 data class DateGenerator(val format: String? = null) : Generator {
     override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
         if (format != null) {
-            return mapOf("type" to "Date", "format" to this.format)
+            return mapOf(
+                SerializationConstants.TYPE_KEY to GeneratorSerialization.DATE.type,
+                SerializationConstants.FORMAT_KEY to this.format
+            )
         }
-        return mapOf("type" to "Date")
+        return mapOf(SerializationConstants.TYPE_KEY to GeneratorSerialization.DATE.type)
     }
 
     override fun generate(base: Any?): Any {
@@ -99,9 +119,12 @@ data class DateGenerator(val format: String? = null) : Generator {
 data class TimeGenerator(val format: String? = null) : Generator {
     override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
         if (format != null) {
-            return mapOf("type" to "Time", "format" to this.format)
+            return mapOf(
+                SerializationConstants.TYPE_KEY to GeneratorSerialization.TIME.type,
+                SerializationConstants.FORMAT_KEY to this.format
+            )
         }
-        return mapOf("type" to "Time")
+        return mapOf(SerializationConstants.TYPE_KEY to GeneratorSerialization.TIME.type)
     }
 
     override fun generate(base: Any?): Any {
@@ -117,9 +140,12 @@ data class TimeGenerator(val format: String? = null) : Generator {
 data class DateTimeGenerator(val format: String? = null) : Generator {
     override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
         if (format != null) {
-            return mapOf("type" to "DateTime", "format" to this.format)
+            return mapOf(
+                SerializationConstants.TYPE_KEY to GeneratorSerialization.DATE_TIME.type,
+                SerializationConstants.FORMAT_KEY to this.format
+            )
         }
-        return mapOf("type" to "DateTime")
+        return mapOf(SerializationConstants.TYPE_KEY to GeneratorSerialization.DATE_TIME.type)
     }
 
     override fun generate(base: Any?): Any {
@@ -134,7 +160,7 @@ data class DateTimeGenerator(val format: String? = null) : Generator {
 
 object RandomBooleanGenerator : Generator {
     override fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any> {
-        return mapOf("type" to "RandomBoolean")
+        return mapOf(SerializationConstants.TYPE_KEY to GeneratorSerialization.RANDOM_BOOLEAN.type)
     }
 
     override fun generate(base: Any?): Any {
