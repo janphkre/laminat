@@ -102,12 +102,15 @@ class PactSerialiserSpec : StringSpec() {
             )
             val expectedPact = RequestResponsePact(
                 Provider("test_provider"),
-                Consumer("test_consumer"), listOf(
+                Consumer("test_consumer"),
+                listOf(
                     RequestResponseInteraction(
-                        "test interaction", listOf(
+                        "test interaction",
+                        listOf(
                             ProviderState("test state", mapOf("name" to "Testy")),
                             ProviderState("test state 2", mapOf("name" to "Testy2"))
-                        ), expectedRequest, expectedResponse
+                        ),
+                        expectedRequest, expectedResponse
                     )
                 )
             )

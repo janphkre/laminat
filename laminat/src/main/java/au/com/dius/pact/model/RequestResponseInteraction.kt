@@ -62,7 +62,7 @@ data class RequestResponseInteraction(
             Pair(SerializationConstants.RESPONSE_KEY, responseToMap(response, serializationConfig))
         )
         if (providerStates.isNotEmpty()) {
-            if(serializationConfig.specVersion < PactSpecVersion.V3) {
+            if (serializationConfig.specVersion < PactSpecVersion.V3) {
                 interactionJson[SerializationConstants.PROVIDER_STATE_KEY] = providerState
             } else {
                 interactionJson[SerializationConstants.PROVIDER_STATES_KEY] = providerStates.map { it.toMap() }

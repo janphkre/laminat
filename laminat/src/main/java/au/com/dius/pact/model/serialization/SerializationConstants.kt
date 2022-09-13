@@ -2,7 +2,7 @@ package au.com.dius.pact.model.serialization
 
 object SerializationConstants {
     const val METADATA_KEY = "metadata"
-    const val INTERACTIONS_KEY= "interactions"
+    const val INTERACTIONS_KEY = "interactions"
     const val PROVIDER_KEY = "provider"
     const val CONSUMER_KEY = "consumer"
     const val PARAMS_KEY = "params"

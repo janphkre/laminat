@@ -16,5 +16,4 @@ class JsonGsonAdapter : JsonSerializer<Json>, JsonDeserializer<Json> {
     override fun deserialize(json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?): Json {
         return Json.convertToJson(json)
     }
-
 }

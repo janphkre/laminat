@@ -29,7 +29,7 @@ class RequestResponsePact(
     }
 
     override fun mergeInteractions(interactions: List<Interaction>) {
-        if(interactions.any { it !is RequestResponseInteraction }) {
+        if (interactions.any { it !is RequestResponseInteraction }) {
             throw IllegalArgumentException("Can only merge RequestResponseInteraction into a RequestResponsePact!")
         }
         requestResponseInteractions = ArrayList(requestResponseInteractions).apply {

@@ -1,7 +1,11 @@
 package au.com.dius.pact.model
 
 import au.com.dius.pact.external.json.Json
-import java.io.*
+import java.io.File
+import java.io.FileReader
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.io.Reader
 
 sealed class PactReaderSource {
 
@@ -52,13 +56,13 @@ sealed class PactReaderSource {
 
     data class ClassPathPactSource(
         private val url: String
-    ): PactReaderSource() {
+    ) : PactReaderSource() {
 
         override fun loadPact(): Pair<Json, PactSource> {
             val inputStream = Thread.currentThread().contextClassLoader?.getResourceAsStream(url) ?: throw IllegalStateException("not found on classpath: $url")
             return inputStream.use {
                 val pactData = Json.parse(InputStreamReader(it))
-                Pair(pactData, PactSource.UrlSource("classpath:${url}"))
+                Pair(pactData, PactSource.UrlSource("classpath:$url"))
             }
         }
     }

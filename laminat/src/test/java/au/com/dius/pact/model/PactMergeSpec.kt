@@ -3,32 +3,31 @@ package au.com.dius.pact.model
 import au.com.dius.pact.StringSpecExt
 import au.com.dius.pact.external.features.Feature
 import au.com.dius.pact.external.features.FeatureFlags
-import io.kotlintest.matchers.containsAll
-import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.matchers.shouldNotBe
 import io.kotlintest.properties.forAll
 import io.kotlintest.properties.headers
 import io.kotlintest.properties.row
 import io.kotlintest.properties.table
-import io.kotlintest.specs.StringSpec
-import java.nio.file.Files
 
-class PactMergeSpec: StringSpecExt() {
+class PactMergeSpec : StringSpecExt() {
 
-    
-    private val consumer =  Consumer("test_consumer")
-    private val consumer2 =  Consumer("other consumer")
-    private val provider =  Provider("test_provider")
-    private val provider2 =  Provider("other provider")
-    private val response =  Response(200, mapOf("testreqheader" to "testreqheaderval"), OptionalBody.body("{\"responsetest\":true}"))
-    private val request = Request("Get", "/", PactReader.queryStringToMap("q=p&q=p2&r=s"),
-        mapOf("testreqheader" to "testreqheadervalue"), OptionalBody.body("{\"test\":true}"))
-    private val interaction =  RequestResponseInteraction("test interaction",
-    listOf(ProviderState("test state")), request, response)
-    private val pact =  RequestResponsePact(provider, consumer, listOf(interaction))
+    private val consumer = Consumer("test_consumer")
+    private val consumer2 = Consumer("other consumer")
+    private val provider = Provider("test_provider")
+    private val provider2 = Provider("other provider")
+    private val response = Response(200, mapOf("testreqheader" to "testreqheaderval"), OptionalBody.body("{\"responsetest\":true}"))
+    private val request = Request(
+        "Get", "/", PactReader.queryStringToMap("q=p&q=p2&r=s"),
+        mapOf("testreqheader" to "testreqheadervalue"), OptionalBody.body("{\"test\":true}")
+    )
+    private val interaction = RequestResponseInteraction(
+        "test interaction",
+        listOf(ProviderState("test state")), request, response
+    )
+    private val pact = RequestResponsePact(provider, consumer, listOf(interaction))
 
-    private val anonymousPact = object: Pact {
+    private val anonymousPact = object : Pact {
         override val provider: Provider = provider2
         override val consumer: Consumer
             get() = throw NotImplementedError()
@@ -74,7 +73,6 @@ class PactMergeSpec: StringSpecExt() {
 
         afterSpec {
             FeatureFlags.restoreDefault(Feature.MERGE_REMOVE_EXACT_DUPLICATES)
-
         }
 
         "Pacts with different consumers are compatible for #type" {
@@ -142,9 +140,12 @@ class PactMergeSpec: StringSpecExt() {
                     row(
                         RequestResponsePact::class,
                         RequestResponsePact(provider, consumer, emptyList()),
-                        RequestResponsePact(provider, consumer, listOf(
-                            RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
-                        ))
+                        RequestResponsePact(
+                            provider, consumer,
+                            listOf(
+                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
+                            )
+                        )
                     ),
                 )
             ) { _, newPact, existingPact ->
@@ -161,9 +162,13 @@ class PactMergeSpec: StringSpecExt() {
                     headers("type", "newPact", "existingPact"),
                     row(
                         RequestResponsePact::class,
-                        RequestResponsePact(provider, consumer, listOf(
-                            RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
-                        )), RequestResponsePact(provider, consumer, emptyList())
+                        RequestResponsePact(
+                            provider, consumer,
+                            listOf(
+                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
+                            )
+                        ),
+                        RequestResponsePact(provider, consumer, emptyList())
                     ),
                 )
             ) { _, newPact, existingPact ->
@@ -180,12 +185,18 @@ class PactMergeSpec: StringSpecExt() {
                     headers("type", "newPact", "existingPact"),
                     row(
                         RequestResponsePact::class,
-                        RequestResponsePact(provider, consumer, listOf(
-                            RequestResponseInteraction("test", listOf(ProviderState("test")), Request("POST"), Response())
-                        )),
-                        RequestResponsePact(provider, consumer, listOf(
-                            RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
-                        ))
+                        RequestResponsePact(
+                            provider, consumer,
+                            listOf(
+                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request("POST"), Response())
+                            )
+                        ),
+                        RequestResponsePact(
+                            provider, consumer,
+                            listOf(
+                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
+                            )
+                        )
                     ),
                 )
             ) { _, newPact, existingPact ->
@@ -202,12 +213,18 @@ class PactMergeSpec: StringSpecExt() {
                     headers("type", "newPact", "existingPact"),
                     row(
                         RequestResponsePact::class,
-                        RequestResponsePact(provider, consumer, listOf(
-                            RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
-                        )),
-                        RequestResponsePact(provider, consumer, listOf(
-                            RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
-                        ))
+                        RequestResponsePact(
+                            provider, consumer,
+                            listOf(
+                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
+                            )
+                        ),
+                        RequestResponsePact(
+                            provider, consumer,
+                            listOf(
+                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
+                            )
+                        )
                     ),
                 )
             ) { _, newPact, existingPact ->
@@ -217,7 +234,7 @@ class PactMergeSpec: StringSpecExt() {
             }
         }
 
-        //Different from pact-jvm 3.6.0: Duplicates cause error by default.
+        // Different from pact-jvm 3.6.0: Duplicates cause error by default.
         "pact merge does not remove duplicates for #type" {
             // TODO: ADD MESSAGE PACTs once implemented
             forAll(
@@ -225,12 +242,18 @@ class PactMergeSpec: StringSpecExt() {
                     headers("type", "newPact", "existingPact"),
                     row(
                         RequestResponsePact::class,
-                        RequestResponsePact(provider, consumer, listOf(
-                            RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
-                        )),
-                        RequestResponsePact(provider, consumer, listOf(
-                            RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
-                        ))
+                        RequestResponsePact(
+                            provider, consumer,
+                            listOf(
+                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
+                            )
+                        ),
+                        RequestResponsePact(
+                            provider, consumer,
+                            listOf(
+                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
+                            )
+                        )
                     ),
                 )
             ) { _, newPact, existingPact ->
@@ -248,12 +271,18 @@ class PactMergeSpec: StringSpecExt() {
                     headers("type", "newPact", "existingPact"),
                     row(
                         RequestResponsePact::class,
-                        RequestResponsePact(provider, consumer, listOf(
-                            RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
-                        )),
-                        RequestResponsePact(provider, consumer, listOf(
-                            RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
-                        ))
+                        RequestResponsePact(
+                            provider, consumer,
+                            listOf(
+                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
+                            )
+                        ),
+                        RequestResponsePact(
+                            provider, consumer,
+                            listOf(
+                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
+                            )
+                        )
                     ),
                 )
             ) { _, newPact, existingPact ->
@@ -271,9 +300,12 @@ class PactMergeSpec: StringSpecExt() {
                     row(
                         RequestResponsePact::class,
                         RequestResponsePact(provider, consumer, listOf(interaction)),
-                        RequestResponsePact(provider, consumer, listOf(
-                            RequestResponseInteraction("test interaction", listOf(ProviderState("test state 2")), Request(), Response())
-                        ))
+                        RequestResponsePact(
+                            provider, consumer,
+                            listOf(
+                                RequestResponseInteraction("test interaction", listOf(ProviderState("test state 2")), Request(), Response())
+                            )
+                        )
                     ),
                 )
             ) { _, newPact, existingPact ->

@@ -8,7 +8,6 @@ import au.com.dius.pact.external.PactBuildException
 import au.com.dius.pact.external.json.Json
 import au.com.dius.pact.model.matchingrules.MaxTypeMatcher
 import au.com.dius.pact.model.matchingrules.MinTypeMatcher
-import com.google.gson.JsonPrimitive
 import okio.Buffer
 
 object DslJsonBodyConverter : DslBodyConverter {
@@ -41,7 +40,7 @@ object DslJsonBodyConverter : DslBodyConverter {
         parent: DslPart,
         bodyMatches: BodyMatchElement?
     ): DslPart {
-        return when(jsonElement) {
+        return when (jsonElement) {
             is Json.Object -> {
                 jsonObjectToDsl(
                     keyInParent,

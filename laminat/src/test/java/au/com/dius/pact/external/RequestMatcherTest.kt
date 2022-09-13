@@ -4,15 +4,8 @@ import au.com.dius.pact.consumer.ConsumerPactBuilder
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody
 import au.com.dius.pact.model.RequestResponseInteraction
 import java.io.File
-import java.net.InetAddress
-import java.net.Socket
-import okhttp3.Headers
-import okhttp3.mockwebserver.RecordedRequest
-import okio.Buffer
 import org.junit.Assert
 import org.junit.Test
-import org.mockito.Mockito.doReturn
-import org.mockito.Mockito.mock
 
 /**
  * This test checks that the RequestMatcher matches incoming requests correctly.

@@ -3,11 +3,10 @@ package au.com.dius.pact.model
 import au.com.dius.pact.external.util.toUtf8String
 import au.com.dius.pact.matchers.MatchingConfig
 import au.com.dius.pact.model.matchingrules.MatchingRules
-import org.apache.http.Consts
+import java.nio.charset.Charset
 import java.util.Locale
 import kotlin.math.min
 import org.apache.http.entity.ContentType
-import java.nio.charset.Charset
 
 abstract class HttpPart {
 
@@ -17,12 +16,12 @@ abstract class HttpPart {
 
     fun charset(): Charset {
         val contentTypeKey = contentTypeHeaderKey()
-        if(contentTypeKey != null) {
+        if (contentTypeKey != null) {
             val contentType = headers[contentTypeKey]!!
 
             val explicitCharset = try {
                 Charset.forName(explicitCharsetStringFromHeader(contentType))
-            } catch(e: Exception) {
+            } catch (e: Exception) {
                 null
             }
 
@@ -32,7 +31,6 @@ abstract class HttpPart {
             return contentType.mapToCharset()
         }
         return detectContentType().mapToCharset()
-
     }
 
     private fun String.mapToCharset(): Charset {
@@ -56,7 +54,7 @@ abstract class HttpPart {
     private fun explicitCharsetStringFromHeader(header: String): String? {
         val entryList = header.split(';').drop(1)
         for (entry in entryList) {
-            val entryKeyValue= entry.split("=")
+            val entryKeyValue = entry.split("=")
             if (entryKeyValue.first().contains("charset")) {
                 return entryKeyValue.last()
             }

@@ -3,7 +3,6 @@ package au.com.dius.pact.model.matchingrules
 import au.com.dius.pact.model.PactSerializationConfig
 import au.com.dius.pact.model.PactSpecVersion
 import au.com.dius.pact.model.serialization.SerializationConstants
-import java.util.Locale
 
 /**
  * Logic to use to combine rules

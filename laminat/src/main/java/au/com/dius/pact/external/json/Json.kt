@@ -92,7 +92,7 @@ sealed interface Json {
         fun asNumber(): Number = value
 
         @Suppress("UNCHECKED_CAST")
-        override fun <T > getValue(): T = value as T
+        override fun <T> getValue(): T = value as T
         override fun <T> getValueOrNull(): T? = getValue()
 
         override fun serialize(writer: JsonWriter) {
@@ -108,7 +108,7 @@ sealed interface Json {
         private val elements: MutableMap<String, Json>
     ) : Json, MutableMap<String, Json> by elements {
 
-        constructor(vararg elementPairs: Pair<String,Json>): this(mutableMapOf(*elementPairs))
+        constructor(vararg elementPairs: Pair<String, Json>) : this(mutableMapOf(*elementPairs))
 
         override fun get(index: Int): Json {
             throw UnsupportedOperationException("Object is not an array!")
@@ -142,8 +142,7 @@ sealed interface Json {
         private val elements: MutableList<Json>
     ) : Json, MutableList<Json> by elements {
 
-        constructor(vararg elementList: Json): this(mutableListOf(*elementList))
-
+        constructor(vararg elementList: Json) : this(mutableListOf(*elementList))
 
         override fun get(index: Int): Json {
             return elements[index]
@@ -153,7 +152,7 @@ sealed interface Json {
             throw UnsupportedOperationException("Array is not an object!")
         }
 
-        override fun <T > getValue(): T {
+        override fun <T> getValue(): T {
             throw UnsupportedOperationException("Array is not a primitive!")
         }
 
@@ -227,7 +226,7 @@ sealed interface Json {
         }
 
         fun convertToGson(json: Json?): JsonElement {
-            return when(json) {
+            return when (json) {
                 null -> JsonNull.INSTANCE
                 Null -> JsonNull.INSTANCE
                 is Array -> JsonArray().apply {

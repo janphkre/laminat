@@ -2,8 +2,19 @@ package au.com.dius.pact.external
 
 import au.com.dius.pact.external.features.Feature
 import au.com.dius.pact.external.features.FeatureFlags
-import au.com.dius.pact.model.*
-import java.io.*
+import au.com.dius.pact.model.Pact
+import au.com.dius.pact.model.PactMerge
+import au.com.dius.pact.model.PactMergeException
+import au.com.dius.pact.model.PactReader
+import au.com.dius.pact.model.PactReaderSource
+import au.com.dius.pact.model.PactSerializationConfig
+import au.com.dius.pact.model.PactSpecVersion
+import au.com.dius.pact.model.PactWriter
+import au.com.dius.pact.model.RequestResponsePact
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStreamWriter
+import java.io.PrintWriter
 import java.util.Locale
 
 /**
@@ -34,13 +45,12 @@ object PactJsonifier {
         }
         val firstPact = pacts.first()
         var mergedPact = RequestResponsePact(firstPact.provider, firstPact.consumer, emptyList())
-            pacts.forEach { current ->
-                val result = PactMerge.merge(current, mergedPact)
-                if (!result.ok) {
-                    throw PactMergeException(result.message)
-                }
+        pacts.forEach { current ->
+            val result = PactMerge.merge(current, mergedPact)
+            if (!result.ok) {
+                throw PactMergeException(result.message)
             }
-
+        }
 
         val file = getFileFor(mergedPact, baseDir)
         if (FeatureFlags.isFeatureEnabled(Feature.MERGE_EXISTING_PACTS_FILE) && file.exists()) {

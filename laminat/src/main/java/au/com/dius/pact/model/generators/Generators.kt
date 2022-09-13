@@ -5,9 +5,9 @@ import au.com.dius.pact.model.InvalidPactException
 import au.com.dius.pact.model.OptionalBody
 import au.com.dius.pact.model.PactSerializationConfig
 import au.com.dius.pact.model.PactSpecVersion
+import java.util.EnumMap
+import java.util.Locale
 import org.apache.http.entity.ContentType
-import java.util.*
-import kotlin.collections.HashMap
 
 data class Generators(val categories: MutableMap<Category, MutableMap<String, Generator>> = EnumMap(Category::class.java)) {
 

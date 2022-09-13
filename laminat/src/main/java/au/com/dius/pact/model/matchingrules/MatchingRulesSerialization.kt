@@ -73,5 +73,4 @@ enum class MatchingRulesSerialization(
             return type.fromJson(json)
         }
     }
-
 }

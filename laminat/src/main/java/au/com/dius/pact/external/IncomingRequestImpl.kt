@@ -5,13 +5,13 @@ import au.com.dius.pact.external.util.toReader
 import au.com.dius.pact.model.HttpPart
 import au.com.dius.pact.model.OptionalBody
 import au.com.dius.pact.model.matchingrules.MatchingRules
+import java.nio.charset.Charset
 import okhttp3.mockwebserver.RecordedRequest
 import org.apache.http.entity.ContentType
-import java.nio.charset.Charset
 
-class IncomingRequestImpl (
+class IncomingRequestImpl(
     private val internalRequest: RecordedRequest
-): IncomingRequest, HttpPart() {
+) : IncomingRequest, HttpPart() {
 
     private val charset: Charset by lazy {
         charset()

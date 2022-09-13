@@ -6,7 +6,7 @@ import io.kotlintest.specs.StringSpec
 
 abstract class StringSpecExt(
     lambda: (StringSpecExt.() -> Unit) = {}
-): StringSpec() {
+) : StringSpec() {
 
     override val oneInstancePerTest: Boolean = false
 

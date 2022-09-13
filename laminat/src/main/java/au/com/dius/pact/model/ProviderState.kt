@@ -42,7 +42,7 @@ data class ProviderState(
         private const val NONE = "None"
 
         fun nonNullName(name: String?): String {
-            if(name.isNullOrEmpty()) {
+            if (name.isNullOrEmpty()) {
                 return NONE
             }
             return name

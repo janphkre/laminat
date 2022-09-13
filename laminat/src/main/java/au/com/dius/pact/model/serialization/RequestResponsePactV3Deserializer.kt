@@ -1,18 +1,27 @@
 package au.com.dius.pact.model.serialization
 
 import au.com.dius.pact.external.json.Json
-import au.com.dius.pact.model.*
+import au.com.dius.pact.model.Consumer
+import au.com.dius.pact.model.OptionalBody
+import au.com.dius.pact.model.Pact
+import au.com.dius.pact.model.PactSource
+import au.com.dius.pact.model.Provider
+import au.com.dius.pact.model.ProviderState
+import au.com.dius.pact.model.Request
+import au.com.dius.pact.model.RequestResponseInteraction
+import au.com.dius.pact.model.RequestResponsePact
+import au.com.dius.pact.model.Response
+import au.com.dius.pact.model.generators.Category as GeneratorCategory
 import au.com.dius.pact.model.generators.Generator
 import au.com.dius.pact.model.generators.GeneratorSerialization
 import au.com.dius.pact.model.generators.Generators
+import au.com.dius.pact.model.matchingrules.Category as MatchingCategory
 import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
 import au.com.dius.pact.model.matchingrules.MatchingRules
 import au.com.dius.pact.model.matchingrules.MatchingRulesSerialization
-import java.util.*
-import au.com.dius.pact.model.generators.Category as GeneratorCategory
-import au.com.dius.pact.model.matchingrules.Category as MatchingCategory
+import java.util.EnumMap
 
-class RequestResponsePactV3Deserializer: PactDeserializer {
+class RequestResponsePactV3Deserializer : PactDeserializer {
 
     override fun isValid(pactJson: Json): Boolean {
         return (pactJson as? Json.Object)?.containsKey(SerializationConstants.INTERACTIONS_KEY) ?: false
@@ -54,7 +63,7 @@ class RequestResponsePactV3Deserializer: PactDeserializer {
         )
     }
 
-    private fun mapToResponse(json: Json) : Response {
+    private fun mapToResponse(json: Json): Response {
         return Response(
             status = json[SerializationConstants.STATUS_KEY].getValue(),
             headers = json[SerializationConstants.HEADERS_KEY].toStringMap(),
@@ -133,13 +142,13 @@ class RequestResponsePactV3Deserializer: PactDeserializer {
     }
 
     private fun Json.toGeneratorsMap(): MutableMap<GeneratorCategory, MutableMap<String, Generator>> {
-        if(this is Json.Null) {
+        if (this is Json.Null) {
             return EnumMap(GeneratorCategory::class.java)
         }
         this as Json.Object
         return this.entries.associateTo(EnumMap(GeneratorCategory::class.java)) { (key, json) ->
             val category = GeneratorCategory.values().first { it.name.equals(key, ignoreCase = true) }
-            val generatorMap = when(category) {
+            val generatorMap = when (category) {
                 GeneratorCategory.METHOD, GeneratorCategory.PATH, GeneratorCategory.STATUS -> {
                     val generator = GeneratorSerialization.fromJson(json)
                     mutableMapOf("" to generator)

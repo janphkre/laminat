@@ -4,8 +4,6 @@ import au.com.dius.pact.external.json.Json
 import au.com.dius.pact.model.serialization.RequestResponsePactV3Deserializer
 import java.net.URLDecoder
 import org.apache.http.Consts
-import java.io.File
-import java.net.URL
 
 object PactReader {
 
@@ -34,7 +32,7 @@ object PactReader {
 
     private fun parseV3Pact(pactJson: Json, pactSource: PactSource): Pact {
         val requestResponseDeserializer = RequestResponsePactV3Deserializer()
-        if(!requestResponseDeserializer.isValid(pactJson)) {
+        if (!requestResponseDeserializer.isValid(pactJson)) {
             throw InvalidPactException("Received invalid JSON for a pact. Can not be parsed to a pact!")
         }
         return requestResponseDeserializer.createPact(pactSource, pactJson)
