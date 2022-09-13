@@ -40,7 +40,7 @@ data class RequestResponseInteraction(
             if (other !is RequestResponseInteraction) {
                 return false
             }
-            return request == other.request
+            return description == other.description || request == other.request
         }
         return false
     }
@@ -50,7 +50,7 @@ data class RequestResponseInteraction(
             if (other !is RequestResponseInteraction) {
                 return false
             }
-            return request == other.request && response == other.response
+            return description == other.description && request == other.request && response == other.response
         }
         return false
     }

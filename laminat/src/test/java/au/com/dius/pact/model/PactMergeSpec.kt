@@ -84,6 +84,7 @@ class PactMergeSpec : StringSpecExt() {
                 )
             ) { _, newPact, existingPact ->
                 val result = PactMerge.merge(newPact, existingPact)
+                result.message shouldBe ""
                 result.ok shouldBe true
                 result.result shouldNotBe null
             }
@@ -127,6 +128,7 @@ class PactMergeSpec : StringSpecExt() {
                 )
             ) { _, newPact, existingPact ->
                 val result = PactMerge.merge(newPact, existingPact)
+                result.message shouldBe ""
                 result.ok shouldBe true
                 result.result shouldNotBe null
             }
@@ -150,6 +152,7 @@ class PactMergeSpec : StringSpecExt() {
                 )
             ) { _, newPact, existingPact ->
                 val result = PactMerge.merge(newPact, existingPact)
+                result.message shouldBe ""
                 result.ok shouldBe true
                 result.result shouldNotBe null
             }
@@ -173,6 +176,7 @@ class PactMergeSpec : StringSpecExt() {
                 )
             ) { _, newPact, existingPact ->
                 val result = PactMerge.merge(newPact, existingPact)
+                result.message shouldBe ""
                 result.ok shouldBe true
                 result.result shouldNotBe null
             }
@@ -188,7 +192,7 @@ class PactMergeSpec : StringSpecExt() {
                         RequestResponsePact(
                             provider, consumer,
                             listOf(
-                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request("POST"), Response())
+                                RequestResponseInteraction("test", listOf(ProviderState("test2")), Request("POST"), Response())
                             )
                         ),
                         RequestResponsePact(
@@ -201,6 +205,7 @@ class PactMergeSpec : StringSpecExt() {
                 )
             ) { _, newPact, existingPact ->
                 val result = PactMerge.merge(newPact, existingPact)
+                result.message shouldBe ""
                 result.ok shouldBe true
                 result.result shouldNotBe null
             }
@@ -222,7 +227,7 @@ class PactMergeSpec : StringSpecExt() {
                         RequestResponsePact(
                             provider, consumer,
                             listOf(
-                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
+                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request("POST"), Response())
                             )
                         )
                     ),
@@ -289,6 +294,97 @@ class PactMergeSpec : StringSpecExt() {
                 val result = PactMerge.merge(newPact, existingPact)
                 result.ok shouldBe true
                 result.result shouldNotBe null
+                result.result!!.interactions.size shouldBe 1
+            }
+        }
+
+        "pact merge fails for exact duplicates with different descriptions for #type" {
+            FeatureFlags.enableFeature(Feature.MERGE_REMOVE_EXACT_DUPLICATES)
+            // TODO: ADD MESSAGE PACTs once implemented
+            forAll(
+                table(
+                    headers("type", "newPact", "existingPact"),
+                    row(
+                        RequestResponsePact::class,
+                        RequestResponsePact(
+                            provider, consumer,
+                            listOf(
+                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
+                            )
+                        ),
+                        RequestResponsePact(
+                            provider, consumer,
+                            listOf(
+                                RequestResponseInteraction("test2", listOf(ProviderState("test")), Request(), Response())
+                            )
+                        )
+                    ),
+                )
+            ) { _, newPact, existingPact ->
+                val result = PactMerge.merge(newPact, existingPact)
+                result.ok shouldBe false
+                result.result shouldBe null
+            }
+        }
+
+        "pact merge removing exact duplicates does not remove different interactions for #type" {
+            FeatureFlags.enableFeature(Feature.MERGE_REMOVE_EXACT_DUPLICATES)
+            // TODO: ADD MESSAGE PACTs once implemented
+            forAll(
+                table(
+                    headers("type", "newPact", "existingPact"),
+                    row(
+                        RequestResponsePact::class,
+                        RequestResponsePact(
+                            provider, consumer,
+                            listOf(
+                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
+                            )
+                        ),
+                        RequestResponsePact(
+                            provider, consumer,
+                            listOf(
+                                RequestResponseInteraction("test2", listOf(ProviderState("test")), Request(path = "example2"), Response())
+                            )
+                        )
+                    ),
+                )
+            ) { _, newPact, existingPact ->
+                val result = PactMerge.merge(newPact, existingPact)
+                result.message shouldBe ""
+                result.ok shouldBe true
+                result.result shouldNotBe null
+
+                result.result!!.interactions.size shouldBe 2
+            }
+        }
+
+        "pact merge removing exact duplicates fails for different interactions for #type" {
+            FeatureFlags.enableFeature(Feature.MERGE_REMOVE_EXACT_DUPLICATES)
+            // TODO: ADD MESSAGE PACTs once implemented
+            forAll(
+                table(
+                    headers("type", "newPact", "existingPact"),
+                    row(
+                        RequestResponsePact::class,
+                        RequestResponsePact(
+                            provider, consumer,
+                            listOf(
+                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response())
+                            )
+                        ),
+                        RequestResponsePact(
+                            provider, consumer,
+                            listOf(
+                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response(status=123))
+                            )
+                        )
+                    ),
+                )
+            ) { _, newPact, existingPact ->
+                val result = PactMerge.merge(newPact, existingPact)
+                result.ok shouldBe false
+                result.result shouldBe null
             }
         }
 
@@ -310,6 +406,7 @@ class PactMergeSpec : StringSpecExt() {
                 )
             ) { _, newPact, existingPact ->
                 val result = PactMerge.merge(newPact, existingPact)
+                result.message shouldBe ""
                 result.ok shouldBe true
                 result.result shouldNotBe null
                 result.result!!.interactions shouldBe listOf(
