@@ -215,6 +215,7 @@ class RetrofitDslTest {
     private fun updateVersion(expectedPactJson: String): String {
         val gson = GsonBuilder()
             .setPrettyPrinting()
+            .serializeNulls()
             .create()
         val expectedPactTree = gson.fromJson<JsonObject>(expectedPactJson, JsonObject::class.java)
         expectedPactTree.getAsJsonObject("metadata")

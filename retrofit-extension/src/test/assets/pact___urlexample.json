@@ -25,6 +25,8 @@
     "pact-laminat-android": {
       "version": "3.5.14"
     },
-    "pact-laminat-serialization-config": {}
+    "pact-laminat-serialization-config": {
+      "maxLength": null
+    }
   }
 }
