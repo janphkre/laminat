@@ -8,7 +8,7 @@ import io.kotlintest.properties.row
 import io.kotlintest.properties.table
 import io.kotlintest.specs.StringSpec
 
-class ProviderAndConsumerSpec: StringSpec({
+class ProviderAndConsumerSpec : StringSpec({
 
     // different from pact-jvm: empty string is treated as a valid name
     "creates a provider from a Map" {

@@ -6,9 +6,9 @@ import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.specs.StringSpec
 
-class RequestSpec: StringSpec({
+class RequestSpec : StringSpec({
 
-    "delegates to the matching rules to parse matchers"() {
+    "delegates to the matching rules to parse matchers" {
         // given:
         val json = Json.Object(
             "matchingRules" to Json.Object(
@@ -42,10 +42,9 @@ class RequestSpec: StringSpec({
         request.body should { it is OptionalBody.MissingBody }
         request.matchingRules.isEmpty() shouldBe true
         request.generators.isEmpty() shouldBe true
-
     }
 
-    //TODO: NOT IMPLEMENTED YET
+    // TODO: NOT IMPLEMENTED YET
     /*"detects multipart file uploads based on the content type" {
         forAll(
             table(
@@ -61,15 +60,15 @@ class RequestSpec: StringSpec({
         }
     }*/
 
-    "handles the cookie header"() {
+    "handles the cookie header" {
         // expect:
-        Request(headers= mapOf("Cookie" to "test=12345; test2=abcd")).cookie() shouldBe listOf("test=12345", "test2=abcd")
+        Request(headers = mapOf("Cookie" to "test=12345; test2=abcd")).cookie() shouldBe listOf("test=12345", "test2=abcd")
     }
 
-    "handles the cookie header with multiple values"() {
-    // expect:
-    Request(headers= mapOf("Cookie" to "test=12345; test2=abcd; test3=xgfes")).cookie() shouldBe listOf(
-        "test=12345", "test2=abcd", "test3=xgfes"
-    )
-}
+    "handles the cookie header with multiple values" {
+        // expect:
+        Request(headers = mapOf("Cookie" to "test=12345; test2=abcd; test3=xgfes")).cookie() shouldBe listOf(
+            "test=12345", "test2=abcd", "test3=xgfes"
+        )
+    }
 })

@@ -376,7 +376,7 @@ class PactMergeSpec : StringSpecExt() {
                         RequestResponsePact(
                             provider, consumer,
                             listOf(
-                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response(status=123))
+                                RequestResponseInteraction("test", listOf(ProviderState("test")), Request(), Response(status = 123))
                             )
                         )
                     ),

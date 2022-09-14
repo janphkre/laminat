@@ -5,7 +5,7 @@ import au.com.dius.pact.model.serialization.RequestResponsePactV3Deserializer
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.specs.StringSpec
 
-class ResponseSpec: StringSpec({
+class ResponseSpec : StringSpec({
     "delegates to the matching rules to parse matchers" {
         // given:
         val json = Json.Object(

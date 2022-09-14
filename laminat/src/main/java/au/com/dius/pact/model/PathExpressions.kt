@@ -54,8 +54,10 @@ fun indexPath(
                 chars.pushback(c)
                 break@loop
             }
-            else -> throw InvalidPathExpression("Indexes can only consist of numbers or a \"*\", found \"${c.value}\" " +
-                "instead in path expression \"$path\" at index ${c.index}")
+            else -> throw InvalidPathExpression(
+                "Indexes can only consist of numbers or a \"*\", found \"${c.value}\" " +
+                    "instead in path expression \"$path\" at index ${c.index}"
+            )
         }
     }
 
@@ -73,8 +75,10 @@ fun identifier(ch: Char, chars: PushbackIterator<IndexedValue<Char>>, tokens: Mu
             chars.pushback(c)
             break
         } else {
-            throw InvalidPathExpression("\"${c.value}\" is not allowed in an identifier in path expression \"$path\"" +
-                " at index ${c.index}")
+            throw InvalidPathExpression(
+                "\"${c.value}\" is not allowed in an identifier in path expression \"$path\"" +
+                    " at index ${c.index}"
+            )
         }
     }
     tokens.add(PathToken.Field(id))
@@ -92,8 +96,10 @@ fun pathIdentifier(
         when {
             ch.value == '*' -> tokens.add(PathToken.Star)
             ch.value.isLetterOrDigit() || EXP_ALLOWED_SPECIAL_CHARS.contains(ch.value) -> identifier(ch.value, chars, tokens, path)
-            else -> throw InvalidPathExpression("Expected either a \"*\" or path identifier in path expression \"$path\"" +
-                " at index ${ch.index}")
+            else -> throw InvalidPathExpression(
+                "Expected either a \"*\" or path identifier in path expression \"$path\"" +
+                    " at index ${ch.index}"
+            )
         }
     } else {
         throw InvalidPathExpression("Expected a path after \".\" in path expression \"$path\" at index $index")
@@ -108,23 +114,31 @@ fun bracketPath(chars: PushbackIterator<IndexedValue<Char>>, tokens: MutableList
             ch.value == '\'' -> stringPath(chars, tokens, path, ch.index)
             ch.value.isDigit() -> indexPath(ch, chars, tokens, path)
             ch.value == '*' -> tokens.add(PathToken.StarIndex)
-            ch.value == ']' -> throw InvalidPathExpression("Empty bracket expressions are not allowed in path expression " +
-                "\"$path\" at index ${ch.index}")
-            else -> throw InvalidPathExpression("Indexes can only consist of numbers or a \"*\", found \"${ch.value}\" " +
-                "instead in path expression \"$path\" at index ${ch.index}")
+            ch.value == ']' -> throw InvalidPathExpression(
+                "Empty bracket expressions are not allowed in path expression " +
+                    "\"$path\" at index ${ch.index}"
+            )
+            else -> throw InvalidPathExpression(
+                "Indexes can only consist of numbers or a \"*\", found \"${ch.value}\" " +
+                    "instead in path expression \"$path\" at index ${ch.index}"
+            )
         }
         if (chars.hasNext()) {
             val c = chars.next()
             if (c.value != ']') {
-                throw InvalidPathExpression("Unterminated brackets, found \"${c.value}\" instead of \"]\" " +
-                    "in path expression \"$path\" at index ${c.index}")
+                throw InvalidPathExpression(
+                    "Unterminated brackets, found \"${c.value}\" instead of \"]\" " +
+                        "in path expression \"$path\" at index ${c.index}"
+                )
             }
         } else {
             throw InvalidPathExpression("Unterminated brackets in path expression \"$path\" at index ${ch.index}")
         }
     } else {
-        throw InvalidPathExpression("Expected a \"'\" (single quote) or a digit in path expression \"$path\"" +
-            " after index $index")
+        throw InvalidPathExpression(
+            "Expected a \"'\" (single quote) or a digit in path expression \"$path\"" +
+                " after index $index"
+        )
     }
 }
 
@@ -135,8 +149,10 @@ fun pathExp(chars: PushbackIterator<IndexedValue<Char>>, tokens: MutableList<Pat
         when (next.value) {
             '.' -> pathIdentifier(chars, tokens, path, next.index)
             '[' -> bracketPath(chars, tokens, path, next.index)
-            else -> throw InvalidPathExpression("Expected a \".\" or \"[\" instead of \"${next.value}\" in path expression " +
-                "\"$path\" at index ${next.index}")
+            else -> throw InvalidPathExpression(
+                "Expected a \".\" or \"[\" instead of \"${next.value}\" in path expression " +
+                    "\"$path\" at index ${next.index}"
+            )
         }
     }
 }

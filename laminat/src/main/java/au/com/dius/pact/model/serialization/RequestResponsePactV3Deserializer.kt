@@ -19,7 +19,6 @@ import au.com.dius.pact.model.matchingrules.Category as MatchingCategory
 import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
 import au.com.dius.pact.model.matchingrules.MatchingRules
 import au.com.dius.pact.model.matchingrules.MatchingRulesSerialization
-import org.jetbrains.annotations.TestOnly
 import java.util.EnumMap
 
 class RequestResponsePactV3Deserializer : PactDeserializer {

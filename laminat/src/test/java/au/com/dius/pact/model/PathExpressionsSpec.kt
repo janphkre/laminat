@@ -8,7 +8,7 @@ import io.kotlintest.properties.row
 import io.kotlintest.properties.table
 import io.kotlintest.specs.StringSpec
 
-class PathExpressionsSpec: StringSpec({
+class PathExpressionsSpec : StringSpec({
 
     "Parse Path Exp Handles Empty String" {
         // expect:
@@ -156,7 +156,6 @@ class PathExpressionsSpec: StringSpec({
             val ex = result.exceptionOrNull()
             ex should { it is InvalidPathExpression }
             ex!!.message shouldBe message
-
         }
     }
 
@@ -177,7 +176,6 @@ class PathExpressionsSpec: StringSpec({
             val ex = result.exceptionOrNull()
             ex should { it is InvalidPathExpression }
             ex!!.message shouldBe message
-
         }
     }
 })

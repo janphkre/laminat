@@ -11,20 +11,20 @@ import io.kotlintest.properties.row
 import io.kotlintest.properties.table
 import io.kotlintest.specs.StringSpec
 
-class RequestResponseInteractionSpec: StringSpec() {
-    
+class RequestResponseInteractionSpec : StringSpec() {
+
     private val generators = Generators(mutableMapOf(Category.HEADER to mutableMapOf("a" to RandomStringGenerator(4))))
-    
+
     private val interaction = RequestResponseInteraction(
         "test interaction",
         listOf(
             ProviderState("state one"),
-            ProviderState("state two",mapOf("value" to "one", "other" to "2"))
+            ProviderState("state two", mapOf("value" to "one", "other" to "2"))
         ),
-        Request(generators = generators), 
+        Request(generators = generators),
         Response(generators = generators)
     )
-    
+
     init {
         "creates a V3 map format if V3 spec" {
             // when:
@@ -54,7 +54,6 @@ class RequestResponseInteractionSpec: StringSpec() {
             )
         }
 
-
         "does not include a provide state if there is not any" {
             // when:
             val emptyInteraction = RequestResponseInteraction(
@@ -74,13 +73,12 @@ class RequestResponseInteractionSpec: StringSpec() {
         }
 
         "unique key test" {
-            //where:
+            // where:
             val interaction1 = RequestResponseInteraction("description 1+2", emptyList(), Request(), Response())
             val interaction2 = RequestResponseInteraction("description 1+2", emptyList(), Request(), Response())
             val interaction3 = RequestResponseInteraction("description 1+2", listOf(ProviderState("state 3")), Request(), Response())
             val interaction4 = RequestResponseInteraction("description 4", emptyList(), Request(), Response())
             val interaction5 = RequestResponseInteraction("description 4", listOf(ProviderState("state 5")), Request(), Response())
-
 
             // expect:
             interaction1.uniqueKey() shouldBe interaction1.uniqueKey()

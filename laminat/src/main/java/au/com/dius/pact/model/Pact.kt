@@ -15,7 +15,7 @@ data class Provider @JvmOverloads constructor(val name: String = "provider") {
     companion object {
         fun fromJson(json: Json): Provider {
             val value = json[SerializationConstants.NAME_KEY]
-            if(value is Json.Null) {
+            if (value is Json.Null) {
                 return Provider()
             }
             return Provider(value.getValue())
@@ -35,7 +35,7 @@ data class Consumer @JvmOverloads constructor(val name: String = "consumer") {
     companion object {
         fun fromJson(json: Json): Consumer {
             val value = json[SerializationConstants.NAME_KEY]
-            if(value is Json.Null) {
+            if (value is Json.Null) {
                 return Consumer()
             }
             return Consumer(value.getValue())
