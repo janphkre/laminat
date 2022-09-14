@@ -40,5 +40,21 @@ data class Response(
 
     companion object {
         const val DEFAULT_STATUS = 200
+
+        fun create(
+            status: Int?,
+            headers: Map<String, String>?,
+            body: OptionalBody?,
+            matchingRules: MatchingRules?,
+            generators: Generators?
+        ): Response {
+            return Response(
+                status ?: DEFAULT_STATUS,
+                headers ?: emptyMap(),
+                body ?: OptionalBody.missing(),
+                matchingRules ?: MatchingRules(),
+                generators ?: Generators()
+            )
+        }
     }
 }

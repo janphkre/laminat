@@ -19,6 +19,7 @@ import au.com.dius.pact.model.matchingrules.Category as MatchingCategory
 import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
 import au.com.dius.pact.model.matchingrules.MatchingRules
 import au.com.dius.pact.model.matchingrules.MatchingRulesSerialization
+import org.jetbrains.annotations.TestOnly
 import java.util.EnumMap
 
 class RequestResponsePactV3Deserializer : PactDeserializer {
@@ -51,10 +52,10 @@ class RequestResponsePactV3Deserializer : PactDeserializer {
         return pact
     }
 
-    private fun mapToRequest(json: Json): Request {
-        return Request(
-            method = json[SerializationConstants.METHOD_KEY].getValue(),
-            path = json[SerializationConstants.PATH_KEY].getValue(),
+    internal fun mapToRequest(json: Json): Request {
+        return Request.create(
+            method = json[SerializationConstants.METHOD_KEY].getValueOrNull(),
+            path = json[SerializationConstants.PATH_KEY].getValueOrNull(),
             headers = json[SerializationConstants.HEADERS_KEY].toStringMap(),
             query = json[SerializationConstants.QUERY_KEY].toStringListMap(),
             body = json.extractBody(),
@@ -63,9 +64,9 @@ class RequestResponsePactV3Deserializer : PactDeserializer {
         )
     }
 
-    private fun mapToResponse(json: Json): Response {
-        return Response(
-            status = json[SerializationConstants.STATUS_KEY].getValue(),
+    internal fun mapToResponse(json: Json): Response {
+        return Response.create(
+            status = json[SerializationConstants.STATUS_KEY].getValueOrNull(),
             headers = json[SerializationConstants.HEADERS_KEY].toStringMap(),
             body = json.extractBody(),
             matchingRules = MatchingRules(json[SerializationConstants.MATCHING_RULES_KEY].toCategoryMap()),

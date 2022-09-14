@@ -84,5 +84,25 @@ class Request(
         const val COOKIE_KEY = "cookie"
         const val DEFAULT_METHOD = "GET"
         const val DEFAULT_PATH = "/"
+
+        fun create(
+            method: String? = null,
+            path: String? = null,
+            query: Map<String, List<String>>? = null,
+            headers: Map<String, String>? = null,
+            body: OptionalBody? = null,
+            matchingRules: MatchingRules? = null,
+            generators: Generators? = null
+        ): Request {
+            return Request(
+                method ?: DEFAULT_METHOD,
+                path ?: DEFAULT_PATH,
+                query ?: emptyMap(),
+                headers ?: emptyMap(),
+                body ?: OptionalBody.missing(),
+                matchingRules ?: MatchingRules(),
+                generators ?: Generators()
+            )
+        }
     }
 }
