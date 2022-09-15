@@ -416,5 +416,45 @@ class PactMergeSpec : StringSpecExt() {
                 result.result!!.interactions.size shouldBe 2
             }
         }
+
+        "Pact merge should refuse different requests for identical description and states for #type" {
+            // TODO: ADD MESSAGE PACTs once implemented
+            forAll(
+                table(
+                    headers("type", "basePact", "newPact"),
+                    row(
+                        RequestResponsePact::class,
+                        pact,
+                        RequestResponsePact(
+                            pact.provider, pact.consumer,
+                            listOf(
+                                RequestResponseInteraction("test interaction", listOf(ProviderState("test state")), Request("Get", "/different", PactReader.queryStringToMap("q=p&q=p2&r=s"),
+                                    mapOf("testreqheader" to "testreqheadervalue"), OptionalBody.body("{\"test\":true}")), response)
+                            )
+                        )
+                    ),
+                )
+            ) { _, basePact, newPact ->
+                val result = PactMerge.merge(basePact, newPact)
+
+                // expect:
+                result.ok shouldBe false
+            }
+        }
+
+        "Pact merge should refuse different responses for identical description and states" {
+            // given:
+            val differentResponse = response.copy()
+            differentResponse.status = 503
+            val newInteraction = RequestResponseInteraction("test interaction",
+                listOf(ProviderState("test state")), request, differentResponse)
+            val pactCopy = RequestResponsePact(pact.provider, pact.consumer, listOf(newInteraction))
+
+            // when:
+            val result = PactMerge.merge(pact, pactCopy)
+
+            // then:
+            result.ok shouldBe false
+        }
     }
 }
