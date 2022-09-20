@@ -1,9 +1,12 @@
 package au.com.dius.pact.model
 
 import au.com.dius.pact.external.json.Json
+import au.com.dius.pact.external.util.mapKeyValues
 import au.com.dius.pact.model.serialization.RequestResponsePactV3Deserializer
+import au.com.dius.pact.model.serialization.SerializationConstants
 import java.net.URLDecoder
 import org.apache.http.Consts
+import java.util.Locale
 
 object PactReader {
 
@@ -28,6 +31,37 @@ object PactReader {
             PactSpecVersion.V2 -> parseV2Pact(pactJson, pactSource)
             PactSpecVersion.V3 -> parseV3Pact(pactJson, pactSource)
         }
+    }
+
+    fun transformJson(pactJson: Json): Json {
+        val interactions = (pactJson[SerializationConstants.INTERACTIONS_KEY] as Json.Array)
+        val transformedInteractions = interactions.mapTo(ArrayList<Json>(interactions.size)) { interaction ->
+            interaction as Json.Object
+            val result = interaction.mapKeyValues { (key, value) ->
+                when(key) {
+                    SerializationConstants.REQUEST_KEY -> Pair(key, transformRequestResponse(value))
+                    SerializationConstants.RESPONSE_KEY -> Pair(key, transformRequestResponse(value))
+                    SerializationConstants.PROVIDER_STATE_KEY_SNAKE_CASE -> Pair(SerializationConstants.PROVIDER_STATE_KEY, value)
+                    else -> Pair(key, value)
+                }
+            }
+            Json.Object(result)
+        }
+        (pactJson as Json.Object)[SerializationConstants.INTERACTIONS_KEY] = Json.Array(transformedInteractions)
+        return pactJson
+    }
+
+    private fun transformRequestResponse(actionJson: Json): Json {
+        actionJson as Json.Object
+        val transformedAction = actionJson.mapKeyValues { (key, value) ->
+            when(key) {
+                SerializationConstants.MATCHING_RULES_REQUEST_KEY,
+                SerializationConstants.MATCHING_RULES_RESPONSE_KEY -> Pair(SerializationConstants.MATCHING_RULES_KEY, value)
+                SerializationConstants.METHOD_KEY -> Pair(key, Json.wrapInJson(value.getValueOrNull<String>()?.uppercase(Locale.ROOT) ?: value))
+                else -> Pair(key, value)
+            }
+        }
+        return Json.Object(transformedAction)
     }
 
     private fun parseV3Pact(pactJson: Json, pactSource: PactSource): Pact {

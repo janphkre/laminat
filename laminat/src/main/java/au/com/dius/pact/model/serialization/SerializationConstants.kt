@@ -13,6 +13,8 @@ object SerializationConstants {
     const val PROVIDER_STATES_KEY = "providerStates"
     @Deprecated("Use explicit list of states instead!")
     const val PROVIDER_STATE_KEY = "providerState"
+    @Deprecated("Use explicit list of states instead!")
+    const val PROVIDER_STATE_KEY_SNAKE_CASE = "provider_state"
     const val DESCRIPTION_KEY = "description"
 
     const val METHOD_KEY = "method"
@@ -21,6 +23,10 @@ object SerializationConstants {
     const val QUERY_KEY = "query"
     const val BODY_KEY = "body"
     const val MATCHING_RULES_KEY = "matchingRules"
+    @Deprecated("Use MATCHING_RULES_KEY instead")
+    const val MATCHING_RULES_REQUEST_KEY = "requestMatchingRules"
+    @Deprecated("Use MATCHING_RULES_KEY instead")
+    const val MATCHING_RULES_RESPONSE_KEY = "responseMatchingRules"
     const val GENERATORS_KEY = "generators"
     const val STATUS_KEY = "status"
 

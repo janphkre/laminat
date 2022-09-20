@@ -1,5 +1,7 @@
 package au.com.dius.pact.external.json
 
+import au.com.dius.pact.external.features.Feature
+import au.com.dius.pact.external.features.FeatureFlags
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonNull
@@ -205,7 +207,7 @@ sealed interface Json {
                 is JsonArray -> Array(gson.mapTo(ArrayList(gson.size())) { convertToJson(it) })
                 is JsonObject -> {
                     val gsonEntries = gson.entrySet()
-                    val entries = HashMap<String, Json>(gsonEntries.size)
+                    val entries = LinkedHashMap<String, Json>(gsonEntries.size)
                     gsonEntries.forEach {
                         entries[it.key] = convertToJson(it.value)
                     }
@@ -258,6 +260,9 @@ sealed interface Json {
         fun serialize(json: Json): String {
             val stringWriter = StringWriter()
             val gsonWriter = JsonWriter(stringWriter)
+            if(FeatureFlags.isFeatureEnabled(Feature.NULL_VALUES_JSON_BODY_GENERATOR)) {
+                gsonWriter.serializeNulls = true
+            }
             json.serialize(gsonWriter)
             return stringWriter.toString()
         }
