@@ -260,9 +260,7 @@ sealed interface Json {
         fun serialize(json: Json): String {
             val stringWriter = StringWriter()
             val gsonWriter = JsonWriter(stringWriter)
-            if(FeatureFlags.isFeatureEnabled(Feature.NULL_VALUES_JSON_BODY_GENERATOR)) {
-                gsonWriter.serializeNulls = true
-            }
+            gsonWriter.serializeNulls = FeatureFlags.isFeatureEnabled(Feature.NULL_VALUES_JSON_BODY_GENERATOR)
             json.serialize(gsonWriter)
             return stringWriter.toString()
         }
