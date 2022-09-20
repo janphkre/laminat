@@ -8,7 +8,7 @@ object PactParsingUtil {
     fun parseAssetToJson(assetName: String): Json {
         val content = readFileFromAssets(assetName)
         val result = parseContentToJson(content)
-        (((result as Json.Object)["metadata"] as Json.Object)["pact-laminat-android"] as Json.Object)["version"] = Json.StringPrimitive(BuildConfig.VERSION_NAME)
+        (((result as Json.Object)["metadata"] as? Json.Object)?.get("pact-laminat-android") as? Json.Object)?.apply { this["version"] = Json.StringPrimitive(BuildConfig.VERSION_NAME) }
         return result
     }
 
