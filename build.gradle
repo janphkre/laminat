@@ -21,6 +21,9 @@ buildscript {
         test_junit_version = '4.13.2'
         test_json_version = '20220320'
         test_mockito_version = '2.19.0'
+        test_mockk_version = '1.12.8'
+        test_hamcrest_version = '2.1'
+        test_kotlintest_version = '2.0.7'
 
         ktlint_version = '10.2.0'
 

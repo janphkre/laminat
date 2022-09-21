@@ -17,6 +17,10 @@ object PactParsingUtil {
     }
 
     private fun readFileFromAssets(assetName: String): String {
-        return File("src/test/assets/$assetName").readText(Charsets.UTF_8).trim()
+        return File(convertToAssetFilePath(assetName)).readText(Charsets.UTF_8).trim()
+    }
+
+    fun convertToAssetFilePath(assetName: String): String {
+        return "src/test/assets/$assetName"
     }
 }

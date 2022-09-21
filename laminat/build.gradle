@@ -55,13 +55,14 @@ dependencies {
 
     testImplementation "junit:junit:$test_junit_version"
     testImplementation "org.json:json:$test_json_version"
-    testImplementation "org.mockito:mockito-core:$test_mockito_version"
+    testImplementation "org.mockito:mockito-core:$test_mockito_version" //TODO: REPLACE WITH MOCKK, WHERE IS THIS USED?
+    testImplementation "io.mockk:mockk:$test_mockk_version"
 
     // The Android vm does not like the library "org.apache.httpcomponents:httpcore:4.4.4"
     // because it already contains parts from it that are final for example but a super class in the lib.
     // The required java classes are added manually into org.apache.http...
 
     //Pact-JVM Tests:
-    testImplementation 'org.hamcrest:hamcrest:2.1'
-    testImplementation 'io.kotlintest:kotlintest:2.0.7'
+    testImplementation "org.hamcrest:hamcrest:$test_hamcrest_version"
+    testImplementation "io.kotlintest:kotlintest:$test_kotlintest_version"
 }
