@@ -133,8 +133,8 @@ class PactReaderSpec : StringSpecExt({
         val pact = PactReader.readPact(PactReaderSource.InputStreamPactSource(pactFileInputStream))
 
         //then:
-        verify(exactly = 0) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(any(), any()) }
-        verify(exactly = 1) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(match { it == PactSource.InputStreamPactSource }, any()) }
+        verify(exactly = 1) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(match { it == PactSource.InputStreamPactSource }, any()) }
+        verify(exactly = 0) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(any(), any()) }
         pact should { it is RequestResponsePact }
         pact.source shouldBe PactSource.InputStreamPactSource
     }
@@ -147,8 +147,8 @@ class PactReaderSpec : StringSpecExt({
         val pact = PactReader.readPact(PactReaderSource.ReaderPactSource(StringReader(pactFileText)))
 
         //then:
-        verify(exactly = 0) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(any(), any()) }
-        verify(exactly = 1) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(match { it == PactSource.ReaderPactSource }, any()) }
+        verify(exactly = 1) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(match { it == PactSource.ReaderPactSource }, any()) }
+        verify(exactly = 0) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(any(), any()) }
         pact should { it is RequestResponsePact }
         pact.source shouldBe PactSource.ReaderPactSource
     }
@@ -273,8 +273,8 @@ class PactReaderSpec : StringSpecExt({
         val pact = PactReader.readPact(PactReaderSource.ClosurePactSource { PactReaderSource.FileSource(pactFile) })
 
         //then:
-        verify(exactly = 0) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(any(), any()) }
-        verify(exactly = 1) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(match { it == PactSource.FileSource(pactFile) }, any()) }
+        verify(exactly = 1) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(match { it == PactSource.FileSource(pactFile) }, any()) }
+        verify(exactly = 0) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(any(), any()) }
         pact should { it is RequestResponsePact }
         pact.source shouldBe PactSource.FileSource(pactFile)
     }

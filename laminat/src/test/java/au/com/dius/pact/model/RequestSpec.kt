@@ -26,7 +26,7 @@ class RequestSpec : StringSpec({
         val request = RequestResponsePactV3Deserializer().mapToRequest(json)
 
         // then:
-        !request.matchingRules.isEmpty() shouldBe false
+        request.matchingRules.isEmpty() shouldBe false
         request.matchingRules.hasCategory("stuff") shouldBe true
     }
 
