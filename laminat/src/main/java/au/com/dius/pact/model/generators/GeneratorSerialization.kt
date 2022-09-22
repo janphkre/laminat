@@ -1,6 +1,8 @@
 package au.com.dius.pact.model.generators
 
 import au.com.dius.pact.external.json.Json
+import au.com.dius.pact.external.json.getValue
+import au.com.dius.pact.external.json.getValueOrNull
 import au.com.dius.pact.model.serialization.SerializationConstants
 
 enum class GeneratorSerialization(
@@ -80,7 +82,7 @@ enum class GeneratorSerialization(
         fun fromJson(json: Json): Generator {
             json as Json.Object
             val typeString = json[SerializationConstants.TYPE_KEY].getValue<String>()
-            val type = values().first { it.type.equals(typeString, ignoreCase = true) }
+            val type = values().firstOrNull { it.type.equals(typeString, ignoreCase = true) } ?: throw IllegalArgumentException("Unknown generator type $typeString")
             return type.fromJson(json)
         }
     }

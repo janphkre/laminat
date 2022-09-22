@@ -40,7 +40,7 @@ class Request(
     }
 
     fun cookie(): List<String> {
-        val cookieEntry = headers[COOKIE_KEY] ?: return emptyList()
+        val cookieEntry = headers.entries.find { it.key.lowercase(Locale.ROOT) == COOKIE_KEY }?.value ?: return emptyList()
         return cookieEntry.split(';').map { it.trim() }
     }
 

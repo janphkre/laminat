@@ -1,6 +1,8 @@
 package au.com.dius.pact.model.matchingrules
 
 import au.com.dius.pact.external.json.Json
+import au.com.dius.pact.external.json.getValue
+import au.com.dius.pact.external.json.getValueOrNull
 import au.com.dius.pact.model.serialization.SerializationConstants
 
 enum class MatchingRulesSerialization(
@@ -68,9 +70,13 @@ enum class MatchingRulesSerialization(
     companion object {
         fun fromJson(json: Json): MatchingRule {
             json as Json.Object
-            val typeString = json[SerializationConstants.MATCH_KEY].getValue<String>()
+            val typeString = json[SerializationConstants.MATCH_KEY].getValueOrNull<String>() ?: return fromJsonGuess(json)
             val type = values().first { it.type.equals(typeString, ignoreCase = true) }
             return type.fromJson(json)
+        }
+
+        private fun fromJsonGuess(json: Json.Object): MatchingRule {
+            TODO("Guess MatchingRule from $json")
         }
     }
 }

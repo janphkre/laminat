@@ -1,7 +1,10 @@
 package au.com.dius.pact.model
 
 import au.com.dius.pact.external.json.Json
+import au.com.dius.pact.external.json.getValue
+import au.com.dius.pact.external.json.getValueOrNull
 import au.com.dius.pact.external.util.mapKeyValues
+import au.com.dius.pact.model.serialization.RequestResponsePactV2Deserializer
 import au.com.dius.pact.model.serialization.RequestResponsePactV3Deserializer
 import au.com.dius.pact.model.serialization.SerializationConstants
 import java.net.URLDecoder
@@ -27,10 +30,15 @@ object PactReader {
 
     fun readPact(source: PactReaderSource): Pact {
         val (pactJson, pactSource) = source.loadPact()
-        return when (pactJson.grabSpecVersion()) {
-            PactSpecVersion.V2 -> parseV2Pact(pactJson, pactSource)
-            PactSpecVersion.V3 -> parseV3Pact(pactJson, pactSource)
+        val pactVersion = determineSpecVersion(pactJson)
+        val deserializer = when (pactVersion) {
+            PactSpecVersion.V2 -> RequestResponsePactV2Deserializer()
+            PactSpecVersion.V3 -> RequestResponsePactV3Deserializer()
         }
+        if (!deserializer.isValid(pactJson)) {
+            throw InvalidPactException("Received invalid JSON for a pact. Can not be parsed to a pact in version ${pactVersion.value}!")
+        }
+        return deserializer.createPact(pactSource, pactJson)
     }
 
     fun transformJson(pactJson: Json): Json {
@@ -64,27 +72,25 @@ object PactReader {
         return Json.Object(transformedAction)
     }
 
-    private fun parseV3Pact(pactJson: Json, pactSource: PactSource): Pact {
-        val requestResponseDeserializer = RequestResponsePactV3Deserializer()
-        if (!requestResponseDeserializer.isValid(pactJson)) {
-            throw InvalidPactException("Received invalid JSON for a pact. Can not be parsed to a pact!")
-        }
-        return requestResponseDeserializer.createPact(pactSource, pactJson)
-    }
-
-    private fun parseV2Pact(pactJson: Json, pactSource: PactSource): Pact {
-        TODO()
-    }
-
-    private fun Json.grabSpecVersion(): PactSpecVersion {
+    fun determineSpecVersion(json: Json): PactSpecVersion {
         var version: String? = null
-        val metadata = ((this as? Json.Object)?.get("metadata") as? Json.Object) ?: return PactSpecVersion.V2
+        val metadata = ((json as? Json.Object)?.get("metadata") as? Json.Object) ?: return PactSpecVersion.V2
         if (metadata.containsKey("pactSpecificationVersion")) {
             version = metadata["pactSpecificationVersion"].getValue()
         } else if (metadata.containsKey("pactSpecification")) {
-            version = metadata["pactSpecification"]["version"].getValue()
+            val pactSpecification =  metadata["pactSpecification"]
+            version = when(pactSpecification) {
+                is Json.Object -> pactSpecification["version"].getValueOrNull()
+                is Json.Primitive -> pactSpecification.getValue()
+                else -> null
+            }
         } else if (metadata.containsKey("pact-specification")) {
-            version = metadata["pact-specification"]["version"].getValue()
+            val pactSpecification =  metadata["pact-specification"]
+            version = when(pactSpecification) {
+                is Json.Object -> pactSpecification["version"].getValueOrNull()
+                is Json.Primitive -> pactSpecification.getValue()
+                else -> null
+            }
         }
         if (version == "3.0") {
             version = "3.0.0"

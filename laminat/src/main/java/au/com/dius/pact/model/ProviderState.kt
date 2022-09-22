@@ -1,6 +1,7 @@
 package au.com.dius.pact.model
 
 import au.com.dius.pact.external.json.Json
+import au.com.dius.pact.external.json.getValue
 import au.com.dius.pact.model.serialization.SerializationConstants
 
 /**
@@ -50,8 +51,7 @@ data class ProviderState(
 
         fun fromJson(json: Json): ProviderState {
             return ProviderState(
-                json[SerializationConstants.NAME_KEY].getValue() as String
-
+                json[SerializationConstants.NAME_KEY].getValue<String>()
             )
         }
     }

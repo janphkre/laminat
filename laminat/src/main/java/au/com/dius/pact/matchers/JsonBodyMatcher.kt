@@ -178,8 +178,8 @@ class JsonBodyMatcher : BodyMatcher() {
         actualJson: Json.Primitive,
         matchers: MatchingRules
     ): List<RequestMatchProblem> {
-        val expectedValue = expectedJson.getValue<Any>()
-        val actualValue = actualJson.getValue<Any>()
+        val expectedValue = expectedJson.unwrap<Any>()
+        val actualValue = actualJson.unwrap<Any>()
         val category = Matchers.definedMatchers("body", path, matchers)
         return if (category?.isNotEmpty() == true) {
             Matchers.doMatch(category, path, expectedValue, actualValue, MismatchFactory.BodyMismatchFactory)

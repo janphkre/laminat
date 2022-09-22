@@ -1,6 +1,8 @@
 package au.com.dius.pact.model.serialization
 
 import au.com.dius.pact.external.json.Json
+import au.com.dius.pact.external.json.getValue
+import au.com.dius.pact.external.json.getValueOrNull
 import au.com.dius.pact.model.Consumer
 import au.com.dius.pact.model.OptionalBody
 import au.com.dius.pact.model.Pact
@@ -21,7 +23,7 @@ import au.com.dius.pact.model.matchingrules.MatchingRules
 import au.com.dius.pact.model.matchingrules.MatchingRulesSerialization
 import java.util.EnumMap
 
-class RequestResponsePactV3Deserializer : PactDeserializer {
+open class RequestResponsePactV3Deserializer : PactDeserializer {
 
     override fun isValid(pactJson: Json): Boolean {
         return (pactJson as? Json.Object)?.containsKey(SerializationConstants.INTERACTIONS_KEY) ?: false
@@ -56,7 +58,7 @@ class RequestResponsePactV3Deserializer : PactDeserializer {
             method = json[SerializationConstants.METHOD_KEY].getValueOrNull(),
             path = json[SerializationConstants.PATH_KEY].getValueOrNull(),
             headers = json[SerializationConstants.HEADERS_KEY].toStringMap(),
-            query = json[SerializationConstants.QUERY_KEY].toStringListMap(),
+            query = mapQuery(json[SerializationConstants.QUERY_KEY]),
             body = json.extractBody(),
             matchingRules = MatchingRules(json[SerializationConstants.MATCHING_RULES_KEY].toCategoryMap()),
             generators = Generators(json[SerializationConstants.GENERATORS_KEY].toGeneratorsMap())
@@ -71,6 +73,10 @@ class RequestResponsePactV3Deserializer : PactDeserializer {
             matchingRules = MatchingRules(json[SerializationConstants.MATCHING_RULES_KEY].toCategoryMap()),
             generators = Generators(json[SerializationConstants.GENERATORS_KEY].toGeneratorsMap())
         )
+    }
+
+    internal open fun mapQuery(json: Json): Map<String, List<String>> {
+        return json.toStringListMap()
     }
 
     private fun Json.toStringMap(): Map<String, String> {
@@ -108,7 +114,7 @@ class RequestResponsePactV3Deserializer : PactDeserializer {
         }
     }
 
-    private fun Json.toCategoryMap(): MutableMap<String, MatchingCategory> {
+    internal open fun Json.toCategoryMap(): MutableMap<String, MatchingCategory> {
         if (this is Json.Null) {
             return HashMap()
         }

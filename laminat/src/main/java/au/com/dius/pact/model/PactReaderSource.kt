@@ -21,7 +21,7 @@ sealed class PactReaderSource {
 
         override fun loadPact(): Pair<Json, PactSource> {
             val pactData = parseJson(FileReader(file))
-            return Pair(pactData, PactSource.InputStreamPactSource)
+            return Pair(pactData, PactSource.FileSource(file))
         }
     }
 

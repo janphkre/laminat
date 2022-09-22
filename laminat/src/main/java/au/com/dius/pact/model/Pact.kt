@@ -18,7 +18,8 @@ data class Provider @JvmOverloads constructor(val name: String = "provider") {
             if (value is Json.Null) {
                 return Provider()
             }
-            return Provider(value.getValue())
+            value as Json.StringPrimitive
+            return Provider(value.asString())
         }
     }
 }
@@ -38,7 +39,8 @@ data class Consumer @JvmOverloads constructor(val name: String = "consumer") {
             if (value is Json.Null) {
                 return Consumer()
             }
-            return Consumer(value.getValue())
+            value as Json.StringPrimitive
+            return Consumer(value.asString())
         }
     }
 }

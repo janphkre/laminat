@@ -20,10 +20,9 @@ sealed interface Json {
 
     operator fun get(index: Int): Json
 
-    fun <T> getValue(): T
-    fun <T> getValueOrNull(): T?
-
-    sealed interface Primitive : Json
+    sealed interface Primitive : Json {
+        fun <T> unwrap(): T
+    }
 
     data class BooleanPrimitive(
         private val value: Boolean
@@ -40,8 +39,7 @@ sealed interface Json {
         fun asBoolean(): Boolean = value
 
         @Suppress("UNCHECKED_CAST")
-        override fun <T> getValue(): T = value as T
-        override fun <T> getValueOrNull(): T? = getValue()
+        override fun <T> unwrap(): T = value as T
 
         override fun serialize(writer: JsonWriter) {
             writer.value(value)
@@ -67,8 +65,7 @@ sealed interface Json {
         fun asString(): String = value
 
         @Suppress("UNCHECKED_CAST")
-        override fun <T> getValue(): T = value as T
-        override fun <T> getValueOrNull(): T? = getValue()
+        override fun <T> unwrap(): T = value as T
 
         override fun serialize(writer: JsonWriter) {
             writer.value(value)
@@ -93,9 +90,12 @@ sealed interface Json {
 
         fun asNumber(): Number = value
 
+        fun asInt(): Int = value.toInt()
+
+        fun asFloat(): Float = value.toFloat()
+
         @Suppress("UNCHECKED_CAST")
-        override fun <T> getValue(): T = value as T
-        override fun <T> getValueOrNull(): T? = getValue()
+        override fun <T> unwrap(): T = value as T
 
         override fun serialize(writer: JsonWriter) {
             writer.value(value)
@@ -119,12 +119,6 @@ sealed interface Json {
         override fun get(key: String): Json {
             return elements[key] ?: Null
         }
-
-        override fun <T> getValue(): T {
-            throw UnsupportedOperationException("Object is not a primitive!")
-        }
-
-        override fun <T> getValueOrNull(): T? = getValue()
 
         override fun serialize(writer: JsonWriter) {
             writer.beginObject()
@@ -154,12 +148,6 @@ sealed interface Json {
             throw UnsupportedOperationException("Array is not an object!")
         }
 
-        override fun <T> getValue(): T {
-            throw UnsupportedOperationException("Array is not a primitive!")
-        }
-
-        override fun <T> getValueOrNull(): T? = getValue()
-
         override fun serialize(writer: JsonWriter) {
             writer.beginArray()
             elements.forEach { value ->
@@ -182,12 +170,6 @@ sealed interface Json {
         override fun get(key: String): Json {
             throw UnsupportedOperationException("Null is not an object!")
         }
-
-        override fun <T> getValue(): T {
-            throw UnsupportedOperationException("Null is not a primitive!")
-        }
-
-        override fun <T> getValueOrNull(): T? = null
 
         override fun serialize(writer: JsonWriter) {
             writer.nullValue()
