@@ -29,14 +29,13 @@ class InteractionSpec : StringSpec() {
             }
         }
 
-        // Different from pact-jvm 3.6.0
-        "interactions do not conflict if their requests are different" {
+        "interactions do conflict if their requests are different" {
             // given:
             val one = RequestResponseInteraction("One", listOf(state), request, response)
             val two = RequestResponseInteraction("One", listOf(state), request2, response)
 
             // expect:
-            one.conflictsWith(two) shouldBe false
+            one.conflictsWith(two) shouldBe true
         }
 
         // Different from pact-jvm 3.6.0
