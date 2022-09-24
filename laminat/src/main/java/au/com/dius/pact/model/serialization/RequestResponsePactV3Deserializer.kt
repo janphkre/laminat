@@ -21,6 +21,7 @@ import au.com.dius.pact.model.matchingrules.Category as MatchingCategory
 import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
 import au.com.dius.pact.model.matchingrules.MatchingRules
 import au.com.dius.pact.model.matchingrules.MatchingRulesSerialization
+import au.com.dius.pact.model.matchingrules.RuleLogic
 import java.util.EnumMap
 
 open class RequestResponsePactV3Deserializer : PactDeserializer {
@@ -141,9 +142,11 @@ open class RequestResponsePactV3Deserializer : PactDeserializer {
 
     private fun Json.toMatchingRuleGroup(): MatchingRuleGroup {
         this as Json.Object
-        val array = this[SerializationConstants.MATCHERS_KEY] as Json.Array
+        val array = this[SerializationConstants.MATCHERS_KEY] as? Json.Array ?: emptyList()
+        val ruleLogicName = this[SerializationConstants.COMBINE_KEY].getValueOrNull<String>()
         return MatchingRuleGroup(
-            rules = array.mapTo(ArrayList(array.size)) { MatchingRulesSerialization.fromJson(it) }
+            rules = array.mapTo(ArrayList(array.size)) { MatchingRulesSerialization.fromJson(it) },
+            ruleLogic = ruleLogicName?.let { deserializedName -> RuleLogic.values().firstOrNull { it.name == deserializedName } } ?: RuleLogic.AND
         )
     }
 

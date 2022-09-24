@@ -19,6 +19,8 @@ object SerializationConstants {
 
     const val METHOD_KEY = "method"
     const val PATH_KEY = "path"
+    @Deprecated("Use HEADERS_KEY instead!")
+    const val HEADER_KEY = "header"
     const val HEADERS_KEY = "headers"
     const val QUERY_KEY = "query"
     const val BODY_KEY = "body"
@@ -52,4 +54,7 @@ object SerializationConstants {
     const val NUMBER_KEY = "number"
     const val INTEGER_KEY = "integer"
     const val DECIMAL_KEY = "decimal"
+    @Deprecated("Use DECIMAL_KEY instead")
+    const val REAL_KEY = "real"
+    const val VALUES_KEY = "values"
 }

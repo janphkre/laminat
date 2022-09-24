@@ -94,6 +94,14 @@ data class NumberTypeMatcher(val numberType: NumberType) : MatchingRule {
  */
 data class RegexMatcher @JvmOverloads constructor(val regex: Regex, val example: String? = null) : MatchingRule {
 
+    override fun equals(other: Any?): Boolean {
+        if(other !is RegexMatcher) {
+            return false
+        }
+        return example == other.example &&
+            regex.toString() == other.regex.toString()
+    }
+
     @JvmOverloads
     constructor(regex: String, example: String? = null) : this(Regex(regex), example)
 

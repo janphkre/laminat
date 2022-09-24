@@ -3,7 +3,7 @@ package au.com.dius.pact.model.matchingrules
 import au.com.dius.pact.model.PactSerializationConfig
 import au.com.dius.pact.model.PactSpecVersion
 
-class MatchingRules(
+data class MatchingRules(
     private val rules: MutableMap<String, Category> = HashMap()
 ) {
 

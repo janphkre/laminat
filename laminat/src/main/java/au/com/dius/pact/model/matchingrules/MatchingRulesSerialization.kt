@@ -1,5 +1,6 @@
 package au.com.dius.pact.model.matchingrules
 
+import au.com.dius.pact.external.Logging
 import au.com.dius.pact.external.json.Json
 import au.com.dius.pact.external.json.getValue
 import au.com.dius.pact.external.json.getValueOrNull
@@ -39,6 +40,11 @@ enum class MatchingRulesSerialization(
             return NumberTypeMatcher(NumberTypeMatcher.NumberType.DECIMAL)
         }
     },
+    REAL(SerializationConstants.REAL_KEY) {
+        override fun fromJson(json: Json.Object): MatchingRule {
+            return NumberTypeMatcher(NumberTypeMatcher.NumberType.DECIMAL)
+        }
+    },
     REGEX(SerializationConstants.REGEX_KEY) {
         override fun fromJson(json: Json.Object): MatchingRule {
             return RegexMatcher(json[SerializationConstants.REGEX_KEY].getValue<String>(), null)
@@ -56,12 +62,25 @@ enum class MatchingRulesSerialization(
     },
     TYPE(SerializationConstants.TYPE_KEY) {
         override fun fromJson(json: Json.Object): MatchingRule {
-            return TypeMatcher
+            return if (json.containsKey(SerializationConstants.MIN_KEY) && json.containsKey(SerializationConstants.MAX_KEY)) {
+                MinMaxTypeMatcher(json[SerializationConstants.MIN_KEY].getValue(),json[SerializationConstants.MAX_KEY].getValue())
+            } else if (json.containsKey(SerializationConstants.MIN_KEY)) {
+                MinTypeMatcher(json[SerializationConstants.MIN_KEY].getValue())
+            } else if (json.containsKey(SerializationConstants.MAX_KEY)) {
+                MaxTypeMatcher(json[SerializationConstants.MAX_KEY].getValue())
+            } else {
+                TypeMatcher
+            }
         }
     },
     NULL(SerializationConstants.NULL_KEY) {
         override fun fromJson(json: Json.Object): MatchingRule {
             return NullMatcher
+        }
+    },
+    VALUES(SerializationConstants.VALUES_KEY) {
+        override fun fromJson(json: Json.Object): MatchingRule {
+            TODO("Not yet implemented")
         }
     };
 
@@ -71,12 +90,27 @@ enum class MatchingRulesSerialization(
         fun fromJson(json: Json): MatchingRule {
             json as Json.Object
             val typeString = json[SerializationConstants.MATCH_KEY].getValueOrNull<String>() ?: return fromJsonGuess(json)
-            val type = values().first { it.type.equals(typeString, ignoreCase = true) }
+            val type = values().firstOrNull { it.type.equals(typeString, ignoreCase = true) }
+            if (type == null) {
+                Logging.warn { "Unrecognised matcher definition $json, defaulting to equality matching" }
+                return EqualsMatcher
+            }
             return type.fromJson(json)
         }
 
         private fun fromJsonGuess(json: Json.Object): MatchingRule {
-            TODO("Guess MatchingRule from $json")
+            return when {
+                json.containsKey(SerializationConstants.REGEX_KEY) -> REGEX.fromJson(json)
+                json.containsKey(SerializationConstants.MIN_KEY) -> TYPE.fromJson(json)
+                json.containsKey(SerializationConstants.MAX_KEY) -> TYPE.fromJson(json)
+                json.containsKey(SerializationConstants.TIMESTAMP_KEY) -> TIMESTAMP.fromJson(json)
+                json.containsKey(SerializationConstants.TIME_KEY) -> TIME.fromJson(json)
+                json.containsKey(SerializationConstants.DATE_KEY) -> DATE.fromJson(json)
+                else -> {
+                    Logging.warn { "Unrecognised matcher definition without a key $json, defaulting to equality matching" }
+                    EqualsMatcher
+                }
+            }
         }
     }
 }
