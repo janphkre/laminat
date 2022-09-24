@@ -6,6 +6,7 @@ import au.com.dius.pact.consumer.dsl.PactDslJsonRootValue
 import au.com.dius.pact.external.PactJsonifier
 import au.com.dius.pact.model.PactMergeException
 import au.com.dius.pact.model.RequestResponsePact
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import java.io.File
@@ -108,9 +109,7 @@ class PactTest {
 
         val outputPact = outputPactFile.readText()
         val expectedPactJson = File("src/test/assets/$expectedPact").readText()
-        val gson = GsonBuilder()
-            .setPrettyPrinting()
-            .create()
+        val gson = getGson()
         val expectedPactTree = gson.fromJson<JsonObject>(expectedPactJson, JsonObject::class.java)
         expectedPactTree.getAsJsonObject("metadata").getAsJsonObject("pact-laminat-android").addProperty("version", BuildConfig.VERSION_NAME)
         val expectedPactString = gson.toJson(expectedPactTree)
@@ -172,9 +171,7 @@ class PactTest {
 
         val outputPact = outputPactFile.readText()
         val expectedPactJson = File("src/test/assets/$expectedBinaryPact").readText()
-        val gson = GsonBuilder()
-            .setPrettyPrinting()
-            .create()
+        val gson = getGson()
         val expectedPactTree = gson.fromJson<JsonObject>(expectedPactJson, JsonObject::class.java)
         expectedPactTree.getAsJsonObject("metadata").getAsJsonObject("pact-laminat-android").addProperty("version", BuildConfig.VERSION_NAME)
         val expectedPactString = gson.toJson(expectedPactTree)
@@ -187,5 +184,12 @@ class PactTest {
         val responseBody = getBinaryPacts().first().requestResponseInteractions.first().response.generateResponse().body.asBinary(Charsets.UTF_8)
 
         Assert.assertArrayEquals("Generated pact does not match expectations!", ByteArray(128) { it.toByte() }, responseBody)
+    }
+
+    private fun getGson(): Gson {
+        return GsonBuilder()
+            .setPrettyPrinting()
+            .serializeNulls()
+            .create()
     }
 }

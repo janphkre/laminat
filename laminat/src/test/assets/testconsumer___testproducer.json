@@ -47,6 +47,7 @@
           "We": "will have to see about this!",
           "Content-Type": "application/json; charset\u003dUTF-8"
         },
+        "body": null,
         "matchingRules": {
           "body": {
             "$": {
@@ -66,6 +67,7 @@
           "We": "will have to see about this as well.",
           "Content-Type": "application/json; charset\u003dUTF-8"
         },
+        "body": null,
         "matchingRules": {
           "body": {
             "$": {

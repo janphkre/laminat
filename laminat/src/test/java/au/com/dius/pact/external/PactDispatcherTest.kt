@@ -46,9 +46,9 @@ class PactDispatcherTest : AbstractRequestTest() {
         dispatcher.setInteractions(testPost.interactions as List<RequestResponseInteraction>)
 
         val response = dispatcher.dispatch(incomingRequest)
-        Assert.assertEquals("HTTP/1.1 200 OK", response.status)
         val responseBody = String(response.getBody()?.readByteArray() ?: ByteArray(0))
         Assert.assertEquals("{\"regex3\":\"12345\",\"regex4\":\"abc\"}", responseBody)
+        Assert.assertEquals("HTTP/1.1 200 OK", response.status)
     }
 
     @Test
