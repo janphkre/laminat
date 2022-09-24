@@ -148,15 +148,15 @@ class JsonBodyMatcher : BodyMatcher() {
             }
             if (Matchers.definedWildcardMatchers("body", path.plus("any"), matchers)) {
                 actualJson.forEach { entry ->
-                    if (!expectedJson.containsKey(entry.key) || !allowUnexpectedKeys) {
+                    if (expectedJson.containsKey(entry.key) || !allowUnexpectedKeys) {
                         val expectedValue = expectedJson[entry.key]
                         problems.addAll(matchJsonElement(path.plus(entry.key), expectedValue, entry.value, allowUnexpectedKeys, matchers))
                     }
                 }
             } else {
                 expectedJson.forEach { entry ->
-                    if (!actualJson.containsKey(entry.key)) {
-                        val actualValue = expectedJson[entry.key]
+                    if (actualJson.containsKey(entry.key)) {
+                        val actualValue = actualJson[entry.key]
                         problems.addAll(matchJsonElement(path.plus(entry.key), entry.value, actualValue, allowUnexpectedKeys, matchers))
                     } else {
                         problems.add(
