@@ -1,6 +1,6 @@
 package au.com.dius.pact.external
 
-object Logging {
+object Logging { // TODO: USE LOGGING WHERE NECESSARY
 
     enum class Level {
         INFO, WARN, ERROR

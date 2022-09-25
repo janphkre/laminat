@@ -40,6 +40,8 @@ object SerializationConstants {
     const val FORMAT_KEY = "format"
     const val REGEX_KEY = "regex"
     const val SIZE_KEY = "size"
+    const val EXPRESSION_KEY = "expression"
+    const val DATA_TYPE_KEY = "dataType"
 
     const val MATCHERS_KEY = "matchers"
     const val COMBINE_KEY = "combine"

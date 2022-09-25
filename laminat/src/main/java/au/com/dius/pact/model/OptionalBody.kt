@@ -10,18 +10,11 @@ sealed interface OptionalBody {
 
     object MissingBody : OptionalBody {
         override fun asBinary(charset: Charset): ByteArray {
-            return ByteArray(0)
+            throw UnwrapMissingBodyException("Body was not defined")
         }
 
         override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-            if (other !is OptionalBody) {
-                return false
-            }
-
-            return true
+            return other is MissingBody
         }
     }
 
@@ -31,17 +24,7 @@ sealed interface OptionalBody {
         }
 
         override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-            if (other !is OptionalBody) {
-                return false
-            }
-            if (!asBinary(Charsets.UTF_8).contentEquals(other.asBinary(Charsets.UTF_8))) {
-                return false
-            }
-
-            return true
+            return other is NullBody
         }
     }
 
@@ -52,17 +35,7 @@ sealed interface OptionalBody {
         }
 
         override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-            if (other !is OptionalBody) {
-                return false
-            }
-            if (!asBinary(Charsets.UTF_8).contentEquals(other.asBinary(Charsets.UTF_8))) {
-                return false
-            }
-
-            return true
+            return other is EmptyBody
         }
     }
 
@@ -90,13 +63,13 @@ sealed interface OptionalBody {
             if (this === other) {
                 return true
             }
-            if (other !is OptionalBody) {
+            if (!(other is StringBody || other is BinaryBody)) {
                 return false
             }
+            other as OptionalBody
             if (!asBinary(Charsets.UTF_8).contentEquals(other.asBinary(Charsets.UTF_8))) {
                 return false
             }
-
             return true
         }
 
@@ -121,13 +94,13 @@ sealed interface OptionalBody {
             if (this === other) {
                 return true
             }
-            if (other !is OptionalBody) {
+            if (!(other is StringBody || other is BinaryBody)) {
                 return false
             }
+            other as OptionalBody
             if (!asBinary(Charsets.UTF_8).contentEquals(other.asBinary(Charsets.UTF_8))) {
                 return false
             }
-
             return true
         }
 
@@ -135,6 +108,12 @@ sealed interface OptionalBody {
             return value.contentHashCode()
         }
     }
+
+    fun isPresent(): Boolean {
+        return this is StringBody || this is BinaryBody
+    }
+
+    fun asBinary(charset: Charset): ByteArray
 
     companion object {
 
@@ -175,10 +154,4 @@ sealed interface OptionalBody {
             }
         }
     }
-
-    fun isPresent(): Boolean {
-        return this is StringBody || this is BinaryBody
-    }
-
-    fun asBinary(charset: Charset): ByteArray
 }
