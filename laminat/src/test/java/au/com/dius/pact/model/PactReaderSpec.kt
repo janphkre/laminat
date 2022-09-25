@@ -3,6 +3,8 @@ package au.com.dius.pact.model
 import au.com.dius.pact.PactParsingUtil
 import au.com.dius.pact.StringSpecExt
 import au.com.dius.pact.external.json.Json
+import au.com.dius.pact.model.generators.Category
+import au.com.dius.pact.model.generators.RegexGenerator
 import au.com.dius.pact.model.serialization.RequestResponsePactV2Deserializer
 import au.com.dius.pact.model.serialization.RequestResponsePactV3Deserializer
 import com.google.gson.JsonSyntaxException
@@ -224,32 +226,7 @@ class PactReaderSpec : StringSpecExt({
         pact.requestResponseInteractions[0].providerStates shouldBe listOf(ProviderState("test state"))
     }
 
-    "reads from classpath inside jar" {
-        // given:
-        val pactPath = "classpath:jar-pacts/test_pact_v3.json" //TODO!
-
-        // when:
-        val pact = PactReader.readPact(PactReaderSource.ClassPathPactSource(pactPath))
-
-        //then:
-        pact should { it is RequestResponsePact }
-        pact as RequestResponsePact
-        pact.requestResponseInteractions[0].providerStates shouldBe listOf(ProviderState("test state", mapOf("name" to "Testy")), ProviderState("test state 2", mapOf("name" to "Testy2")))
-    }
-
-    "throws a meaningful exception when reading from non-existent classpath" {
-        // given:
-        val pactPath = "classpath:no_such_pact.json" //TODO!
-
-        // when:
-        val pactResult = runCatching { PactReader.readPact(PactReaderSource.ClassPathPactSource(pactPath)) }
-
-        // then:
-        pactResult.exceptionOrNull() should { it is RuntimeException && it.message!!.contains("no_such_pact.json") }
-
-        verify(exactly = 0) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(any(), any()) }
-        verify(exactly = 0) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(any(), any()) }
-    }
+    // different from pact-jvm 3.6.x: Does not support reading from classpath
 
     "correctly loads V2 pact with string bodies" {
         // given:
@@ -352,8 +329,8 @@ class PactReaderSpec : StringSpecExt({
 
         //then:
         pact should { it is RequestResponsePact }
-        pact as RequestResponsePact
-        (pact.requestResponseInteractions[0].request.body as OptionalBody.StringBody).unwrap() shouldBe "{\"entityName\":\"mock-name\",\"xml\":\"<?xml version=\\\\\"1.0\\\\\" encoding=\\\\\"UTF-8\\\\\"?>\\\\n\"}"
-        (pact.requestResponseInteractions[0].response.body as OptionalBody.StringBody).unwrap() shouldBe "{\\n  \"entityName\": \"\${eName}\",\\n  \"xml\": \"<?xml version=\\\\\"1.0\\\\\" encoding=\\\\\"UTF-8\\\\\"?>\\\\n\"\\n}"
+        val interaction = pact.interactions[0] as RequestResponseInteraction
+        (interaction.request.body as OptionalBody.StringBody).unwrap() shouldBe "{\"entityName\":\"mock-name\",\"xml\":\"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n\"}"
+        (interaction.request.generators.categories[Category.BODY]!!["$"]!! as RegexGenerator).regex shouldBe "{\n  \"entityName\": \"\${eName}\",\n  \"xml\": \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n\"\n}"
 }
 })

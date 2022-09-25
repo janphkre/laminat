@@ -53,17 +53,4 @@ sealed class PactReaderSource {
             return closure.invoke().loadPact()
         }
     }
-
-    data class ClassPathPactSource(
-        private val url: String
-    ) : PactReaderSource() {
-
-        override fun loadPact(): Pair<Json, PactSource> {
-            val inputStream = Thread.currentThread().contextClassLoader?.getResourceAsStream(url) ?: throw IllegalStateException("not found on classpath: $url")
-            return inputStream.use {
-                val pactData = Json.parse(InputStreamReader(it))
-                Pair(pactData, PactSource.UrlSource("classpath:$url"))
-            }
-        }
-    }
 }

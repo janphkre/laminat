@@ -21,8 +21,8 @@
         "generators": {
           "body": {
             "$": {
-              "type": "ProviderState",
-              "expression": "{\n  \"entityName\": \"${eName}\",\n  \"xml\": \"\u003c?xml version\u003d\\\"1.0\\\" encoding\u003d\\\"UTF-8\\\"?\u003e\\n\"\n}"
+              "type": "Regex",
+              "regex": "{\n  \"entityName\": \"${eName}\",\n  \"xml\": \"\u003c?xml version\u003d\\\"1.0\\\" encoding\u003d\\\"UTF-8\\\"?\u003e\\n\"\n}"
             }
           }
         }
