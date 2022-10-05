@@ -152,8 +152,10 @@ These toggles can be altered with
 FeatureFlags.enableFeature(Feature.MERGE_EXISTING_PACTS_FILE)
 FeatureFlags.enableFeature(Feature.MERGE_REMOVE_EXACT_DUPLICATES)
 FeatureFlags.disableFeature(Feature.NULL_VALUES_JSON_BODY_GENERATOR)
+FeatureFlags.enableFeature(Feature.MERGE_DISALLOW_DIFFERENT_PACT_VERSIONS)
 ```
-See the javadoc of each enum value: [Feature.kt][4]
+See the javadoc of each enum value for an explanation: [Feature.kt][4]
+
 # laminat-retrofit
 Extension for laminat to generate pact requests from retrofit definitions. 
 Check out the [unit test]{3] for an example usage.

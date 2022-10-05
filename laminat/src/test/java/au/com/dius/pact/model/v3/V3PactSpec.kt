@@ -39,6 +39,7 @@ class V3PactSpec: StringSpecExt() {
         afterTest {
             pactDirectory.deleteRecursively()
             FeatureFlags.restoreDefault(Feature.MERGE_EXISTING_PACTS_FILE)
+            FeatureFlags.restoreDefault(Feature.MERGE_DISALLOW_DIFFERENT_PACT_VERSIONS)
         }
 
         "writing pacts should merge with any existing file" {
@@ -74,9 +75,9 @@ class V3PactSpec: StringSpecExt() {
 
         "refuse to merge pacts with different spec versions" {
             // given:
-            val json = Json.parse(pactFile.readText(Charsets.UTF_8))
-            (json["metadata"]["pact-specification"] as Json.Object)["version"] = Json.StringPrimitive("2.0.0")
-            pactFile.writeText(json.toString(), Charsets.UTF_8)
+            FeatureFlags.enableFeature(Feature.MERGE_DISALLOW_DIFFERENT_PACT_VERSIONS)
+            val pactAssetFile = File(PactParsingUtil.convertToAssetFilePath("test_pact_v2.json"))
+            pactFile.writeBytes(pactAssetFile.readBytes())
 
             val pactString = Json.Object(
                 "consumer" to Json.Object("name" to Json.StringPrimitive("test_consumer")),
@@ -99,7 +100,35 @@ class V3PactSpec: StringSpecExt() {
             // then:
             val exception = result.exceptionOrNull()
             exception shouldBeException (InvalidPactException::class)
-            exception!!.message shouldBe "Cannot merge pacts as they are not compatible"
+            exception!!.message shouldBe "Cannot merge pacts as they are not compatible:\nFile already contains pact in version 2.0.0, but serialization config with version 3.0.0 was defined"
+        }
+
+        "merge pacts with different spec versions" {
+            // given:
+            val pactAssetFile = File(PactParsingUtil.convertToAssetFilePath("test_pact_v2.json"))
+            pactFile.writeBytes(pactAssetFile.readBytes())
+
+            val pactString = Json.Object(
+                "consumer" to Json.Object("name" to Json.StringPrimitive("test_consumer")),
+                "provider" to Json.Object("name" to Json.StringPrimitive("test_provider")),
+                "interactions" to Json.Array(
+                    Json.Object(
+                        "providerStates" to Json.Array(Json.Object("name" to Json.StringPrimitive("a new request exists"))),
+                        "request" to Json.Object(),
+                        "response" to Json.Object(),
+                        "description" to Json.StringPrimitive("a new hello request")
+                    )
+                ),
+                "metadata" to Json.Object("pactSpecification" to Json.Object("version" to Json.StringPrimitive("3.0.0")))
+            ).toString()
+            val pact = PactReader.readPact(PactReaderSource.ReaderPactSource(pactString.reader()))
+
+            // when:
+            val result = runCatching { PactJsonifier.generateJson(pact, pactDirectory, PactSerializationConfig(PactSpecVersion.V3, null)) }
+
+            // then:
+            val exception = result.exceptionOrNull()
+            exception shouldBe null
         }
     }
 }

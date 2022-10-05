@@ -29,6 +29,10 @@ object PactReader {
     }
 
     fun readPact(source: PactReaderSource): Pact {
+        return readPactWithVersion(source).first
+    }
+
+    fun readPactWithVersion(source: PactReaderSource): Pair<Pact, PactSpecVersion> {
         val (pactJson, pactSource) = source.loadPact()
         val pactVersion = determineSpecVersion(pactJson)
         val deserializer = when (pactVersion) {
@@ -38,7 +42,7 @@ object PactReader {
         if (!deserializer.isValid(pactJson)) {
             throw InvalidPactException("Received invalid JSON for a pact. Can not be parsed to a pact in version ${pactVersion.value}!")
         }
-        return deserializer.createPact(pactSource, pactJson)
+        return deserializer.createPact(pactSource, pactJson) to pactVersion
     }
 
     fun transformJson(pactJson: Json): Json {

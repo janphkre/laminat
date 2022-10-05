@@ -18,5 +18,13 @@ enum class Feature(val default: Boolean) {
      * Disable this flag to not serialize null values in the body of interactions.
      * See https://github.com/pact-foundation/pact-jvm/issues/877
      */
-    NULL_VALUES_JSON_BODY_GENERATOR(true) //TODO: TEST THIS
+    NULL_VALUES_JSON_BODY_GENERATOR(true), //TODO: TEST THIS
+
+
+    /**
+     * Enable this flag to disallow the merge of pacts that differ in their version.
+     * E.g. a pact file that has a v2 pact in it may not be merged with a v3 pact serialization config.
+     * See https://github.com/pact-foundation/pact-jvm/issues/877
+     */
+    MERGE_DISALLOW_DIFFERENT_PACT_VERSIONS(false)
 }

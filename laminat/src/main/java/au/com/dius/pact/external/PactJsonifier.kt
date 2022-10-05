@@ -2,6 +2,7 @@ package au.com.dius.pact.external
 
 import au.com.dius.pact.external.features.Feature
 import au.com.dius.pact.external.features.FeatureFlags
+import au.com.dius.pact.model.InvalidPactException
 import au.com.dius.pact.model.Pact
 import au.com.dius.pact.model.PactMerge
 import au.com.dius.pact.model.PactMergeException
@@ -55,12 +56,18 @@ object PactJsonifier {
         val file = getFileFor(mergedPact, baseDir)
         if (FeatureFlags.isFeatureEnabled(Feature.MERGE_EXISTING_PACTS_FILE) && file.exists()) {
             val source = PactReaderSource.FileSource(file)
-            val originalPact = PactReader.readPact(source) as RequestResponsePact
+            val (originalPact, pactVersion) = PactReader.readPactWithVersion(source)
+            if (FeatureFlags.isFeatureEnabled(Feature.MERGE_DISALLOW_DIFFERENT_PACT_VERSIONS) && pactVersion != serializationConfig.specVersion) {
+               throw InvalidPactException(
+                   "Cannot merge pacts as they are not compatible:\n" +
+                   "File already contains pact in version ${pactVersion.value}, but serialization config with version ${serializationConfig.specVersion.value} was defined"
+               )
+            }
             val result = PactMerge.merge(mergedPact, originalPact)
             if (!result.ok) {
                 throw PactMergeException(result.message)
             }
-            mergedPact = originalPact
+            mergedPact = originalPact as RequestResponsePact
         }
         mergedPact.sortInteractions()
         saveToPactFile(file, mergedPact, serializationConfig)
