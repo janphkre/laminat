@@ -7,7 +7,6 @@ import au.com.dius.pact.external.features.Feature
 import au.com.dius.pact.external.features.FeatureFlags
 import au.com.dius.pact.external.json.Json
 import au.com.dius.pact.shouldBeException
-import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
 import java.io.File
 import java.nio.file.Files

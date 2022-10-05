@@ -63,7 +63,7 @@ enum class MatchingRulesSerialization(
     TYPE(SerializationConstants.TYPE_KEY) {
         override fun fromJson(json: Json.Object): MatchingRule {
             return if (json.containsKey(SerializationConstants.MIN_KEY) && json.containsKey(SerializationConstants.MAX_KEY)) {
-                MinMaxTypeMatcher(json[SerializationConstants.MIN_KEY].getValue(),json[SerializationConstants.MAX_KEY].getValue())
+                MinMaxTypeMatcher(json[SerializationConstants.MIN_KEY].getValue(), json[SerializationConstants.MAX_KEY].getValue())
             } else if (json.containsKey(SerializationConstants.MIN_KEY)) {
                 MinTypeMatcher(json[SerializationConstants.MIN_KEY].getValue())
             } else if (json.containsKey(SerializationConstants.MAX_KEY)) {

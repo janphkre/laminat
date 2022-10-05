@@ -3,6 +3,8 @@ package au.com.dius.pact.external
 import au.com.dius.pact.model.PactMergeException
 import au.com.dius.pact.model.RequestResponseInteraction
 import au.com.dius.pact.model.Response
+import java.io.PrintWriter
+import java.io.StringWriter
 import okhttp3.Headers
 import okhttp3.Headers.Companion.headersOf
 import okhttp3.Headers.Companion.toHeaders
@@ -10,10 +12,7 @@ import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 import okio.Buffer
-import org.apache.http.Consts
 import org.apache.http.entity.ContentType
-import java.io.PrintWriter
-import java.io.StringWriter
 
 /**
  * An okhttp dispatcher that creates matches based on the list of interactions through an OkHttpRequestMatcher.

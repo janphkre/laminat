@@ -3,7 +3,6 @@ package au.com.dius.pact.model
 import au.com.dius.pact.external.json.Json
 import au.com.dius.pact.model.serialization.RequestResponsePactV3Deserializer
 import au.com.dius.pact.shouldBeInstance
-import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.specs.StringSpec
 

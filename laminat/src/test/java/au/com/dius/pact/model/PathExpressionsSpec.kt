@@ -1,14 +1,12 @@
 package au.com.dius.pact.model
 
 import au.com.dius.pact.shouldBeException
-import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.properties.forAll
 import io.kotlintest.properties.headers
 import io.kotlintest.properties.row
 import io.kotlintest.properties.table
 import io.kotlintest.specs.StringSpec
-import org.junit.Assert
 
 class PathExpressionsSpec : StringSpec({
 

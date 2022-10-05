@@ -4,16 +4,15 @@ import au.com.dius.pact.consumer.ConsumerPactBuilder
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody
 import au.com.dius.pact.model.PactReader
 import au.com.dius.pact.model.PactReaderSource
-import au.com.dius.pact.model.PactReaderSpec
 import au.com.dius.pact.model.PactSerializationConfig
 import au.com.dius.pact.model.PactSpecVersion
 import au.com.dius.pact.model.PactWriter
 import au.com.dius.pact.model.RequestResponseInteraction
-import org.junit.Assert
-import org.junit.Test
 import java.io.PrintWriter
 import java.io.StringReader
 import java.io.StringWriter
+import org.junit.Assert
+import org.junit.Test
 
 class PactReaderTest {
 
@@ -61,7 +60,6 @@ class PactReaderTest {
 
         compareInteractions(expectedInteraction, actualInteraction)
     }
-
 
     @Test
     fun pactReader_pactV2WithPathMatcher_DeserializesCorrectly() {

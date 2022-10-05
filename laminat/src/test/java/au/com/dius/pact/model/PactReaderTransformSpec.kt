@@ -1,15 +1,13 @@
 package au.com.dius.pact.model
 
 import au.com.dius.pact.PactParsingUtil
-import au.com.dius.pact.external.features.Feature
-import au.com.dius.pact.external.features.FeatureFlags
 import au.com.dius.pact.external.json.Json
 import com.google.gson.stream.JsonWriter
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.specs.StringSpec
 import java.io.StringWriter
 
-class PactReaderTransformSpec: StringSpec() {
+class PactReaderTransformSpec : StringSpec() {
 
     private val provider = mapOf("name" to "Alice Service")
     private val consumer = mapOf("name" to "Consumer")
@@ -29,7 +27,7 @@ class PactReaderTransformSpec: StringSpec() {
         ),
         "body" to "\"That is some good Mallory.\""
     )
-    
+
     init {
         "only transforms legacy fields" {
             // when:
@@ -69,7 +67,7 @@ class PactReaderTransformSpec: StringSpec() {
         "handles both a snake and camel case provider state" {
             // given:
             (jsonMap["interactions"][0] as Json.Object)["provider_state"] = Json.wrapInJson("provider state")
-            (jsonMap["interactions"][0]  as Json.Object)["providerState"] = Json.wrapInJson("provider state 2")
+            (jsonMap["interactions"][0] as Json.Object)["providerState"] = Json.wrapInJson("provider state 2")
 
             // when:
             val result = PactReader.transformJson(jsonMap)
@@ -108,16 +106,16 @@ class PactReaderTransformSpec: StringSpec() {
         }
 
         "converts request and response matching rules" {
-            //given:
+            // given:
             (jsonMap["interactions"][0]["request"] as Json.Object)["requestMatchingRules"] =
-                Json.Object("body" to Json.Object( "$" to Json.Array(Json.Object("match" to Json.wrapInJson("type")))))
+                Json.Object("body" to Json.Object("$" to Json.Array(Json.Object("match" to Json.wrapInJson("type")))))
             (jsonMap["interactions"][0]["response"] as Json.Object)["responseMatchingRules"] =
-                Json.Object("body" to Json.Object( "$" to Json.Array(Json.Object("match" to Json.wrapInJson("type")))))
+                Json.Object("body" to Json.Object("$" to Json.Array(Json.Object("match" to Json.wrapInJson("type")))))
 
-            //when:
+            // when:
             val result = PactReader.transformJson(jsonMap)
 
-            //then:
+            // then:
             result.prettySerialize() shouldBe """|{
             |  "provider": {
             |    "name": "Alice Service"

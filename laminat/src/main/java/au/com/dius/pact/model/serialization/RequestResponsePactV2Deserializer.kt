@@ -2,27 +2,12 @@ package au.com.dius.pact.model.serialization
 
 import au.com.dius.pact.external.json.Json
 import au.com.dius.pact.external.json.getValueOrNull
-import au.com.dius.pact.model.Consumer
-import au.com.dius.pact.model.OptionalBody
-import au.com.dius.pact.model.Pact
 import au.com.dius.pact.model.PactReader
-import au.com.dius.pact.model.PactSource
-import au.com.dius.pact.model.Provider
-import au.com.dius.pact.model.ProviderState
-import au.com.dius.pact.model.Request
-import au.com.dius.pact.model.RequestResponseInteraction
-import au.com.dius.pact.model.RequestResponsePact
-import au.com.dius.pact.model.Response
-import au.com.dius.pact.model.generators.Generator
-import au.com.dius.pact.model.generators.GeneratorSerialization
-import au.com.dius.pact.model.generators.Generators
 import au.com.dius.pact.model.matchingrules.Category
 import au.com.dius.pact.model.matchingrules.MatchingRuleGroup
-import au.com.dius.pact.model.matchingrules.MatchingRules
 import au.com.dius.pact.model.matchingrules.MatchingRulesSerialization
-import java.util.EnumMap
 
-class RequestResponsePactV2Deserializer: RequestResponsePactV3Deserializer() {
+class RequestResponsePactV2Deserializer : RequestResponsePactV3Deserializer() {
 
     override fun mapQuery(json: Json): Map<String, List<String>> {
         val queryString = json.getValueOrNull<String>()
@@ -75,12 +60,11 @@ class RequestResponsePactV2Deserializer: RequestResponsePactV3Deserializer() {
                     json
                 )
             }
-        }.groupBy(keySelector =  { intermediate ->
+        }.groupBy(keySelector = { intermediate ->
             intermediate.categoryKey
         }).mapValuesTo(LinkedHashMap()) { (key, intermediateList) ->
 
             MatchingRuleGroup().apply {
-
             }
             val matchingRules = intermediateList.associateTo(HashMap()) { intermediate ->
                 val matchingRule = MatchingRulesSerialization.fromJson(intermediate.matchingRule)

@@ -1,12 +1,11 @@
 package au.com.dius.pact.external.json
 
-
 inline fun <reified T> Json.getValue(): T {
     return getValueOrNull<T>() ?: throw UnsupportedOperationException("Can not get a value from null!")
 }
 
 inline fun <reified T> Json.getValueOrNull(): T? {
-    when(this) {
+    when (this) {
         is Json.Null -> return null
         is Json.StringPrimitive -> {
             if (T::class == String::class) {
@@ -19,7 +18,7 @@ inline fun <reified T> Json.getValueOrNull(): T? {
             }
         }
         is Json.NumberPrimitive -> {
-            when(T::class) {
+            when (T::class) {
                 Int::class -> return asInt() as T
                 Float::class -> return asFloat() as T
                 Number::class -> return asNumber() as T

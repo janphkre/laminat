@@ -58,10 +58,10 @@ object PactJsonifier {
             val source = PactReaderSource.FileSource(file)
             val (originalPact, pactVersion) = PactReader.readPactWithVersion(source)
             if (FeatureFlags.isFeatureEnabled(Feature.MERGE_DISALLOW_DIFFERENT_PACT_VERSIONS) && pactVersion != serializationConfig.specVersion) {
-               throw InvalidPactException(
-                   "Cannot merge pacts as they are not compatible:\n" +
-                   "File already contains pact in version ${pactVersion.value}, but serialization config with version ${serializationConfig.specVersion.value} was defined"
-               )
+                throw InvalidPactException(
+                    "Cannot merge pacts as they are not compatible:\n" +
+                        "File already contains pact in version ${pactVersion.value}, but serialization config with version ${serializationConfig.specVersion.value} was defined"
+                )
             }
             val result = PactMerge.merge(mergedPact, originalPact)
             if (!result.ok) {

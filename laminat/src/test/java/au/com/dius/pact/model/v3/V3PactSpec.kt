@@ -13,13 +13,10 @@ import au.com.dius.pact.model.PactReaderSource
 import au.com.dius.pact.model.PactSerializationConfig
 import au.com.dius.pact.model.PactSpecVersion
 import au.com.dius.pact.shouldBeException
-import io.kotlintest.matchers.match
-import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
-import org.junit.Assert
 import java.io.File
 
-class V3PactSpec: StringSpecExt() {
+class V3PactSpec : StringSpecExt() {
 
     private lateinit var pactDirectory: File
     private lateinit var pactFile: File
@@ -71,7 +68,7 @@ class V3PactSpec: StringSpecExt() {
             (json["interactions"][0]["description"]).getValueOrNull<String>() shouldBe "a new hello request"
         }
 
-        //different from pact-jvm: Message-Pacts are not implemented, Merging is tested in PactWriterSpec
+        // different from pact-jvm: Message-Pacts are not implemented, Merging is tested in PactWriterSpec
 
         "refuse to merge pacts with different spec versions" {
             // given:

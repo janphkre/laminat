@@ -11,22 +11,15 @@ import au.com.dius.pact.shouldBeException
 import au.com.dius.pact.shouldBeInstance
 import com.google.gson.JsonSyntaxException
 import io.kotlintest.matchers.match
-import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
-import io.kotlintest.matchers.shouldHave
 import io.kotlintest.properties.forAll
 import io.kotlintest.properties.headers
 import io.kotlintest.properties.row
 import io.kotlintest.properties.table
 import io.mockk.every
-import io.mockk.mockk
 import io.mockk.mockkConstructor
-import io.mockk.mockkObject
 import io.mockk.unmockkAll
 import io.mockk.verify
-import org.junit.Assert
-import org.mockito.Mockito
-import org.mockito.Mockito.only
 import java.io.File
 import java.io.StringReader
 
@@ -80,7 +73,7 @@ class PactReaderSpec : StringSpecExt({
         // when:
         val pact = PactReader.readPact(PactReaderSource.FileSource(pactFile))
 
-        //then:
+        // then:
         verify(exactly = 1) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(match { it == PactSource.FileSource(pactFile) }, any()) }
         verify(exactly = 0) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(any(), any()) }
         pact shouldBeInstance RequestResponsePact::class
@@ -94,7 +87,7 @@ class PactReaderSpec : StringSpecExt({
         // when:
         val pact = PactReader.readPact(PactReaderSource.FileSource(pactFile))
 
-        //then:
+        // then:
         verify(exactly = 0) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(any(), any()) }
         verify(exactly = 1) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(match { it == PactSource.FileSource(pactFile) }, any()) }
         pact shouldBeInstance RequestResponsePact::class
@@ -108,7 +101,7 @@ class PactReaderSpec : StringSpecExt({
         // when:
         val pact = PactReader.readPact(PactReaderSource.FileSource(pactFile))
 
-        //then:
+        // then:
         verify(exactly = 0) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(any(), any()) }
         verify(exactly = 1) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(match { it == PactSource.FileSource(pactFile) }, any()) }
         pact shouldBeInstance RequestResponsePact::class
@@ -137,7 +130,7 @@ class PactReaderSpec : StringSpecExt({
         // when:
         val pact = PactReader.readPact(PactReaderSource.InputStreamPactSource(pactFileInputStream))
 
-        //then:
+        // then:
         verify(exactly = 1) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(match { it == PactSource.InputStreamPactSource }, any()) }
         verify(exactly = 0) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(any(), any()) }
         pact shouldBeInstance RequestResponsePact::class
@@ -151,7 +144,7 @@ class PactReaderSpec : StringSpecExt({
         // when:
         val pact = PactReader.readPact(PactReaderSource.ReaderPactSource(StringReader(pactFileText)))
 
-        //then:
+        // then:
         verify(exactly = 1) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(match { it == PactSource.ReaderPactSource }, any()) }
         verify(exactly = 0) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(any(), any()) }
         pact shouldBeInstance RequestResponsePact::class
@@ -179,7 +172,7 @@ class PactReaderSpec : StringSpecExt({
         // when:
         val pact = PactReader.readPact(PactReaderSource.FileSource(pactFile))
 
-        //then:
+        // then:
         verify(exactly = 1) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(match { it == PactSource.FileSource(pactFile) }, any()) }
         verify(exactly = 0) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(any(), any()) }
         pact shouldBeInstance RequestResponsePact::class
@@ -195,10 +188,10 @@ class PactReaderSpec : StringSpecExt({
         // when:
         val pact = PactReader.readPact(PactReaderSource.FileSource(pactFile))
 
-        //then:
+        // then:
         pact shouldBeInstance RequestResponsePact::class
         pact as RequestResponsePact
-        pact.requestResponseInteractions[0].request.query shouldBe mapOf("q" to listOf("p", "p2"), "r" to  listOf("s"))
+        pact.requestResponseInteractions[0].request.query shouldBe mapOf("q" to listOf("p", "p2"), "r" to listOf("s"))
         pact.requestResponseInteractions[1].request.query shouldBe mapOf("datetime" to listOf("2011-12-03T10:15:30+01:00"), "description" to listOf("hello world!"))
         pact.requestResponseInteractions[2].request.query shouldBe mapOf("options" to listOf("delete.topic.enable=true"), "broker" to listOf("1"))
     }
@@ -210,7 +203,7 @@ class PactReaderSpec : StringSpecExt({
         // when:
         val pact = PactReader.readPact(PactReaderSource.FileSource(pactFile))
 
-        //then:
+        // then:
         pact shouldBeInstance RequestResponsePact::class
         pact as RequestResponsePact
         pact.requestResponseInteractions[0].providerStates shouldBe listOf(ProviderState("test state", mapOf("name" to "Testy")), ProviderState("test state 2", mapOf("name" to "Testy2")))
@@ -223,7 +216,7 @@ class PactReaderSpec : StringSpecExt({
         // when:
         val pact = PactReader.readPact(PactReaderSource.FileSource(pactFile))
 
-        //then:
+        // then:
         pact shouldBeInstance RequestResponsePact::class
         pact as RequestResponsePact
         pact.requestResponseInteractions[0].providerStates shouldBe listOf(ProviderState("test state"))
@@ -238,7 +231,7 @@ class PactReaderSpec : StringSpecExt({
         // when:
         val pact = PactReader.readPact(PactReaderSource.FileSource(pactFile))
 
-        //then:
+        // then:
         pact shouldBeInstance RequestResponsePact::class
         pact as RequestResponsePact
         (pact.requestResponseInteractions[0].request.body as OptionalBody.StringBody).unwrap() shouldBe "\"This is a string\""
@@ -252,7 +245,7 @@ class PactReaderSpec : StringSpecExt({
         // when:
         val pact = PactReader.readPact(PactReaderSource.ClosurePactSource { PactReaderSource.FileSource(pactFile) })
 
-        //then:
+        // then:
         verify(exactly = 1) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(match { it == PactSource.FileSource(pactFile) }, any()) }
         verify(exactly = 0) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(any(), any()) }
         pact shouldBeInstance RequestResponsePact::class
@@ -266,10 +259,10 @@ class PactReaderSpec : StringSpecExt({
         // when:
         val pact = PactReader.readPact(PactReaderSource.ClosurePactSource { PactReaderSource.FileSource(pactFile) })
 
-        //then:
+        // then:
         pact shouldBeInstance RequestResponsePact::class
         pact.interactions.forEach { interaction ->
-            //interaction shouldBeTrue regex.matches(it.interactionId)  // TODO: interaction id does not exist
+            // interaction shouldBeTrue regex.matches(it.interactionId)  // TODO: interaction id does not exist
         }
     }
 
@@ -280,10 +273,10 @@ class PactReaderSpec : StringSpecExt({
         // when:
         val pact = PactReader.readPact(PactReaderSource.ClosurePactSource { PactReaderSource.FileSource(pactFile) })
 
-        //then:
+        // then:
         pact shouldBeInstance RequestResponsePact::class
         pact.interactions.forEach { interaction ->
-            //interaction shouldBeTrue regex.matches(it.interactionId) // TODO: interaction id does not exist
+            // interaction shouldBeTrue regex.matches(it.interactionId) // TODO: interaction id does not exist
         }
     }
 
@@ -305,17 +298,17 @@ class PactReaderSpec : StringSpecExt({
     "determining pact spec version" {
         forAll(
             table(
-        
+
                 headers("json", "version"),
                 row("{}", PactSpecVersion.V2),
-        row("{\"metadata\":{}}", PactSpecVersion.V2),
-                row("{\"metadata\":{\"pactSpecificationVersion\":\"1.2.3\"}}"       , PactSpecVersion.V2),
-            row("{\"metadata\":{\"pactSpecification\":\"1.2.3\"}}"              , PactSpecVersion.V2),
-        row("{\"metadata\":{\"pactSpecification\":{}}}"                   , PactSpecVersion.V2),
-        row("{\"metadata\":{\"pactSpecification\":{\"version\":\"1.2.3\"}}}"  , PactSpecVersion.V2),
-        row("{\"metadata\":{\"pactSpecification\":{\"version\":\"3.0\"}}}"    , PactSpecVersion.V3),
-        row("{\"metadata\":{\"pact-specification\":{\"version\":\"1.2.3\"}}}" , PactSpecVersion.V2),
-        )
+                row("{\"metadata\":{}}", PactSpecVersion.V2),
+                row("{\"metadata\":{\"pactSpecificationVersion\":\"1.2.3\"}}", PactSpecVersion.V2),
+                row("{\"metadata\":{\"pactSpecification\":\"1.2.3\"}}", PactSpecVersion.V2),
+                row("{\"metadata\":{\"pactSpecification\":{}}}", PactSpecVersion.V2),
+                row("{\"metadata\":{\"pactSpecification\":{\"version\":\"1.2.3\"}}}", PactSpecVersion.V2),
+                row("{\"metadata\":{\"pactSpecification\":{\"version\":\"3.0\"}}}", PactSpecVersion.V3),
+                row("{\"metadata\":{\"pact-specification\":{\"version\":\"1.2.3\"}}}", PactSpecVersion.V2),
+            )
         ) { json, version ->
             val parsedJson = Json.parse(json)
             PactReader.determineSpecVersion(parsedJson) shouldBe version
@@ -330,10 +323,10 @@ class PactReaderSpec : StringSpecExt({
         // when:
         val pact = PactReader.readPact(PactReaderSource.ClosurePactSource { PactReaderSource.FileSource(pactFile) })
 
-        //then:
+        // then:
         pact shouldBeInstance RequestResponsePact::class
         val interaction = pact.interactions[0] as RequestResponseInteraction
         (interaction.request.body as OptionalBody.StringBody).unwrap() shouldBe "{\"entityName\":\"mock-name\",\"xml\":\"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n\"}"
         (interaction.request.generators.categories[Category.BODY]!!["$"]!! as RegexGenerator).regex shouldBe "{\n  \"entityName\": \"\${eName}\",\n  \"xml\": \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n\"\n}"
-}
+    }
 })

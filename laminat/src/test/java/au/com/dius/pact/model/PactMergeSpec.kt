@@ -428,8 +428,14 @@ class PactMergeSpec : StringSpecExt() {
                         RequestResponsePact(
                             pact.provider, pact.consumer,
                             listOf(
-                                RequestResponseInteraction("test interaction", listOf(ProviderState("test state")), Request("Get", "/different", PactReader.queryStringToMap("q=p&q=p2&r=s"),
-                                    mapOf("testreqheader" to "testreqheadervalue"), OptionalBody.body("{\"test\":true}")), response)
+                                RequestResponseInteraction(
+                                    "test interaction", listOf(ProviderState("test state")),
+                                    Request(
+                                        "Get", "/different", PactReader.queryStringToMap("q=p&q=p2&r=s"),
+                                        mapOf("testreqheader" to "testreqheadervalue"), OptionalBody.body("{\"test\":true}")
+                                    ),
+                                    response
+                                )
                             )
                         )
                     ),
@@ -446,8 +452,10 @@ class PactMergeSpec : StringSpecExt() {
             // given:
             val differentResponse = response.copy()
             differentResponse.status = 503
-            val newInteraction = RequestResponseInteraction("test interaction",
-                listOf(ProviderState("test state")), request, differentResponse)
+            val newInteraction = RequestResponseInteraction(
+                "test interaction",
+                listOf(ProviderState("test state")), request, differentResponse
+            )
             val pactCopy = RequestResponsePact(pact.provider, pact.consumer, listOf(newInteraction))
 
             // when:
