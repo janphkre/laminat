@@ -1,5 +1,6 @@
 package au.com.dius.pact.model
 
+import au.com.dius.pact.shouldBeException
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.properties.forAll
@@ -7,6 +8,7 @@ import io.kotlintest.properties.headers
 import io.kotlintest.properties.row
 import io.kotlintest.properties.table
 import io.kotlintest.specs.StringSpec
+import org.junit.Assert
 
 class PathExpressionsSpec : StringSpec({
 
@@ -26,7 +28,7 @@ class PathExpressionsSpec : StringSpec({
 
         // then:
         val ex = result.exceptionOrNull()
-        ex should { it is InvalidPathExpression }
+        ex shouldBeException InvalidPathExpression::class
         ex!!.message shouldBe "Path expression \"adsjhaskjdh\" does not start with a root marker \"$\""
     }
 
@@ -36,7 +38,7 @@ class PathExpressionsSpec : StringSpec({
 
         // then:
         val ex = result.exceptionOrNull()
-        ex should { it is InvalidPathExpression }
+        ex shouldBeException InvalidPathExpression::class
         ex!!.message shouldBe "Expected a \".\" or \"[\" instead of \"a\" in path expression \"\$adsjhaskjdh\" at index 1"
     }
 
@@ -53,7 +55,7 @@ class PathExpressionsSpec : StringSpec({
 
             // then:
             val ex = result.exceptionOrNull()
-            ex should { it is InvalidPathExpression }
+            ex shouldBeException InvalidPathExpression::class
             ex!!.message shouldBe message
         }
     }
@@ -71,7 +73,7 @@ class PathExpressionsSpec : StringSpec({
 
             // then:
             val ex = result.exceptionOrNull()
-            ex should { it is InvalidPathExpression }
+            ex shouldBeException InvalidPathExpression::class
             ex!!.message shouldBe message
         }
     }
@@ -154,7 +156,7 @@ class PathExpressionsSpec : StringSpec({
 
             // then:
             val ex = result.exceptionOrNull()
-            ex should { it is InvalidPathExpression }
+            ex shouldBeException InvalidPathExpression::class
             ex!!.message shouldBe message
         }
     }
@@ -174,7 +176,7 @@ class PathExpressionsSpec : StringSpec({
 
             // then:
             val ex = result.exceptionOrNull()
-            ex should { it is InvalidPathExpression }
+            ex shouldBeException InvalidPathExpression::class
             ex!!.message shouldBe message
         }
     }

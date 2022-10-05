@@ -1,5 +1,6 @@
 package au.com.dius.pact.model
 
+import au.com.dius.pact.shouldBeException
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.matchers.shouldEqual
@@ -81,7 +82,7 @@ class OptionalBodyTest : StringSpec() {
 
         // similar to pact-jvm 3.6.x: orElse does not exist but asBinary throws exception
         "a missing body unwrap should throw an exception" {
-            runCatching { missingBody.asBinary(Charsets.UTF_8) }.exceptionOrNull() should { it is UnwrapMissingBodyException }
+            runCatching { missingBody.asBinary(Charsets.UTF_8) }.exceptionOrNull() shouldBeException UnwrapMissingBodyException::class
         }
 
         "a body that contains a null or else returns the else" {

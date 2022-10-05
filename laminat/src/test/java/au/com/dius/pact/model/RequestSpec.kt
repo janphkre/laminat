@@ -2,6 +2,7 @@ package au.com.dius.pact.model
 
 import au.com.dius.pact.external.json.Json
 import au.com.dius.pact.model.serialization.RequestResponsePactV3Deserializer
+import au.com.dius.pact.shouldBeInstance
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.specs.StringSpec
@@ -39,7 +40,7 @@ class RequestSpec : StringSpec({
         request.path shouldBe "/"
         request.query.isEmpty() shouldBe true
         request.headers.isEmpty() shouldBe true
-        request.body should { it is OptionalBody.MissingBody }
+        request.body shouldBeInstance OptionalBody.MissingBody::class
         request.matchingRules.isEmpty() shouldBe true
         request.generators.isEmpty() shouldBe true
     }

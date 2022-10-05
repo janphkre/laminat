@@ -6,6 +6,7 @@ import au.com.dius.pact.external.PactJsonifier
 import au.com.dius.pact.external.features.Feature
 import au.com.dius.pact.external.features.FeatureFlags
 import au.com.dius.pact.external.json.Json
+import au.com.dius.pact.shouldBeException
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
 import java.io.File
@@ -137,7 +138,7 @@ class PactWriterSpec : StringSpecExt({
 
         // then:
         result.isFailure shouldBe true
-        result.exceptionOrNull() should { it is PactMergeException }
+        result.exceptionOrNull() shouldBeException PactMergeException::class
     }
 
     // different from pact-jvm 3.6.x: Requests are mergable if they have any criteria to differentiate incoming requests

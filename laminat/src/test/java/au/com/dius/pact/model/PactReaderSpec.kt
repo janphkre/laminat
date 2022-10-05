@@ -7,6 +7,8 @@ import au.com.dius.pact.model.generators.Category
 import au.com.dius.pact.model.generators.RegexGenerator
 import au.com.dius.pact.model.serialization.RequestResponsePactV2Deserializer
 import au.com.dius.pact.model.serialization.RequestResponsePactV3Deserializer
+import au.com.dius.pact.shouldBeException
+import au.com.dius.pact.shouldBeInstance
 import com.google.gson.JsonSyntaxException
 import io.kotlintest.matchers.match
 import io.kotlintest.matchers.should
@@ -22,6 +24,7 @@ import io.mockk.mockkConstructor
 import io.mockk.mockkObject
 import io.mockk.unmockkAll
 import io.mockk.verify
+import org.junit.Assert
 import org.mockito.Mockito
 import org.mockito.Mockito.only
 import java.io.File
@@ -52,7 +55,7 @@ class PactReaderSpec : StringSpecExt({
         // then:
         verify(exactly = 1) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(match { it == PactSource.FileSource(pactFile) }, any()) }
         verify(exactly = 0) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(any(), any()) }
-        pact should { it is RequestResponsePact }
+        pact shouldBeInstance RequestResponsePact::class
         pact.source shouldBe PactSource.FileSource(pactFile)
     }
 
@@ -66,7 +69,7 @@ class PactReaderSpec : StringSpecExt({
         // then:
         verify(exactly = 1) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(match { it == PactSource.FileSource(pactFile) }, any()) }
         verify(exactly = 0) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(any(), any()) }
-        pact should { it is RequestResponsePact }
+        pact shouldBeInstance RequestResponsePact::class
         pact.source shouldBe PactSource.FileSource(pactFile)
     }
 
@@ -80,7 +83,7 @@ class PactReaderSpec : StringSpecExt({
         //then:
         verify(exactly = 1) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(match { it == PactSource.FileSource(pactFile) }, any()) }
         verify(exactly = 0) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(any(), any()) }
-        pact should { it is RequestResponsePact }
+        pact shouldBeInstance RequestResponsePact::class
         pact.source shouldBe PactSource.FileSource(pactFile)
     }
 
@@ -94,7 +97,7 @@ class PactReaderSpec : StringSpecExt({
         //then:
         verify(exactly = 0) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(any(), any()) }
         verify(exactly = 1) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(match { it == PactSource.FileSource(pactFile) }, any()) }
-        pact should { it is RequestResponsePact }
+        pact shouldBeInstance RequestResponsePact::class
         pact.source shouldBe PactSource.FileSource(pactFile)
     }
 
@@ -108,7 +111,7 @@ class PactReaderSpec : StringSpecExt({
         //then:
         verify(exactly = 0) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(any(), any()) }
         verify(exactly = 1) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(match { it == PactSource.FileSource(pactFile) }, any()) }
-        pact should { it is RequestResponsePact }
+        pact shouldBeInstance RequestResponsePact::class
         pact.source shouldBe PactSource.FileSource(pactFile)
     }
 
@@ -123,7 +126,7 @@ class PactReaderSpec : StringSpecExt({
         //then:
         verify(exactly = 0) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(any(), any()) }
         verify(exactly = 1) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(match { it == PactSource.FileSource(pactFile) }, any()) }
-        pact should { it is MessagePact }
+        pact shouldBeInstance MessagePact::class
         pact.source shouldBe PactSource.FileSource(pactFile)
     }*/
 
@@ -137,7 +140,7 @@ class PactReaderSpec : StringSpecExt({
         //then:
         verify(exactly = 1) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(match { it == PactSource.InputStreamPactSource }, any()) }
         verify(exactly = 0) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(any(), any()) }
-        pact should { it is RequestResponsePact }
+        pact shouldBeInstance RequestResponsePact::class
         pact.source shouldBe PactSource.InputStreamPactSource
     }
 
@@ -151,7 +154,7 @@ class PactReaderSpec : StringSpecExt({
         //then:
         verify(exactly = 1) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(match { it == PactSource.ReaderPactSource }, any()) }
         verify(exactly = 0) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(any(), any()) }
-        pact should { it is RequestResponsePact }
+        pact shouldBeInstance RequestResponsePact::class
         pact.source shouldBe PactSource.ReaderPactSource
     }
 
@@ -163,7 +166,7 @@ class PactReaderSpec : StringSpecExt({
         val pactResult = runCatching { PactReader.readPact(PactReaderSource.ReaderPactSource(StringReader(pactString))) }
 
         // then:
-        pactResult.exceptionOrNull() should { it is JsonSyntaxException }
+        pactResult.exceptionOrNull() shouldBeException JsonSyntaxException::class
 
         verify(exactly = 0) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(any(), any()) }
         verify(exactly = 0) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(any(), any()) }
@@ -179,7 +182,7 @@ class PactReaderSpec : StringSpecExt({
         //then:
         verify(exactly = 1) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(match { it == PactSource.FileSource(pactFile) }, any()) }
         verify(exactly = 0) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(any(), any()) }
-        pact should { it is RequestResponsePact }
+        pact shouldBeInstance RequestResponsePact::class
         pact.source shouldBe PactSource.FileSource(pactFile)
     }
 
@@ -193,7 +196,7 @@ class PactReaderSpec : StringSpecExt({
         val pact = PactReader.readPact(PactReaderSource.FileSource(pactFile))
 
         //then:
-        pact should { it is RequestResponsePact }
+        pact shouldBeInstance RequestResponsePact::class
         pact as RequestResponsePact
         pact.requestResponseInteractions[0].request.query shouldBe mapOf("q" to listOf("p", "p2"), "r" to  listOf("s"))
         pact.requestResponseInteractions[1].request.query shouldBe mapOf("datetime" to listOf("2011-12-03T10:15:30+01:00"), "description" to listOf("hello world!"))
@@ -208,7 +211,7 @@ class PactReaderSpec : StringSpecExt({
         val pact = PactReader.readPact(PactReaderSource.FileSource(pactFile))
 
         //then:
-        pact should { it is RequestResponsePact }
+        pact shouldBeInstance RequestResponsePact::class
         pact as RequestResponsePact
         pact.requestResponseInteractions[0].providerStates shouldBe listOf(ProviderState("test state", mapOf("name" to "Testy")), ProviderState("test state 2", mapOf("name" to "Testy2")))
     }
@@ -221,7 +224,7 @@ class PactReaderSpec : StringSpecExt({
         val pact = PactReader.readPact(PactReaderSource.FileSource(pactFile))
 
         //then:
-        pact should { it is RequestResponsePact }
+        pact shouldBeInstance RequestResponsePact::class
         pact as RequestResponsePact
         pact.requestResponseInteractions[0].providerStates shouldBe listOf(ProviderState("test state"))
     }
@@ -236,7 +239,7 @@ class PactReaderSpec : StringSpecExt({
         val pact = PactReader.readPact(PactReaderSource.FileSource(pactFile))
 
         //then:
-        pact should { it is RequestResponsePact }
+        pact shouldBeInstance RequestResponsePact::class
         pact as RequestResponsePact
         (pact.requestResponseInteractions[0].request.body as OptionalBody.StringBody).unwrap() shouldBe "\"This is a string\""
         (pact.requestResponseInteractions[0].response.body as OptionalBody.StringBody).unwrap() shouldBe "\"This is a string\""
@@ -252,7 +255,7 @@ class PactReaderSpec : StringSpecExt({
         //then:
         verify(exactly = 1) { anyConstructed<RequestResponsePactV2Deserializer>().createPact(match { it == PactSource.FileSource(pactFile) }, any()) }
         verify(exactly = 0) { anyConstructed<RequestResponsePactV3Deserializer>().createPact(any(), any()) }
-        pact should { it is RequestResponsePact }
+        pact shouldBeInstance RequestResponsePact::class
         pact.source shouldBe PactSource.FileSource(pactFile)
     }
 
@@ -264,9 +267,9 @@ class PactReaderSpec : StringSpecExt({
         val pact = PactReader.readPact(PactReaderSource.ClosurePactSource { PactReaderSource.FileSource(pactFile) })
 
         //then:
-        pact should { it is RequestResponsePact }
+        pact shouldBeInstance RequestResponsePact::class
         pact.interactions.forEach { interaction ->
-            //interaction should { regex.matches(it.interactionId) } // TODO: interaction id does not exist
+            //interaction shouldBeTrue regex.matches(it.interactionId)  // TODO: interaction id does not exist
         }
     }
 
@@ -278,9 +281,9 @@ class PactReaderSpec : StringSpecExt({
         val pact = PactReader.readPact(PactReaderSource.ClosurePactSource { PactReaderSource.FileSource(pactFile) })
 
         //then:
-        pact should { it is RequestResponsePact }
+        pact shouldBeInstance RequestResponsePact::class
         pact.interactions.forEach { interaction ->
-            //interaction should { regex.matches(it.interactionId) } // TODO: interaction id does not exist
+            //interaction shouldBeTrue regex.matches(it.interactionId) // TODO: interaction id does not exist
         }
     }
 
@@ -293,9 +296,9 @@ class PactReaderSpec : StringSpecExt({
         val pact = PactReader.readPact(PactReaderSource.ClosurePactSource { PactReaderSource.FileSource(pactFile) })
 
         //then:
-        pact should { it is MessagePact }
+        pact shouldBeInstance MessagePact::class
         pact.interactions.forEach { interaction ->
-            interaction should { regex.matches(it.interactionId) }
+            interaction shouldBeTrue regex.matches(it.interactionId)
         }
     }*/
 
@@ -328,7 +331,7 @@ class PactReaderSpec : StringSpecExt({
         val pact = PactReader.readPact(PactReaderSource.ClosurePactSource { PactReaderSource.FileSource(pactFile) })
 
         //then:
-        pact should { it is RequestResponsePact }
+        pact shouldBeInstance RequestResponsePact::class
         val interaction = pact.interactions[0] as RequestResponseInteraction
         (interaction.request.body as OptionalBody.StringBody).unwrap() shouldBe "{\"entityName\":\"mock-name\",\"xml\":\"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n\"}"
         (interaction.request.generators.categories[Category.BODY]!!["$"]!! as RegexGenerator).regex shouldBe "{\n  \"entityName\": \"\${eName}\",\n  \"xml\": \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n\"\n}"
