@@ -6,7 +6,7 @@ import io.kotlintest.matchers.shouldEqual
 import io.kotlintest.specs.StringSpec
 import java.nio.charset.Charset
 
-class OptionalBodySpec : StringSpec() {
+class OptionalBodyTest : StringSpec() {
 
     private val missingBody = OptionalBody.missing()
     private val nullBody = OptionalBody.nullBody()
