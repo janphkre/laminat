@@ -144,13 +144,23 @@ MatchingConfig.setBodyMatcher(Regex("application/custom-content-type"), CustomBo
 GeneratorsConfig.setContentTypeHandler("application/custom-content-type", CustomContentTypeHandler())
 ```
 
+### Differences to pact-jvm
+While upgrading the v3.5.x branch to incorporate v.3.6.x features and bug fixes, a few things were changed in contrast to the original pact-jvm implementation:
+Features that changed the overall behaviour by feature request were implemented behind a feature toggle.
+These toggles can be altered with
+```kotlin
+FeatureFlags.enableFeature(Feature.MERGE_EXISTING_PACTS_FILE)
+FeatureFlags.enableFeature(Feature.MERGE_REMOVE_EXACT_DUPLICATES)
+FeatureFlags.disableFeature(Feature.NULL_VALUES_JSON_BODY_GENERATOR)
+```
+See the javadoc of each enum value: [Feature.kt][4]
 # laminat-retrofit
-Extension for laminat to generate pact requests from retrofit definitons. 
+Extension for laminat to generate pact requests from retrofit definitions. 
 Check out the [unit test]{3] for an example usage.
 
 
 # laminat-retrofit-noop
-Extension for laminat to generate pact requests from retrofit definitons. This is the no op version containing only source level annotations.
+Extension for laminat to generate pact requests from retrofit definitions. This is the no op version containing only source level annotations.
 
 By using only source level annotations, the annotations can be used on the main / release api client without publishing the additional metadata in the release apk.
 
@@ -158,3 +168,4 @@ By using only source level annotations, the annotations can be used on the main 
 [1]: https://github.com/square/okhttp
 [2]: https://github.com/DiUS/pact-jvm/tree/v3.5.x-jre7
 [3]: https://github.com/janphkre/laminat/blob/3.6.0-alpha-1/retrofit-extension/src/test/java/com/janphkre/laminat/retrofit/RetrofitDslTest.kt
+[4]: https://github.com/janphkre/laminat/blob/v3.6.x-android/laminat/src/main/java/au/com/dius/pact/external/features/Feature.kt
