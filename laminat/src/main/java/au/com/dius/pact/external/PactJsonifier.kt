@@ -28,11 +28,11 @@ import java.util.Locale
  */
 object PactJsonifier {
 
-    fun generateJson(pact: RequestResponsePact, baseDir: File, serializationConfig: PactSerializationConfig = PactSerializationConfig(PactSpecVersion.V3, null)) {
+    fun generateJson(pact: Pact, baseDir: File, serializationConfig: PactSerializationConfig = PactSerializationConfig(PactSpecVersion.V3, null)) {
         generateJson(listOf(pact), baseDir, serializationConfig)
     }
 
-    fun generateJson(pacts: Collection<RequestResponsePact>, baseDir: File, serializationConfig: PactSerializationConfig = PactSerializationConfig(PactSpecVersion.V3, null)) {
+    fun generateJson(pacts: Collection<Pact>, baseDir: File, serializationConfig: PactSerializationConfig = PactSerializationConfig(PactSpecVersion.V3, null)) {
         baseDir.mkdir()
         pacts.forEach {
             val conflicts = it.conflictsWithSelf()
