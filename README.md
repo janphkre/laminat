@@ -7,10 +7,10 @@ Lightweight Android version of Pact. Enables consumer driven contract testing, p
 The pact library is meant for consumer driven contracts. This means that you, as a consumer, define the content and form of a request or message towards a provider.
 In order to maintain consistency between the consumer and the provider pact defines a dsl which can be serialized and deserialized into and from json.
 Therefore the consumer defines the pact and publishes it to the provider.
-From this pact a mocked/stubbed provider can be definied on the consumer side and a mocked/stubbed consumer can be defined on the provider side which makes it possible to ensure the integration for both sides of the contract.
+From this pact a mocked/stubbed provider can be defined on the consumer side and a mocked/stubbed consumer can be defined on the provider side which makes it possible to ensure the integration for both sides of the contract.
 
 This is a lightweight adaption of [pact-jvm7.0][2] for the Android-vm. It is only meant for the consumer side of pact,
-therefore it only contains pact creation, serialization and consumer matching. This adaption was mostly created to get rid of the spring framework and additonal unused HTTP-Clients to maintain a small library on android so you can use a HttpLibrary of your choice. At the moment it comes bundled with the [OkHttp MockWebServer library][1].
+therefore it only contains pact creation, serialization and consumer matching. This adaption was mostly created to get rid of the spring framework and additional unused HTTP-Clients to maintain a small library on android so you can use a HttpLibrary of your choice. At the moment it comes bundled with the [OkHttp MockWebServer library][1].
 Also, this lightweight adaption requires neither groovy, scala nor ruby anymore.
 
 Get the library through jitpack:
