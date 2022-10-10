@@ -2,6 +2,7 @@ package au.com.dius.pact.model.matchingrules
 
 import au.com.dius.pact.model.PactSerializationConfig
 import au.com.dius.pact.model.PactSpecVersion
+import au.com.dius.pact.model.serialization.SerializationConstants
 
 /**
  * Matching rules category
@@ -69,10 +70,9 @@ data class Category @JvmOverloads constructor(
 
     fun applyMatcherRootPrefix(prefix: String) {
         matchingRules = matchingRules.mapKeys { e ->
-            if (e.key.startsWith(prefix)) {
-                e.key
-            } else {
-                prefix + e.key
+            when {
+                e.key.startsWith("$") -> prefix + e.key.substring(1)
+                else -> prefix + e.key
             }
         }.toMutableMap()
     }
@@ -80,15 +80,26 @@ data class Category @JvmOverloads constructor(
     fun toMap(serializationConfig: PactSerializationConfig): Map<String, Any?> {
         return if (serializationConfig.specVersion < PactSpecVersion.V3) {
             matchingRules.entries.associate {
-                val keyBase = "\$.$name"
-                if (it.key.startsWith('$')) {
-                    Pair(keyBase + it.key.substring(1), it.value.toMap(serializationConfig))
-                } else {
-                    Pair(keyBase + it.key, it.value.toMap(serializationConfig))
+                val keyBase = when (name) {
+                    SerializationConstants.HEADER_KEY -> "\$.${SerializationConstants.HEADERS_KEY}"
+                    else -> "\$.$name"
                 }
+                val key = when {
+                    it.key.startsWith('$') -> keyBase + it.key.substring(1)
+                    it.key.isNotEmpty() && !it.key.startsWith('[') -> keyBase + '.' + it.key
+                    it.key.isNotEmpty() -> keyBase + it.key
+                    else -> keyBase
+                }
+                Pair(key, it.value.toMap(serializationConfig))
             }
         } else {
-            matchingRules.entries.associate { Pair(it.key, it.value.toMap(serializationConfig)) }
+            matchingRules.flatMap { entry ->
+                if (entry.key.isEmpty()) {
+                    entry.value.toMap(serializationConfig).entries.map { it.toPair() }
+                } else {
+                    listOf(entry.key to entry.value.toMap(serializationConfig))
+                }
+            }.toMap()
         }
     }
 }
