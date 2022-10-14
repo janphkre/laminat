@@ -63,17 +63,15 @@ data class MatchingRules(
         }
     }
 
-    fun toV3Map(serializationConfig: PactSerializationConfig): Map<String, Map<String, Any?>> {
-        val map = HashMap<String, Map<String, Any?>>()
-
-        rules.forEach {
-            map[it.key] = it.value.toMap(serializationConfig)
-        }
-
-        return map
+    private fun toV3Map(serializationConfig: PactSerializationConfig): Map<String, Map<String, Any?>> {
+        return rules
+            .filterNot { it.value.isEmpty() }
+            .mapValuesTo(HashMap()) {
+                it.value.toMap(serializationConfig)
+            }
     }
 
-    fun toV2Map(serializationConfig: PactSerializationConfig): Map<String, Any?> {
+    private fun toV2Map(serializationConfig: PactSerializationConfig): Map<String, Any?> {
         val map = HashMap<String, Any?>()
 
         rules.forEach { entry ->

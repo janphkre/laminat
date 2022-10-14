@@ -28,22 +28,22 @@ class RequestResponsePactV2Deserializer : RequestResponsePactV3Deserializer() {
         return this.entries.map { (key, json) ->
             // Key structure: $.category.anything
             val keySplit = key.split('.')
-            val offsetKey = keySplit.drop(2).joinToString(separator = ".", prefix = "$.")
+            val offsetKey = keySplit.drop(2).joinToString(separator = ".")
             if (keySplit[1].startsWith(SerializationConstants.BODY_KEY, ignoreCase = true)) {
                 IntermediateCategory(
                     SerializationConstants.BODY_KEY,
-                    offsetKey,
+                    "\$.$offsetKey",
                     json
                 )
             } else if (keySplit[1].startsWith(SerializationConstants.HEADERS_KEY, ignoreCase = true)) {
                 IntermediateCategory(
-                    SerializationConstants.HEADERS_KEY,
+                    SerializationConstants.HEADER_KEY,
                     offsetKey,
                     json
                 )
             } else if (keySplit[1].startsWith(SerializationConstants.HEADER_KEY, ignoreCase = true)) {
                 IntermediateCategory(
-                    SerializationConstants.HEADERS_KEY,
+                    SerializationConstants.HEADER_KEY,
                     offsetKey,
                     json
                 )

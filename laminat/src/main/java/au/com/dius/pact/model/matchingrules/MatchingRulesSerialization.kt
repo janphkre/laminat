@@ -12,7 +12,7 @@ enum class MatchingRulesSerialization(
 
     DATE(SerializationConstants.DATE_KEY) {
         override fun fromJson(json: Json.Object): MatchingRule {
-            return DateMatcher(json[SerializationConstants.DATE_KEY].getValue())
+            return json[SerializationConstants.DATE_KEY].getValueOrNull<String>()?.let { DateMatcher(it) } ?: DateMatcher()
         }
     },
     EQUALS(SerializationConstants.EQUALITY_KEY) {
@@ -22,7 +22,10 @@ enum class MatchingRulesSerialization(
     },
     INCLUDE(SerializationConstants.INCLUDE_KEY) {
         override fun fromJson(json: Json.Object): MatchingRule {
-            return IncludeMatcher(json[SerializationConstants.VALUE_KEY].getValue())
+            val value = json[SerializationConstants.VALUE_KEY].getValueOrNull<String>()
+                ?: json[SerializationConstants.INCLUDE_KEY].getValueOrNull<String>()
+                ?: throw UnsupportedOperationException("Can not create a include matcher without a value!")
+            return IncludeMatcher(value)
         }
     },
     NUMBER(SerializationConstants.NUMBER_KEY) {
@@ -52,12 +55,12 @@ enum class MatchingRulesSerialization(
     },
     TIME(SerializationConstants.TIME_KEY) {
         override fun fromJson(json: Json.Object): MatchingRule {
-            return TimeMatcher(json[SerializationConstants.TIME_KEY].getValue())
+            return json[SerializationConstants.TIME_KEY].getValueOrNull<String>()?.let { TimeMatcher(it) } ?: TimeMatcher()
         }
     },
     TIMESTAMP(SerializationConstants.TIMESTAMP_KEY) {
         override fun fromJson(json: Json.Object): MatchingRule {
-            return TimestampMatcher(json[SerializationConstants.TIMESTAMP_KEY].getValue())
+            return json[SerializationConstants.TIMESTAMP_KEY].getValueOrNull<String>()?.let { TimestampMatcher(it) } ?: TimestampMatcher()
         }
     },
     TYPE(SerializationConstants.TYPE_KEY) {
@@ -65,12 +68,22 @@ enum class MatchingRulesSerialization(
             return if (json.containsKey(SerializationConstants.MIN_KEY) && json.containsKey(SerializationConstants.MAX_KEY)) {
                 MinMaxTypeMatcher(json[SerializationConstants.MIN_KEY].getValue(), json[SerializationConstants.MAX_KEY].getValue())
             } else if (json.containsKey(SerializationConstants.MIN_KEY)) {
-                MinTypeMatcher(json[SerializationConstants.MIN_KEY].getValue())
+                return MIN.fromJson(json)
             } else if (json.containsKey(SerializationConstants.MAX_KEY)) {
-                MaxTypeMatcher(json[SerializationConstants.MAX_KEY].getValue())
+                return MAX.fromJson(json)
             } else {
                 TypeMatcher
             }
+        }
+    },
+    MIN(SerializationConstants.MIN_KEY) {
+        override fun fromJson(json: Json.Object): MatchingRule {
+            return MinTypeMatcher(json[SerializationConstants.MIN_KEY].getValue())
+        }
+    },
+    MAX(SerializationConstants.MAX_KEY) {
+        override fun fromJson(json: Json.Object): MatchingRule {
+            return MaxTypeMatcher(json[SerializationConstants.MAX_KEY].getValue())
         }
     },
     NULL(SerializationConstants.NULL_KEY) {
@@ -80,7 +93,7 @@ enum class MatchingRulesSerialization(
     },
     VALUES(SerializationConstants.VALUES_KEY) {
         override fun fromJson(json: Json.Object): MatchingRule {
-            TODO("Not yet implemented")
+            return ValuesMatcher
         }
     };
 

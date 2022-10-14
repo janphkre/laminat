@@ -19,7 +19,7 @@ object SerializationConstants {
 
     const val METHOD_KEY = "method"
     const val PATH_KEY = "path"
-    @Deprecated("Use HEADERS_KEY instead!")
+    @Deprecated("Use HEADERS_KEY instead! Used in code by matching rules though.")
     const val HEADER_KEY = "header"
     const val HEADERS_KEY = "headers"
     const val QUERY_KEY = "query"

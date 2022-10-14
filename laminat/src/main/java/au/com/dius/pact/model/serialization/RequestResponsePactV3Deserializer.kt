@@ -121,11 +121,19 @@ open class RequestResponsePactV3Deserializer : PactDeserializer {
         }
         this as Json.Object
         return this.entries.associateTo(HashMap()) { (key, json) ->
+            val adaptedKey = when (key) {
+                SerializationConstants.HEADERS_KEY -> {
+                    SerializationConstants.HEADER_KEY
+                }
+                else -> {
+                    key
+                }
+            }
             val matchingCategory = MatchingCategory(
-                name = key,
-                matchingRules = json.toMatchingRuleGroupsMap(key)
+                name = adaptedKey,
+                matchingRules = json.toMatchingRuleGroupsMap(adaptedKey)
             )
-            key to matchingCategory
+            adaptedKey to matchingCategory
         }
     }
 
@@ -134,6 +142,9 @@ open class RequestResponsePactV3Deserializer : PactDeserializer {
             return HashMap()
         }
         this as Json.Object
+        if(this[SerializationConstants.MATCHERS_KEY] is Json.Array) {
+            return mutableMapOf("" to this.toMatchingRuleGroup())
+        }
         return this.entries.associateTo(HashMap()) { (key, json) ->
             val simplifiedKey = key.removePrefix("\$.$prefixName")
             simplifiedKey to json.toMatchingRuleGroup()

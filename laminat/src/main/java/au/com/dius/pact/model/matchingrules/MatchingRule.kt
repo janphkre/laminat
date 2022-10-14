@@ -145,6 +145,10 @@ object NullMatcher : MatchingRule {
     override fun toMap() = mapOf(SerializationConstants.MATCH_KEY to MatchingRulesSerialization.NULL.type)
 }
 
+object ValuesMatcher: MatchingRule {
+    override fun toMap(): Map<String, Any?> = mapOf(SerializationConstants.MATCH_KEY to MatchingRulesSerialization.VALUES.type)
+}
+
 data class MatchingRuleGroup @JvmOverloads constructor(
     val rules: MutableList<MatchingRule> = mutableListOf(),
     val ruleLogic: RuleLogic = RuleLogic.AND
