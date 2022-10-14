@@ -145,7 +145,7 @@ object NullMatcher : MatchingRule {
     override fun toMap() = mapOf(SerializationConstants.MATCH_KEY to MatchingRulesSerialization.NULL.type)
 }
 
-object ValuesMatcher: MatchingRule {
+object ValuesMatcher : MatchingRule {
     override fun toMap(): Map<String, Any?> = mapOf(SerializationConstants.MATCH_KEY to MatchingRulesSerialization.VALUES.type)
 }
 

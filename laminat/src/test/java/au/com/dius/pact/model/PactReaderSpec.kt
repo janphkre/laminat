@@ -327,6 +327,7 @@ class PactReaderSpec : StringSpecExt({
         pact shouldBeInstance RequestResponsePact::class
         val interaction = pact.interactions[0] as RequestResponseInteraction
         (interaction.request.body as OptionalBody.StringBody).unwrap() shouldBe "{\"entityName\":\"mock-name\",\"xml\":\"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n\"}"
-        (interaction.request.generators.categories[Category.BODY]!!["$"]!! as RegexGenerator).regex shouldBe "{\n  \"entityName\": \"\${eName}\",\n  \"xml\": \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n\"\n}"
+        (interaction.request.generators.categories[Category.BODY]!!["$"]!! as RegexGenerator)
+            .regex shouldBe "{\n  \"entityName\": \"\${eName}\",\n  \"xml\": \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n\"\n}"
     }
 })

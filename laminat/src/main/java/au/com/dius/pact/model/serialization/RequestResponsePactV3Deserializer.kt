@@ -142,7 +142,7 @@ open class RequestResponsePactV3Deserializer : PactDeserializer {
             return HashMap()
         }
         this as Json.Object
-        if(this[SerializationConstants.MATCHERS_KEY] is Json.Array) {
+        if (this[SerializationConstants.MATCHERS_KEY] is Json.Array) {
             return mutableMapOf("" to this.toMatchingRuleGroup())
         }
         return this.entries.associateTo(HashMap()) { (key, json) ->

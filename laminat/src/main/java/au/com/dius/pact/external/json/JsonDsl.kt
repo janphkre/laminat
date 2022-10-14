@@ -6,7 +6,7 @@ fun jsonObject(vararg entries: Pair<String, Any?>): Json {
     )
 }
 
-fun jsonArray(vararg entries: Any?) : Json {
+fun jsonArray(vararg entries: Any?): Json {
     return Json.Array(
         entries.mapTo(mutableListOf()) { json(it) }
     )

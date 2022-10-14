@@ -10,8 +10,8 @@ import au.com.dius.pact.model.serialization.RequestResponsePactV3Deserializer
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.specs.StringSpec
 
-/// MatchingRulesSpec in pact-jvm
-class MatchingCategorySpec: StringSpec({
+// / MatchingRulesSpec in pact-jvm
+class MatchingCategorySpec : StringSpec({
 
     "fromMap handles a null map" {
         // when:
@@ -56,16 +56,22 @@ class MatchingCategorySpec: StringSpec({
         matchingRules.keys shouldBe setOf("path", "query", "header", "body")
         matchingRules["path"] shouldBe Category("path", mutableMapOf("" to MatchingRuleGroup(mutableListOf(RegexMatcher("\\w+")))))
         matchingRules["query"] shouldBe Category("query", mutableMapOf("Q1" to MatchingRuleGroup(mutableListOf(RegexMatcher("\\d+")))))
-        matchingRules["header"] shouldBe Category("header", mutableMapOf(
-            "HEADERX" to MatchingRuleGroup(mutableListOf(IncludeMatcher("ValueA"))),
-            "HEADERY" to MatchingRuleGroup(mutableListOf(IncludeMatcher("ValueA")))
-        ))
-        matchingRules["body"] shouldBe Category("body", mutableMapOf(
-            "$.animals" to MatchingRuleGroup(mutableListOf(MinTypeMatcher(1))),
-            "$.animals[*].*" to MatchingRuleGroup(mutableListOf(TypeMatcher)),
-            "$.animals[*].children" to MatchingRuleGroup(mutableListOf(MinTypeMatcher(1))),
-            "$.animals[*].children[*].*" to MatchingRuleGroup(mutableListOf(TypeMatcher))
-        ))
+        matchingRules["header"] shouldBe Category(
+            "header",
+            mutableMapOf(
+                "HEADERX" to MatchingRuleGroup(mutableListOf(IncludeMatcher("ValueA"))),
+                "HEADERY" to MatchingRuleGroup(mutableListOf(IncludeMatcher("ValueA")))
+            )
+        )
+        matchingRules["body"] shouldBe Category(
+            "body",
+            mutableMapOf(
+                "$.animals" to MatchingRuleGroup(mutableListOf(MinTypeMatcher(1))),
+                "$.animals[*].*" to MatchingRuleGroup(mutableListOf(TypeMatcher)),
+                "$.animals[*].children" to MatchingRuleGroup(mutableListOf(MinTypeMatcher(1))),
+                "$.animals[*].children[*].*" to MatchingRuleGroup(mutableListOf(TypeMatcher))
+            )
+        )
     }
 
     "loads V3 matching rules" {
@@ -73,13 +79,13 @@ class MatchingCategorySpec: StringSpec({
         val matchingRulesMap = jsonObject(
             "path" to jsonObject(
                 "matchers" to jsonArray(
-                    jsonObject( "match" to "regex", "regex" to "\\w+" )
+                    jsonObject("match" to "regex", "regex" to "\\w+")
                 )
             ),
             "query" to jsonObject(
                 "Q1" to jsonObject(
                     "matchers" to jsonArray(
-                        jsonObject( "match" to "regex", "regex" to "\\d+" )
+                        jsonObject("match" to "regex", "regex" to "\\d+")
                     )
                 )
             ),
@@ -118,15 +124,21 @@ class MatchingCategorySpec: StringSpec({
         matchingRules.keys shouldBe setOf("path", "query", "header", "body")
         matchingRules["path"] shouldBe Category("path", mutableMapOf("" to MatchingRuleGroup(mutableListOf(RegexMatcher("\\w+")))))
         matchingRules["query"] shouldBe Category("query", mutableMapOf("Q1" to MatchingRuleGroup(mutableListOf(RegexMatcher("\\d+")))))
-        matchingRules["header"] shouldBe Category("header", mutableMapOf(
-            "HEADERY" to MatchingRuleGroup(mutableListOf(IncludeMatcher("ValueA"), IncludeMatcher("ValueB")))
-        ))
-        matchingRules["body"] shouldBe Category("body", mutableMapOf(
-            "$.animals" to MatchingRuleGroup(mutableListOf(MinTypeMatcher(1))),
-            "$.animals[*].*" to MatchingRuleGroup(mutableListOf(TypeMatcher)),
-            "$.animals[*].children" to MatchingRuleGroup(mutableListOf(MinTypeMatcher(1))),
-            "$.animals[*].children[*].*" to MatchingRuleGroup(mutableListOf(TypeMatcher))
-        ))
+        matchingRules["header"] shouldBe Category(
+            "header",
+            mutableMapOf(
+                "HEADERY" to MatchingRuleGroup(mutableListOf(IncludeMatcher("ValueA"), IncludeMatcher("ValueB")))
+            )
+        )
+        matchingRules["body"] shouldBe Category(
+            "body",
+            mutableMapOf(
+                "$.animals" to MatchingRuleGroup(mutableListOf(MinTypeMatcher(1))),
+                "$.animals[*].*" to MatchingRuleGroup(mutableListOf(TypeMatcher)),
+                "$.animals[*].children" to MatchingRuleGroup(mutableListOf(MinTypeMatcher(1))),
+                "$.animals[*].children[*].*" to MatchingRuleGroup(mutableListOf(TypeMatcher))
+            )
+        )
     }
 
     // @Issue("#743")
@@ -136,7 +148,7 @@ class MatchingCategorySpec: StringSpec({
             "path" to jsonObject(
                 "" to jsonObject(
                     "matchers" to jsonArray(
-                        jsonObject( "match" to "regex", "regex" to "\\w+" )
+                        jsonObject("match" to "regex", "regex" to "\\w+")
                     )
                 )
             )
