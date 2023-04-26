@@ -66,13 +66,10 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
                     requestMatch.interaction.response.generateResponse().mapToMockResponse()
                 }
                 is RequestMatch.PartialRequestMatch -> {
-                    notFoundMockResponse().setBody("Partially matched ${requestMatch.interaction.uniqueKey()}:\n${requestMatch.problems.joinToString("\n")}")
+                    notFoundMockResponse().setBody(requestMatch.toErrorMessage())
                 }
                 is RequestMatch.RequestMismatch -> {
-                    notFoundMockResponse().setBody(
-                        "Failed to match request at all! Best match was with ${requestMatch.interaction?.uniqueKey()}:\n" +
-                            "${requestMatch.problems?.joinToString("\n")}"
-                    )
+                    notFoundMockResponse().setBody(requestMatch.toErrorMessage())
                 }
             }
         } catch (e: PactMergeException) {

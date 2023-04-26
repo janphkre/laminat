@@ -1,6 +1,5 @@
 package au.com.dius.pact.external
 
-import au.com.dius.pact.PactWebServer
 import au.com.dius.pact.model.RequestResponseInteraction
 import au.com.dius.pact.model.RequestResponsePact
 import java.io.IOException
@@ -14,8 +13,8 @@ import okhttp3.mockwebserver.MockWebServer
  */
 class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int): PactWebServer {
 
-    private val mockWebServer = MockWebServer()
-    private val dispatcher = PactDispatcher(allowUnexpectedKeys, pactErrorCode)
+    internal val mockWebServer = MockWebServer()
+    internal val dispatcher = PactDispatcher(allowUnexpectedKeys, pactErrorCode)
     private var currentInteractionList: List<RequestResponseInteraction> = emptyList()
 
     init {

@@ -1,7 +1,9 @@
 package au.com.dius.pact.external.monitoring
 
 import android.util.Log
+import au.com.dius.pact.external.PactWebServer
 import au.com.dius.pact.external.StatefullPactWebServer
+import au.com.dius.pact.external.StatelessPactWebServer
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
@@ -14,11 +16,17 @@ import okhttp3.mockwebserver.RecordedRequest
  *
  * @author Jan Phillip Kretzschmar
  */
-class MonitoringStatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int) :
-    StatefullPactWebServer(allowUnexpectedKeys, pactErrorCode) {
+//FIXME: HANDLE DELEGATION WITHOUT INTERNAL PROPERTIES
+class MonitoringStatefullPactWebServer(
+    private val delegate: StatefullPactWebServer
+) : PactWebServer by delegate {
+
+    constructor(allowUnexpectedKeys: Boolean, pactErrorCode: Int) : this(
+        StatefullPactWebServer(allowUnexpectedKeys, pactErrorCode)
+    )
 
     init {
-        mockWebServer.dispatcher = MonitoringDispatcher(dispatcher)
+        delegate.delegate.mockWebServer.dispatcher = MonitoringDispatcher(delegate.delegate.dispatcher)
     }
 
     private class MonitoringDispatcher(

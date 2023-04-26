@@ -12,7 +12,17 @@ import au.com.dius.pact.model.RequestResponseInteraction
  * @author Jan Philip Kretzschmar
  */
 sealed class RequestMatch {
-    data class RequestMismatch(val interaction: RequestResponseInteraction? = null, val problems: List<RequestMatchProblem>? = null) : RequestMatch()
-    data class FullRequestMatch(val interaction: RequestResponseInteraction, val matchedCount: Int) : RequestMatch()
-    data class PartialRequestMatch(val interaction: RequestResponseInteraction, val problems: List<RequestMatchProblem>) : RequestMatch()
+    abstract val interaction: RequestResponseInteraction?
+
+    data class RequestMismatch(override val interaction: RequestResponseInteraction? = null, val problems: List<RequestMatchProblem>? = null) : RequestMatch() {
+        fun toErrorMessage(): String {
+            return "Failed to match request at all! Best match was with ${interaction?.uniqueKey()}:\n${problems?.joinToString("\n")}"
+        }
+    }
+    data class FullRequestMatch(override val interaction: RequestResponseInteraction, val matchedCount: Int) : RequestMatch()
+    data class PartialRequestMatch(override val interaction: RequestResponseInteraction, val problems: List<RequestMatchProblem>) : RequestMatch() {
+        fun toErrorMessage(): String {
+            return "Partially matched ${interaction.uniqueKey()}:\n${problems.joinToString("\n")}"
+        }
+    }
 }

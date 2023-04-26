@@ -1,6 +1,5 @@
 package au.com.dius.pact.external
 
-import au.com.dius.pact.PactWebServer
 import au.com.dius.pact.model.ProviderState
 import au.com.dius.pact.model.RequestResponsePact
 import java.util.LinkedList
@@ -11,15 +10,14 @@ import java.util.LinkedList
  *
  * @author Jan Phillip Kretzschmar
  */
-open class StatefullPactWebServer(
-    private val delegate: StatelessPactWebServer
+class StatefullPactWebServer(
+    internal val delegate: StatelessPactWebServer
 ) : PactWebServer {
 
     private val definedPactList = LinkedList<RequestResponsePact>()
     private var currentProviderStates: List<ProviderState> = emptyList()
 
-
-    constructor(allowUnexpectedKeys: Boolean, pactErrorCode: Int): this(
+    constructor(allowUnexpectedKeys: Boolean, pactErrorCode: Int) : this(
         StatelessPactWebServer(allowUnexpectedKeys, pactErrorCode)
     )
 
