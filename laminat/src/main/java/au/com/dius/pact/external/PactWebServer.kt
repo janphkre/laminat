@@ -1,7 +1,5 @@
 package au.com.dius.pact.external
 
-import au.com.dius.pact.external.IncomingRequest
-import au.com.dius.pact.external.RequestMatch
 import au.com.dius.pact.model.RequestResponsePact
 
 /**

@@ -32,7 +32,7 @@ class RecordingPactWebServer(
             interaction.uniqueKey() == it.interaction?.uniqueKey() &&
                 interaction.request == it.interaction?.request
         } ?: throw InteractionValidationException("Could not find any interaction that matches the given interaction")
-        when(match) {
+        when (match) {
             is RequestMatch.FullRequestMatch -> { }
             is RequestMatch.PartialRequestMatch -> throw InteractionValidationException(match.toErrorMessage())
             is RequestMatch.RequestMismatch -> throw InteractionValidationException(match.toErrorMessage())

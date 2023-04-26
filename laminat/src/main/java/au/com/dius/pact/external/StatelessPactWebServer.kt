@@ -11,7 +11,7 @@ import okhttp3.mockwebserver.MockWebServer
  *
  * @author Jan Phillip Kretzschmar
  */
-class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int): PactWebServer {
+class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int) : PactWebServer {
 
     internal val mockWebServer = MockWebServer()
     internal val dispatcher = PactDispatcher(allowUnexpectedKeys, pactErrorCode)
