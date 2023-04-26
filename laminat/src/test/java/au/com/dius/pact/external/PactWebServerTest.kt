@@ -60,7 +60,7 @@ class PactWebServerTest {
         Assert.assertEquals(1, mockPactWebServer.getDefinedPactCount())
         Assert.assertEquals(2, mockPactWebServer.getDefinedInteractionCount())
         Assert.assertEquals(0, mockPactWebServer.getCurrentInteractionCount())
-        Assert.assertEquals(false, mockPactWebServer.validatePactsCompleted())
+        Assert.assertEquals(false, mockPactWebServer.validateInteractionsCompleted())
     }
 
     @Test
@@ -70,7 +70,7 @@ class PactWebServerTest {
         Assert.assertEquals(1, mockPactWebServer.getDefinedPactCount())
         Assert.assertEquals(2, mockPactWebServer.getDefinedInteractionCount())
         Assert.assertEquals(2, mockPactWebServer.getCurrentInteractionCount())
-        Assert.assertEquals(false, mockPactWebServer.validatePactsCompleted())
+        Assert.assertEquals(false, mockPactWebServer.validateInteractionsCompleted())
     }
 
     @Test
@@ -80,7 +80,7 @@ class PactWebServerTest {
         Assert.assertEquals(1, mockPactWebServer.getDefinedPactCount())
         Assert.assertEquals(2, mockPactWebServer.getDefinedInteractionCount())
         Assert.assertEquals(1, mockPactWebServer.getCurrentInteractionCount())
-        Assert.assertEquals(false, mockPactWebServer.validatePactsCompleted())
+        Assert.assertEquals(false, mockPactWebServer.validateInteractionsCompleted())
     }
 
     @Test
@@ -90,7 +90,7 @@ class PactWebServerTest {
         Assert.assertEquals(0, mockPactWebServer.getDefinedPactCount())
         Assert.assertEquals(0, mockPactWebServer.getDefinedInteractionCount())
         Assert.assertEquals(0, mockPactWebServer.getCurrentInteractionCount())
-        Assert.assertEquals(true, mockPactWebServer.validatePactsCompleted())
+        Assert.assertEquals(true, mockPactWebServer.validateInteractionsCompleted())
     }
 
     @Test
@@ -101,7 +101,7 @@ class PactWebServerTest {
         Assert.assertEquals(true, httpClient.newCall(getRequest()).execute().isSuccessful)
         Assert.assertEquals(false, httpClient.newCall(postRequest()).execute().isSuccessful)
 
-        Assert.assertEquals(false, mockPactWebServer.validatePactsCompleted())
+        Assert.assertEquals(false, mockPactWebServer.validateInteractionsCompleted())
     }
 
     @Test
@@ -112,7 +112,7 @@ class PactWebServerTest {
         Assert.assertEquals(true, httpClient.newCall(getRequest()).execute().isSuccessful)
         Assert.assertEquals(true, httpClient.newCall(postRequest()).execute().isSuccessful)
 
-        Assert.assertEquals(true, mockPactWebServer.validatePactsCompleted())
+        Assert.assertEquals(true, mockPactWebServer.validateInteractionsCompleted())
     }
 
     private fun getRequest(): Request {

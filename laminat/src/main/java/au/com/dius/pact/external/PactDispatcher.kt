@@ -46,7 +46,12 @@ internal class PactDispatcher(allowUnexpectedKeys: Boolean, private val pactErro
         unmatchedRequestsCount = 0L
     }
 
+    @Deprecated("Use validateInteractionsCompleted instead!", ReplaceWith("validateInteractionsCompleted(count)"))
     fun validatePactsCompleted(count: Long): Boolean {
+        return validateInteractionsCompleted(count)
+    }
+
+    fun validateInteractionsCompleted(count: Long): Boolean {
         return matchedRequestCount == count && unmatchedRequestsCount == 0L
     }
 

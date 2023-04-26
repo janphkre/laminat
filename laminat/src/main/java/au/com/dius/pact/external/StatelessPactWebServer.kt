@@ -1,5 +1,6 @@
 package au.com.dius.pact.external
 
+import au.com.dius.pact.PactWebServer
 import au.com.dius.pact.model.RequestResponseInteraction
 import au.com.dius.pact.model.RequestResponsePact
 import java.io.IOException
@@ -11,17 +12,17 @@ import okhttp3.mockwebserver.MockWebServer
  *
  * @author Jan Phillip Kretzschmar
  */
-open class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int) {
+class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int): PactWebServer {
 
-    internal val mockWebServer = MockWebServer()
-    internal val dispatcher = PactDispatcher(allowUnexpectedKeys, pactErrorCode)
+    private val mockWebServer = MockWebServer()
+    private val dispatcher = PactDispatcher(allowUnexpectedKeys, pactErrorCode)
     private var currentInteractionList: List<RequestResponseInteraction> = emptyList()
 
     init {
         mockWebServer.dispatcher = dispatcher
     }
 
-    open fun teardown() {
+    override fun teardown() {
         try {
             mockWebServer.shutdown()
         } catch (e: IOException) {
@@ -30,50 +31,55 @@ open class StatelessPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: I
         clearPacts()
     }
 
-    open fun addPact(pact: RequestResponsePact) {
-        updateInteractions(pact)
+    override fun addPact(pact: RequestResponsePact) {
+        addCurrentInteractions(pact.requestResponseInteractions)
     }
 
-    open fun addPacts(pacts: Collection<RequestResponsePact>) {
-        pacts.forEach { updateInteractions(it) }
+    override fun addPacts(pacts: Collection<RequestResponsePact>) {
+        pacts.forEach { addCurrentInteractions(it.requestResponseInteractions) }
     }
 
-    open fun clearPacts() {
+    override fun clearPacts() {
         clearCurrentInteractions()
         dispatcher.clearPactCompletions()
     }
 
-    fun getCurrentInteractionCount(): Int {
+    override fun getCurrentInteractionCount(): Int {
         return currentInteractionList.size
     }
 
+    @Deprecated("Use validateInteractionsCompleted instead!", ReplaceWith("validateInteractionsCompleted(count)"))
     fun validatePactsCompleted(count: Long): Boolean {
-        return dispatcher.validatePactsCompleted(count)
+        return validateInteractionsCompleted(count)
     }
 
-    fun getUrlString(): String {
+    override fun validateInteractionsCompleted(count: Long): Boolean {
+        return dispatcher.validateInteractionsCompleted(count)
+    }
+
+    override fun validateInteractionsCompleted(): Boolean {
+        return validateInteractionsCompleted(currentInteractionList.size.toLong())
+    }
+
+    override fun getUrlString(): String {
         return mockWebServer.url("").toString()
     }
 
-    protected fun clearCurrentInteractions() {
+    fun clearCurrentInteractions() {
         synchronized(this) {
             currentInteractionList = emptyList()
             dispatcher.setInteractions(currentInteractionList)
         }
     }
 
-    protected fun addCurrentInteractions(interactions: Collection<RequestResponseInteraction>) {
+    fun addCurrentInteractions(interactions: Collection<RequestResponseInteraction>) {
         synchronized(this) {
             currentInteractionList = currentInteractionList.plus(interactions)
             dispatcher.setInteractions(currentInteractionList)
         }
     }
 
-    protected open fun updateInteractions(pact: RequestResponsePact) {
-        addCurrentInteractions(pact.requestResponseInteractions)
-    }
-
-    fun observeMatches(observer: ((IncomingRequest, RequestMatch) -> Unit)?) {
+    override fun observeMatches(observer: ((IncomingRequest, RequestMatch) -> Unit)?) {
         dispatcher.setMatchObserver(observer)
     }
 }

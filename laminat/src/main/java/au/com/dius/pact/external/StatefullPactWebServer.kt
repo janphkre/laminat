@@ -1,5 +1,6 @@
 package au.com.dius.pact.external
 
+import au.com.dius.pact.PactWebServer
 import au.com.dius.pact.model.ProviderState
 import au.com.dius.pact.model.RequestResponsePact
 import java.util.LinkedList
@@ -10,42 +11,73 @@ import java.util.LinkedList
  *
  * @author Jan Phillip Kretzschmar
  */
-open class StatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: Int) : StatelessPactWebServer(allowUnexpectedKeys, pactErrorCode) {
+open class StatefullPactWebServer(
+    private val delegate: StatelessPactWebServer
+) : PactWebServer {
 
     private val definedPactList = LinkedList<RequestResponsePact>()
     private var currentProviderStates: List<ProviderState> = emptyList()
 
+
+    constructor(allowUnexpectedKeys: Boolean, pactErrorCode: Int): this(
+        StatelessPactWebServer(allowUnexpectedKeys, pactErrorCode)
+    )
+
     override fun teardown() {
-        super.teardown()
+        delegate.teardown()
         definedPactList.clear()
         currentProviderStates = emptyList()
     }
 
     override fun addPact(pact: RequestResponsePact) {
         definedPactList.add(pact)
-        super.addPact(pact)
+        delegate.addPact(pact)
     }
 
     override fun addPacts(pacts: Collection<RequestResponsePact>) {
         definedPactList.addAll(pacts)
-        super.addPacts(pacts)
+        delegate.addPacts(pacts)
     }
 
     override fun clearPacts() {
         definedPactList.clear()
-        super.clearPacts()
+        delegate.clearPacts()
     }
 
+    override fun getCurrentInteractionCount(): Int {
+        return delegate.getCurrentInteractionCount()
+    }
+
+    override fun validateInteractionsCompleted(count: Long): Boolean {
+        return delegate.validateInteractionsCompleted(count)
+    }
+
+    @Deprecated("Use validateInteractionsCompleted instead!")
     fun validatePactsCompleted(): Boolean {
         val calculateInteractionCount = definedPactList.fold(0L) { count, item ->
             count + item.requestResponseInteractions.size
         }
-        return super.validatePactsCompleted(calculateInteractionCount)
+        return delegate.validateInteractionsCompleted(calculateInteractionCount)
+    }
+
+    override fun validateInteractionsCompleted(): Boolean {
+        val calculateInteractionCount = definedPactList.fold(0L) { count, item ->
+            count + item.requestResponseInteractions.size
+        }
+        return delegate.validateInteractionsCompleted(calculateInteractionCount)
+    }
+
+    override fun getUrlString(): String {
+        return delegate.getUrlString()
+    }
+
+    override fun observeMatches(observer: ((IncomingRequest, RequestMatch) -> Unit)?) {
+        return delegate.observeMatches(observer)
     }
 
     fun setStates(states: List<ProviderState>) {
         currentProviderStates = states
-        clearCurrentInteractions()
+        delegate.clearCurrentInteractions()
         definedPactList.forEach { pact -> updateInteractions(pact) }
     }
 
@@ -57,7 +89,7 @@ open class StatefullPactWebServer(allowUnexpectedKeys: Boolean, pactErrorCode: I
         return definedPactList.sumOf { it.requestResponseInteractions.size }
     }
 
-    override fun updateInteractions(pact: RequestResponsePact) {
-        addCurrentInteractions(pact.requestResponseInteractions.filter { interaction -> currentProviderStates.containsAll(interaction.providerStates) })
+    private fun updateInteractions(pact: RequestResponsePact) {
+        delegate.addCurrentInteractions(pact.requestResponseInteractions.filter { interaction -> currentProviderStates.containsAll(interaction.providerStates) })
     }
 }
