@@ -17,7 +17,9 @@ class RecordingPactWebServer(
 
     init {
         delegate.observeMatches { incomingRequest, requestMatch ->
-            recordings.add(requestMatch)
+            synchronized(recordings) {
+                recordings.add(requestMatch)
+            }
             observer?.invoke(incomingRequest, requestMatch)
         }
     }
@@ -28,10 +30,12 @@ class RecordingPactWebServer(
      * @throws InteractionValidationException
      */
     fun validateInteraction(interaction: RequestResponseInteraction) {
-        val match = recordings.firstOrNull {
-            interaction.uniqueKey() == it.interaction?.uniqueKey() &&
-                interaction.request == it.interaction?.request
-        } ?: throw InteractionValidationException("Could not find any interaction that matches the given interaction")
+        val match = synchronized(recordings) {
+            recordings.firstOrNull {
+                interaction.uniqueKey() == it.interaction?.uniqueKey() &&
+                    interaction.request == it.interaction?.request
+            } ?: throw InteractionValidationException("Could not find any interaction that matches the given interaction")
+        }
         when (match) {
             is RequestMatch.FullRequestMatch -> { }
             is RequestMatch.PartialRequestMatch -> throw InteractionValidationException(match.toErrorMessage())
@@ -67,13 +71,17 @@ class RecordingPactWebServer(
     }
 
     override fun teardown() {
-        recordings.clear()
         delegate.teardown()
+        synchronized(recordings) {
+            recordings.clear()
+        }
     }
 
     override fun clearPacts() {
-        recordings.clear()
         delegate.clearPacts()
+        synchronized(recordings) {
+            recordings.clear()
+        }
     }
 
     override fun observeMatches(observer: ((IncomingRequest, RequestMatch) -> Unit)?) {
