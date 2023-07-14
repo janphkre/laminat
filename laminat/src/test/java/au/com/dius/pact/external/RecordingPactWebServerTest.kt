@@ -43,6 +43,8 @@ class RecordingPactWebServerTest {
                 .willRespondWith()
                 .status(200)
                 .body(PactDslJsonBody().stringType("abc", "def"))
+                .toPact(),
+            ConsumerPactBuilder("TestConsumer").hasPactWith("TestProducer")
                 .given(STATE_2.name)
                 .uponReceiving("POST nullTestRequest")
                 .method("POST")
@@ -84,6 +86,17 @@ class RecordingPactWebServerTest {
             .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
             .build()
+    }
+
+    @Test
+    fun multipleRequestsRun_pactsAreCleared_validatesAllInteractions() {
+        val httpClient = createHttpClient()
+        Assert.assertEquals(true, httpClient.newCall(getRequest()).execute().isSuccessful)
+        mockPactWebServer.clearPacts()
+        mockPactWebServer.addPact(getInitialPacts().last())
+        Assert.assertEquals(true, httpClient.newCall(postRequest()).execute().isSuccessful)
+
+        mockPactWebServer.validateInteractions(getInitialPacts())
     }
 
     companion object {

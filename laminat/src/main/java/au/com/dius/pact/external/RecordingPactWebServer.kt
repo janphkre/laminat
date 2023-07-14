@@ -72,13 +72,17 @@ class RecordingPactWebServer(
 
     override fun teardown() {
         delegate.teardown()
-        synchronized(recordings) {
-            recordings.clear()
-        }
+        resetRecordings()
     }
 
     override fun clearPacts() {
         delegate.clearPacts()
+    }
+
+    /**
+     * Resets the recordings of this web server.
+     */
+    fun resetRecordings() {
         synchronized(recordings) {
             recordings.clear()
         }
