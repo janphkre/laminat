@@ -3,6 +3,7 @@ package au.com.dius.pact.consumer.dsl;
 import com.mifmif.common.regex.Generex;
 
 import org.apache.http.entity.ContentType;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 
@@ -22,6 +23,7 @@ import au.com.dius.pact.model.ProviderState;
 import au.com.dius.pact.model.generators.Generators;
 import au.com.dius.pact.model.matchingrules.MatchingRules;
 import au.com.dius.pact.model.matchingrules.RegexMatcher;
+import kotlin.Lazy;
 
 public class PactDslRequestWithPath {
     private final ConsumerPactBuilder consumerPactBuilder;
@@ -185,6 +187,16 @@ public class PactDslRequestWithPath {
      */
     public PactDslRequestWithPath body(byte[] body, ContentType mimeType) {
         return body(body, mimeType.toString());
+    }
+
+    /**
+     * The binary body of the request
+     *
+     * @param body Request body in string form
+     */
+    public PactDslRequestWithPath body(@NotNull Lazy<byte[]> body) {
+        requestBody = OptionalBody.body(body);
+        return this;
     }
 
     /**

@@ -3,6 +3,7 @@ package au.com.dius.pact.consumer.dsl;
 import com.mifmif.common.regex.Generex;
 
 import org.apache.http.entity.ContentType;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 
@@ -21,6 +22,7 @@ import au.com.dius.pact.model.Response;
 import au.com.dius.pact.model.generators.Generators;
 import au.com.dius.pact.model.matchingrules.MatchingRules;
 import au.com.dius.pact.model.matchingrules.RegexMatcher;
+import kotlin.Lazy;
 
 public class PactDslResponse {
     private final ConsumerPactBuilder consumerPactBuilder;
@@ -121,6 +123,15 @@ public class PactDslResponse {
         return body(body, mimeType.toString());
     }
 
+    /**
+     * Lazily evaluated binary response body to return
+     *
+     * @param body Response body in string form (lazy)
+     */
+    public PactDslResponse body(@NotNull Lazy<byte[]> body) {
+        responseBody = OptionalBody.body(body);
+        return this;
+    }
     /**
      * The body of the request with possible single quotes as delimiters
      * and using {@link QuoteUtil} to convert single quotes to double quotes if required.

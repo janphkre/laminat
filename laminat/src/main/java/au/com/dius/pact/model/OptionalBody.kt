@@ -78,15 +78,19 @@ sealed interface OptionalBody {
         }
     }
 
-    data class BinaryBody(
+    interface BinaryBody : OptionalBody {
+        fun unwrap(): ByteArray
+    }
+
+    data class DirectBinaryBody(
         private val value: ByteArray
-    ) : OptionalBody {
+    ) : BinaryBody {
 
         override fun asBinary(charset: Charset): ByteArray {
             return unwrap()
         }
 
-        fun unwrap(): ByteArray {
+        override fun unwrap(): ByteArray {
             return value
         }
 
@@ -106,6 +110,40 @@ sealed interface OptionalBody {
 
         override fun hashCode(): Int {
             return value.contentHashCode()
+        }
+    }
+
+    data class LazyBinaryBody(
+        private val value: Lazy<ByteArray>
+    ) : BinaryBody {
+
+        override fun asBinary(charset: Charset): ByteArray {
+            return unwrap()
+        }
+
+        override fun unwrap(): ByteArray {
+            return value.value
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+            if (other is LazyBinaryBody && value === other.value) {
+                return true
+            }
+            if (!(other is StringBody || other is BinaryBody)) {
+                return false
+            }
+            other as OptionalBody
+            if (!asBinary(Charsets.UTF_8).contentEquals(other.asBinary(Charsets.UTF_8))) {
+                return false
+            }
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return unwrap().contentHashCode()
         }
     }
 
@@ -139,8 +177,13 @@ sealed interface OptionalBody {
             } else if (body.isEmpty()) {
                 empty()
             } else {
-                BinaryBody(body)
+                DirectBinaryBody(body)
             }
+        }
+
+        @JvmStatic
+        fun body(body: Lazy<ByteArray>): OptionalBody {
+            return LazyBinaryBody(body)
         }
 
         @JvmStatic
