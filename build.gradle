@@ -9,13 +9,13 @@ buildscript {
 
         min_sdk_version = 14
         target_sdk_version = 31
-        kotlin_version = '1.7.10'
+        kotlin_version = '1.9.22'
         gson_version = '2.9.0'
         apache_commons_version = '3.12.0'
-        generex_version = '1.0.1'
+        generex_version = '1.0.2'
         jsonpath_version = '0.6.4'
 
-        mockserver_version = '4.9.1'
+        mockserver_version = '4.12.0'
 
         //Testing:
         test_junit_version = '4.13.2'
