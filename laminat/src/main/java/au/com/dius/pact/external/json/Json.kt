@@ -132,6 +132,10 @@ sealed interface Json {
         override fun toString(): String {
             return serialize(this)
         }
+
+        fun keySet(): Set<String> {
+            return elements.keys
+        }
     }
 
     data class Array(
@@ -158,6 +162,10 @@ sealed interface Json {
 
         override fun toString(): String {
             return serialize(this)
+        }
+
+        fun size(): Int {
+            return elements.size
         }
     }
 
