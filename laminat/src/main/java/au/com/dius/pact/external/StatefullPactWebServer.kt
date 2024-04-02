@@ -29,12 +29,12 @@ class StatefullPactWebServer(
 
     override fun addPact(pact: RequestResponsePact) {
         definedPactList.add(pact)
-        delegate.addPact(pact)
+        updateInteractions(pact)
     }
 
     override fun addPacts(pacts: Collection<RequestResponsePact>) {
         definedPactList.addAll(pacts)
-        delegate.addPacts(pacts)
+        pacts.forEach { updateInteractions(it) }
     }
 
     override fun clearPacts() {

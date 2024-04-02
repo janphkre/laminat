@@ -29,17 +29,26 @@ class RecordingPactWebServer(
      *
      * @throws InteractionValidationException
      */
-    fun validateInteraction(interaction: RequestResponseInteraction) {
-        val match = synchronized(recordings) {
-            recordings.firstOrNull {
+    fun validateInteraction(interaction: RequestResponseInteraction, options: VerificationOptions) {
+        val matches = synchronized(recordings) {
+            recordings.filter {
                 interaction.uniqueKey() == it.interaction?.uniqueKey() &&
                     interaction.request == it.interaction?.request
-            } ?: throw InteractionValidationException("Could not find any interaction that matches the given interaction")
+            }
         }
-        when (match) {
-            is RequestMatch.FullRequestMatch -> { }
-            is RequestMatch.PartialRequestMatch -> throw InteractionValidationException(match.toErrorMessage())
-            is RequestMatch.RequestMismatch -> throw InteractionValidationException(match.toErrorMessage())
+        val fullMatches = matches.filterIsInstance<RequestMatch.FullRequestMatch>()
+        if (fullMatches.size != matches.size) {
+            val message = matches.mapNotNull { match ->
+                when (match) {
+                    is RequestMatch.FullRequestMatch -> null
+                    is RequestMatch.PartialRequestMatch -> match.toErrorMessage()
+                    is RequestMatch.RequestMismatch -> match.toErrorMessage()
+                }
+            }.joinToString(separator = "\n", prefix = "Found mismatched requests while checking recorded interactions for ${interaction.uniqueKey()}:\n")
+            throw InteractionValidationException(message)
+        }
+        if (options.exact != fullMatches.size) {
+            throw InteractionValidationException("Found ${fullMatches.size} performed interactions when expecting ${options.exact} count for ${interaction.uniqueKey()}")
         }
     }
 
@@ -47,10 +56,10 @@ class RecordingPactWebServer(
      * Validates that all interaction in the given [pact] were executed on the web server successfully.
      * @throws PactValidationException
      */
-    fun validateInteractions(pact: RequestResponsePact) {
+    fun validateInteractions(pact: RequestResponsePact, options: VerificationOptions = VerificationOptions()) {
         val interactionFailures = pact.requestResponseInteractions.mapNotNull { requestResponseInteraction ->
             try {
-                validateInteraction(requestResponseInteraction)
+                validateInteraction(requestResponseInteraction, options)
                 null
             } catch (e: InteractionValidationException) {
                 e
@@ -66,8 +75,8 @@ class RecordingPactWebServer(
      * Validates that all interaction in the given [pacts] were executed on the web server successfully.
      * @throws PactValidationException
      */
-    fun validateInteractions(pacts: List<RequestResponsePact>) {
-        pacts.forEach { validateInteractions(it) }
+    fun validateInteractions(pacts: List<RequestResponsePact>, options: VerificationOptions = VerificationOptions()) {
+        pacts.forEach { validateInteractions(it, options) }
     }
 
     override fun teardown() {

@@ -21,7 +21,7 @@ class RecordingPactWebServerTest {
 
     @Before
     fun setup() {
-        mockPactWebServer = RecordingPactWebServer(StatefullPactWebServer(allowUnexpectedKeys = true, PACT_ERROR_CODE))
+        mockPactWebServer = RecordingPactWebServer(StatelessPactWebServer(allowUnexpectedKeys = true, PACT_ERROR_CODE))
         mockPactWebServer.addPacts(getInitialPacts())
         mockPactWebServer.observeMatches { _, requestMatch ->
             println(requestMatch)
