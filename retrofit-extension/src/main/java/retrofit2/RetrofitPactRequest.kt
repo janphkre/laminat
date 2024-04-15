@@ -24,7 +24,7 @@ class RetrofitPactRequest(
 
     init {
         val requestFactoryBuilder = try {
-            RequestFactory.Builder(retrofit, method).apply { build() }
+            RequestFactory.Builder(retrofit, method.declaringClass, method).apply { build() }
         } catch (e: Exception) {
             throw PactBuildException("Failed to build request from $method with retrofit", e)
         }
