@@ -22,7 +22,12 @@ repositories {
 dependencies {
     mockImplementation "com.github.janphkre.laminat:laminat-retrofit-noop:$laminat_version"
     prodImplementation "com.github.janphkre.laminat:laminat-retrofit:$laminat_version"
-    mockImplementation "com.github.janphkre.laminat:laminat:$laminat_version"
+    mockImplementation "com.github.janphkre.laminat:laminat-core:$laminat_version"
+    //Whatever "backend" you want to use:
+    //Webserver
+    mockImplementation "com.github.janphkre.laminat:laminat-webserver:$laminat_version"
+    //Ktor Client
+    mockImplementation "com.github.janphkre.laminat:laminat-ktor-client:$laminat_version"
 }
 ```
 

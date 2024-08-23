@@ -11,8 +11,6 @@ android {
         targetSdkVersion rootProject.ext.target_sdk_version
         versionCode rootProject.ext.pact_version_code
         versionName rootProject.ext.pact_version
-
-        buildConfigField("String","VERSION_NAME","\"${rootProject.ext.pact_version}\"")
     }
     buildTypes {
         debug {
@@ -28,7 +26,7 @@ publishing {
     publications {
         release(MavenPublication) {
             groupId = rootProject.ext.library_namespace
-            artifactId = "laminat-retrofit"
+            artifactId = 'laminat-webserver'
             version = rootProject.ext.pact_version
 
             afterEvaluate {
@@ -38,18 +36,19 @@ publishing {
     }
 }
 
+
 repositories {
     mavenCentral()
-    maven { url "https://jitpack.io" }
 }
 
 dependencies {
     implementation project(':laminat-core')
-    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
-    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    implementation "com.google.code.gson:gson:$gson_version"
+    implementation "com.squareup.okhttp3:mockwebserver:$mockserver_version"
 
-    testImplementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
     testImplementation "junit:junit:$test_junit_version"
     testImplementation "org.json:json:$test_json_version"
+    testImplementation "org.mockito:mockito-core:$test_mockito_version" //TODO: REPLACE WITH MOCKK, WHERE IS THIS USED?
+    testImplementation "io.mockk:mockk:$test_mockk_version"
 }

@@ -1,3 +1,4 @@
-include ':laminat'
+include ':laminat-core'
+include ':laminat-webserver'
 include ':retrofit-extension'
 include ':retrofit-extension-noop'
