@@ -1,24 +1,24 @@
 package au.com.dius.pact.external
 
-import java.net.InetAddress
-import java.net.Socket
+import io.mockk.every
+import io.mockk.mockk
 import okhttp3.Headers
 import okhttp3.mockwebserver.RecordedRequest
 import okio.Buffer
-import org.mockito.Mockito
+import java.net.InetAddress
+import java.net.Socket
 
 abstract class AbstractRequestTest {
 
     protected fun getMockSocket(): Socket {
-        val mockInetAddress = Mockito.mock(InetAddress::class.java)
-        Mockito.doReturn("mockhost").`when`(mockInetAddress).hostName
-
-        val mockSocket = Mockito.mock(Socket::class.java)
-        Mockito.doReturn(mockInetAddress).`when`(mockSocket).inetAddress
-        Mockito.doReturn(mockInetAddress).`when`(mockSocket).localAddress
-        Mockito.doReturn(1234).`when`(mockSocket).localPort
-
-        return mockSocket
+        val mockInetAddress = mockk<InetAddress> {
+            every { hostName } returns "mockhost"
+        }
+        return mockk {
+            every { localPort } returns 1234
+            every { inetAddress } returns mockInetAddress
+            every { localAddress } returns mockInetAddress
+        }
     }
 
     protected fun getRecordedRequest(

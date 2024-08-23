@@ -2,6 +2,12 @@ package au.com.dius.pact.external.features
 
 enum class Feature(val default: Boolean) {
     /**
+     * Request matcher can either ignore unexpected keys (like an Authorization header you do not want to check for).
+     * Set this to false to disallow this behaviour.
+     */
+    ALLOW_UNEXPECTED_KEYS(true),
+
+    /**
      * Tries to merge an existing pact file while serializing with PactJsonifier instead of overwriting the existing file.
      * See https://github.com/pact-foundation/pact-jvm/issues/804
      */
