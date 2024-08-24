@@ -43,11 +43,12 @@ repositories {
 
 dependencies {
     implementation project(':laminat-core')
-    implementation "io.ktor:ktor-client-core:2.3.12"
+    implementation "io.ktor:ktor-client-core:$ktor_version"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     testImplementation "junit:junit:$test_junit_version"
     testImplementation "org.json:json:$test_json_version"
     testImplementation "io.mockk:mockk:$test_mockk_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$test_coroutines_version"
 }

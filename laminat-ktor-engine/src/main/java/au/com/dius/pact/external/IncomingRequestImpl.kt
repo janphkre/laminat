@@ -21,6 +21,20 @@ class IncomingRequestImpl(
         charset()
     }
 
+    private val lazyHeaders: Map<String, List<String>> by lazy {
+        val headers  = mutableMapOf<String, List<String>>()
+        internalRequest.body.contentLength?.let { contentLength ->
+            headers.put("Content-Length", listOf(contentLength.toString()))
+        }
+        internalRequest.body.contentType?.let { contentType ->
+            headers.put("Content-Type", listOf(contentType.toString()))
+        }
+        internalRequest.headers.entries().forEach {
+            headers.put(it.key, it.value)
+        }
+        headers
+    }
+
     private val lazyBody: ByteArray? by lazy {
         val body = internalRequest.body
         when(body) {
@@ -61,7 +75,7 @@ class IncomingRequestImpl(
     }
 
     override fun getEncodedPath(): String {
-        return internalRequest.url.encodedPath //TODO: STRIP UNTIL FIRST SLASH
+        return internalRequest.url.encodedPath
     }
 
     override fun queryParameterValues(key: String): List<String?> {
@@ -73,7 +87,7 @@ class IncomingRequestImpl(
     }
 
     override fun getCompleteHeaders(): Map<String, List<String>> {
-        return internalRequest.headers.toMap()
+        return lazyHeaders
     }
 
     override fun getCookie(): List<String> {
@@ -81,7 +95,7 @@ class IncomingRequestImpl(
     }
 
     override fun getContentType(): String {
-        return internalRequest.body.contentType?.contentType ?: ""
+        return internalRequest.body.contentType?.toString() ?: ""
     }
 
     override fun getBodySize(): Long {

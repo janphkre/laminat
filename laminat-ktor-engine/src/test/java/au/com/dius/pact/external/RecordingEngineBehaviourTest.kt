@@ -64,7 +64,7 @@ class RecordingEngineBehaviourTest: AbstractRequestTest() {
     private fun getRequest(): IncomingRequest {
         return createIncomingRequest(
             method = "GET",
-            path = "mockExampleUrlBaseString/test/path"
+            path = "/test/path"
         )
     }
 
@@ -73,7 +73,7 @@ class RecordingEngineBehaviourTest: AbstractRequestTest() {
             requestBody = "null".toByteArray(),
             method = "POST",
             contentType = "application/json; charset=UTF-8",
-            path = "mockExampleUrlBaseString/test/path"
+            path = "/test/path"
         )
     }
 
@@ -88,9 +88,6 @@ class RecordingEngineBehaviourTest: AbstractRequestTest() {
     }
 
     companion object {
-        private const val TIMEOUT = 3L
-
-        private const val PACT_ERROR_CODE = 999
         private val STATE_1 = ProviderState("State_1")
         private val STATE_2 = ProviderState("State_2")
     }
