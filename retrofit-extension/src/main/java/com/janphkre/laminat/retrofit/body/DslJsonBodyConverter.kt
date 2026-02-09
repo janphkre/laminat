@@ -192,13 +192,13 @@ object DslJsonBodyConverter : DslBodyConverter {
     ): DslPart {
         return when {
             jsonPrimitive is Json.BooleanPrimitive && bodyMatches == null -> {
-                parent.booleanType(jsonPrimitive.asBoolean())
+                parent.equalsTo(jsonPrimitive.asBoolean())
             }
             jsonPrimitive is Json.NumberPrimitive && bodyMatches == null -> {
-                parent.numberType(jsonPrimitive.asNumber())
+                parent.equalsTo(jsonPrimitive.asNumber())
             }
             jsonPrimitive is Json.StringPrimitive && bodyMatches == null -> {
-                parent.stringType(jsonPrimitive.asString())
+                parent.equalsTo(jsonPrimitive.asString())
             }
             jsonPrimitive is Json.StringPrimitive && bodyMatches != null -> {
                 parent.stringMatcher(bodyMatches.regex, jsonPrimitive.asString())
@@ -215,13 +215,13 @@ object DslJsonBodyConverter : DslBodyConverter {
     ): DslPart {
         return when {
             jsonPrimitive is Json.BooleanPrimitive && bodyMatches == null -> {
-                parent.booleanType(keyInParent, jsonPrimitive.asBoolean())
+                parent.equalTo(keyInParent, jsonPrimitive.asBoolean())
             }
             jsonPrimitive is Json.NumberPrimitive && bodyMatches == null -> {
-                parent.numberType(keyInParent, jsonPrimitive.asNumber())
+                parent.equalTo(keyInParent, jsonPrimitive.asNumber())
             }
             jsonPrimitive is Json.StringPrimitive && bodyMatches == null -> {
-                parent.stringType(keyInParent, jsonPrimitive.asString())
+                parent.equalTo(keyInParent, jsonPrimitive.asString())
             }
             jsonPrimitive is Json.StringPrimitive && bodyMatches != null -> {
                 parent.stringMatcher(keyInParent, bodyMatches.regex, jsonPrimitive.asString())

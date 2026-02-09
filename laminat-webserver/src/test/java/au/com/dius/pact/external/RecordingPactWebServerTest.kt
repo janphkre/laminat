@@ -53,17 +53,39 @@ class RecordingPactWebServerTest {
                 .willRespondWith()
                 .status(200)
                 .body(PactDslJsonRootValue.matchNull())
-                .toPact()
+                .toPact(),
+            pactPostWithBodyRequest()
         )
     }
+
+    private fun pactPostWithBodyRequest() =
+        ConsumerPactBuilder("TestConsumer").hasPactWith("TestProducer")
+            .given(STATE_3.name)
+            .uponReceiving("POST bodyTestRequest")
+            .method("POST")
+            .path("/test/path2")
+            .body(PactDslJsonBody().stringType("field","Correct Data"))
+            .willRespondWith()
+            .status(200)
+            .body(PactDslJsonRootValue.matchNull())
+            .toPact()
 
     @Test
     fun recordingWebServerStarted_multipleRequestsRun_validatesAllInteractions() {
         val httpClient = createHttpClient()
         Assert.assertEquals(true, httpClient.newCall(getRequest()).execute().isSuccessful)
         Assert.assertEquals(true, httpClient.newCall(postRequest()).execute().isSuccessful)
+        Assert.assertEquals(true, httpClient.newCall(postBodyRequest()).execute().isSuccessful)
 
         mockPactWebServer.validateInteractions(getInitialPacts())
+    }
+
+    @Test
+    fun recordingWebServerStarted_requestWithWrongBodyRun_validatesAllInteractions() {
+        val httpClient = createHttpClient()
+        Assert.assertEquals(true, httpClient.newCall(postBodyRequest("Wrong Data")).execute().isSuccessful)
+
+        mockPactWebServer.validateInteractions(pactPostWithBodyRequest())
     }
 
     private fun getRequest(): Request {
@@ -80,6 +102,13 @@ class RecordingPactWebServerTest {
             .build()
     }
 
+    private fun postBodyRequest(data: String = "Correct Data"): Request {
+        return Request.Builder()
+            .post("{\"field\":\"$data\"}".toRequestBody("application/json; charset=UTF-8".toMediaTypeOrNull()))
+            .url("${mockPactWebServer.getUrlString()}test/path2")
+            .build()
+    }
+
     private fun createHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
@@ -93,10 +122,10 @@ class RecordingPactWebServerTest {
         val httpClient = createHttpClient()
         Assert.assertEquals(true, httpClient.newCall(getRequest()).execute().isSuccessful)
         mockPactWebServer.clearPacts()
-        mockPactWebServer.addPact(getInitialPacts().last())
+        mockPactWebServer.addPact(getInitialPacts().get(1))
         Assert.assertEquals(true, httpClient.newCall(postRequest()).execute().isSuccessful)
 
-        mockPactWebServer.validateInteractions(getInitialPacts())
+        mockPactWebServer.validateInteractions(getInitialPacts().dropLast(1))
     }
 
     companion object {
@@ -105,5 +134,6 @@ class RecordingPactWebServerTest {
         private const val PACT_ERROR_CODE = 999
         private val STATE_1 = ProviderState("State_1")
         private val STATE_2 = ProviderState("State_2")
+        private val STATE_3 = ProviderState("State_3")
     }
 }

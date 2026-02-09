@@ -22,6 +22,7 @@ class PactDispatcherTest : AbstractRequestTest() {
                 PactDslJsonBody()
                     .stringMatcher("regex1", "\\d{8,9}", "123456789")
                     .stringMatcher("regex2", ".{4}", "abcd")
+                    .equalTo("stringType", "agbdfbdf")
                     .decimalType("decimal1", 50.99234)
             )
             .willRespondWith()
@@ -37,7 +38,7 @@ class PactDispatcherTest : AbstractRequestTest() {
 
     @Test
     fun pactDispatcher_PostRequest_MatchingCorrectly() {
-        val request = "{ \"regex1\": \"123456789\", \"regex2\": \"abcd\", \"decimal1\": 50.99234}".toByteArray()
+        val request = "{ \"regex1\": \"123456789\", \"regex2\": \"abcd\", \"stringType\": \"agbdfbdf\", \"decimal1\": 50.99234}".toByteArray()
 
         val dispatcher = PactDispatcher(false, 998)
         val incomingRequest = getRecordedRequest(request)
@@ -69,6 +70,22 @@ class PactDispatcherTest : AbstractRequestTest() {
     @Test
     fun pactDispatcher_PostRequestUnmatched_PartialMatching() {
         val request = "{ \"regex1\": \"123456789\", \"regex2\": \"abcd\"}".toByteArray()
+
+        val dispatcher = PactDispatcher(false, 998)
+        val incomingRequest = getRecordedRequest(request)
+
+        @Suppress("UNCHECKED_CAST")
+        dispatcher.setInteractions(testPost.interactions as List<RequestResponseInteraction>)
+
+        val response = dispatcher.dispatch(incomingRequest)
+        Assert.assertEquals("HTTP/1.1 998 PactError", response.status)
+        val responseBody = String(response.getBody()?.readByteArray() ?: ByteArray(0))
+        Assert.assertTrue(responseBody.startsWith("Partially matched None_POST testRequest:"))
+    }
+
+    @Test
+    fun pactDispatcher_PostRequestIncorrectData_PartialMatching() {
+        val request = "{ \"regex1\": \"123456789\", \"regex2\": \"abcd\", \"stringType\": \"abcd\", \"decimal1\": 50.99234}".toByteArray()
 
         val dispatcher = PactDispatcher(false, 998)
         val incomingRequest = getRecordedRequest(request)

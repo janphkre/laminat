@@ -22,6 +22,7 @@ import au.com.dius.pact.model.generators.RandomStringGenerator;
 import au.com.dius.pact.model.generators.RegexGenerator;
 import au.com.dius.pact.model.generators.TimeGenerator;
 import au.com.dius.pact.model.generators.UuidGenerator;
+import au.com.dius.pact.model.matchingrules.EqualsMatcher;
 import au.com.dius.pact.model.matchingrules.MatchingRule;
 import au.com.dius.pact.model.matchingrules.MatchingRuleGroup;
 import au.com.dius.pact.model.matchingrules.NumberTypeMatcher;
@@ -62,6 +63,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonArray array(String name) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -70,6 +72,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonArray array() {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -78,6 +81,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public DslPart closeArray() {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -86,6 +90,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonBody arrayLike(String name) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -94,6 +99,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonBody arrayLike() {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -102,6 +108,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonBody eachLike(String name) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -110,6 +117,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonBody eachLike(int numberExamples) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -118,6 +126,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonBody eachLike(String name, int numberExamples) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -126,6 +135,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonBody eachLike() {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -134,6 +144,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonBody minArrayLike(String name, Integer size) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -142,6 +153,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonBody minArrayLike(Integer size) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -150,6 +162,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonBody minArrayLike(String name, Integer size, int numberExamples) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -158,6 +171,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonBody minArrayLike(Integer size, int numberExamples) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -166,6 +180,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonBody maxArrayLike(String name, Integer size) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -174,6 +189,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonBody maxArrayLike(Integer size) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -182,6 +198,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonBody maxArrayLike(String name, Integer size, int numberExamples) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -190,6 +207,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonBody maxArrayLike(Integer size, int numberExamples) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -198,6 +216,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonBody for objects
    */
   @Override
+  @Deprecated
   public PactDslJsonBody object(String name) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_BODY_FOR_OBJECTS);
   }
@@ -206,6 +225,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonBody for objects
    */
   @Override
+  @Deprecated
   public PactDslJsonBody object() {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_BODY_FOR_OBJECTS);
   }
@@ -214,6 +234,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonBody for objects
    */
   @Override
+  @Deprecated
   public DslPart closeObject() {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_BODY_FOR_OBJECTS);
   }
@@ -245,6 +266,7 @@ public class PactDslRootValue extends DslPart {
     PactDslRootValue value = new PactDslRootValue();
     value.setValue(example);
     value.setMatcher(TypeMatcher.INSTANCE);
+    value.setMatcher(EqualsMatcher.INSTANCE);
     return value;
   }
 
@@ -585,6 +607,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonArray eachArrayLike(String name) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -593,6 +616,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonArray eachArrayLike(int numberExamples) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -601,6 +625,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonArray eachArrayWithMaxLike(String name, Integer size) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -609,6 +634,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonArray eachArrayWithMaxLike(Integer size) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -617,6 +643,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonArray eachArrayWithMaxLike(String name, int numberExamples, Integer size) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -625,6 +652,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonArray eachArrayWithMaxLike(int numberExamples, Integer size) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -633,6 +661,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonArray eachArrayWithMinLike(String name, Integer size) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -641,6 +670,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonArray eachArrayWithMinLike(Integer size) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -649,6 +679,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonArray eachArrayWithMinLike(String name, int numberExamples, Integer size) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -657,6 +688,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonArray eachArrayWithMinLike(int numberExamples, Integer size) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -665,6 +697,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonArray eachArrayLike(String name, int numberExamples) {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
@@ -673,6 +706,7 @@ public class PactDslRootValue extends DslPart {
    * @deprecated Use PactDslJsonArray for arrays
    */
   @Override
+  @Deprecated
   public PactDslJsonArray eachArrayLike() {
     throw new UnsupportedOperationException(USE_PACT_DSL_JSON_ARRAY_FOR_ARRAYS);
   }
