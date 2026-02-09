@@ -107,7 +107,7 @@ fun matchEquality(
             mismatchFactory.create(
                 expected, actual,
                 "Expected ${valueOf(actual)} to equal ${valueOf(
-                    actual
+                    expected
                 )}"
             )
         )

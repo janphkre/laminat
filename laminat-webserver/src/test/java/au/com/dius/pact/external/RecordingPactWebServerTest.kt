@@ -64,7 +64,7 @@ class RecordingPactWebServerTest {
             .uponReceiving("POST bodyTestRequest")
             .method("POST")
             .path("/test/path2")
-            .body(PactDslJsonBody().stringType("field","Correct Data"))
+            .body(PactDslJsonBody().equalTo("field","Correct Data"))
             .willRespondWith()
             .status(200)
             .body(PactDslJsonRootValue.matchNull())
@@ -83,9 +83,20 @@ class RecordingPactWebServerTest {
     @Test
     fun recordingWebServerStarted_requestWithWrongBodyRun_validatesAllInteractions() {
         val httpClient = createHttpClient()
-        Assert.assertEquals(true, httpClient.newCall(postBodyRequest("Wrong Data")).execute().isSuccessful)
+        Assert.assertEquals(false, httpClient.newCall(postBodyRequest("Wrong Data")).execute().isSuccessful)
 
-        mockPactWebServer.validateInteractions(pactPostWithBodyRequest())
+        val result = runCatching {
+            mockPactWebServer.validateInteractions(pactPostWithBodyRequest())
+        }
+        val exception = result.exceptionOrNull()!!
+        Assert.assertEquals(PactValidationException::class.java, exception::class.java)
+        Assert.assertEquals(true, exception.message!!.startsWith("""
+            Could not match pact fully. Following interactions did not match:
+            Found mismatched requests while checking recorded interactions for State_3_POST bodyTestRequest:
+            Partially matched State_3_POST bodyTestRequest:
+            MismatchedBody on null:
+            Expected 'Wrong Data' to equal 'Wrong Data'
+        """.trimIndent()))
     }
 
     private fun getRequest(): Request {
