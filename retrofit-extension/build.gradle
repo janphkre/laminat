@@ -51,5 +51,4 @@ dependencies {
 
     testImplementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     testImplementation "junit:junit:$test_junit_version"
-    testImplementation "org.json:json:$test_json_version"
 }

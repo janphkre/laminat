@@ -48,6 +48,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     testImplementation "junit:junit:$test_junit_version"
-    testImplementation "org.json:json:$test_json_version"
     testImplementation "io.mockk:mockk:$test_mockk_version"
 }
