@@ -90,12 +90,13 @@ class RecordingPactWebServerTest {
         }
         val exception = result.exceptionOrNull()!!
         Assert.assertEquals(PactValidationException::class.java, exception::class.java)
+        println(exception.message)
         Assert.assertEquals(true, exception.message!!.startsWith("""
             Could not match pact fully. Following interactions did not match:
             Found mismatched requests while checking recorded interactions for State_3_POST bodyTestRequest:
             Partially matched State_3_POST bodyTestRequest:
             MismatchedBody on null:
-            Expected 'Wrong Data' to equal 'Wrong Data'
+            Expected 'Wrong Data' to equal 'Correct Data'
         """.trimIndent()))
     }
 

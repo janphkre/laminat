@@ -40,6 +40,12 @@ class RetrofitDslTest {
 
     data class SomeThirdThing(val thirdString: String)
 
+    data class OtherThing(
+        val a: String,
+        val b: Boolean,
+        val c: Double,
+    )
+
     interface TestApi {
         @POST("api/v1/example")
         @MatchBodyRegexes(
@@ -71,6 +77,15 @@ class RetrofitDslTest {
         )
         @Headers("X-Foo: Bar")
         fun postEmptyExample(): Something
+
+        @POST("api/v1/fullExample")
+        @MatchHeaders(
+            [
+                MatchHeader("X-Foo", "Bar")
+            ]
+        )
+        @Headers("X-Foo: Bar")
+        fun postFullExample(@Body something: OtherThing): Something
 
         @GET
         fun getFullCustomUrl(@Url url: String): Something
@@ -203,6 +218,41 @@ class RetrofitDslTest {
 
         val outputPact = outputPactFile.readText(Charset.forName(Consts.UTF_8.name()))
         val expectedPactJson = File("src/test/assets/pact___urlexample.json")
+            .readText(Charset.forName(Consts.UTF_8.name()))
+        val expectedPact = updateVersion(expectedPactJson)
+        Assert.assertEquals(
+            "Generated pact does not match expectations!",
+            expectedPact,
+            outputPact
+        )
+    }
+
+    @Test
+    fun retrofit_InstanciatePact_MatchesFullExampleRequest() {
+        val data = OtherThing(
+            "abcdefg",
+            true,
+            1234.0
+        )
+        val pactInteraction = ConsumerPactBuilder("testretrofitconsumer")
+            .hasPactWith("testretrofitprovider")
+            .uponReceiving("POST full example")
+            .on(retrofitInstance)
+            .match(TestApi::postFullExample)
+            .withParameters(data)
+            .willRespondWith()
+            .status(200)
+            .body("{}")
+            .toPact()
+
+        Assert.assertNotNull(pactInteraction)
+
+        PactJsonifier.generateJson(listOf(pactInteraction), File("pacts"))
+        val outputPactFile = File("pacts/$expectedPactName")
+        Assert.assertTrue("Pact was not generated!", outputPactFile.exists())
+
+        val outputPact = outputPactFile.readText(Charset.forName(Consts.UTF_8.name()))
+        val expectedPactJson = File("src/test/assets/pact___fullexample.json")
             .readText(Charset.forName(Consts.UTF_8.name()))
         val expectedPact = updateVersion(expectedPactJson)
         Assert.assertEquals(

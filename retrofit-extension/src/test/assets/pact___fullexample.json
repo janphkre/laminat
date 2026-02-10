@@ -1,0 +1,80 @@
+{
+  "provider": {
+    "name": "testretrofitprovider"
+  },
+  "consumer": {
+    "name": "testretrofitconsumer"
+  },
+  "interactions": [
+    {
+      "description": "POST full example",
+      "request": {
+        "method": "POST",
+        "path": "/api/v1/fullExample",
+        "headers": {
+          "X-Foo": "Bar",
+          "Content-Type": "application/json; charset\u003dUTF-8"
+        },
+        "body": {
+          "a": "abcdefg",
+          "b": true,
+          "c": 1234.0
+        },
+        "matchingRules": {
+          "header": {
+            "X-Foo": {
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "Bar"
+                }
+              ],
+              "combine": "AND"
+            }
+          },
+          "body": {
+            "$.a": {
+              "matchers": [
+                {
+                  "match": "equality"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.b": {
+              "matchers": [
+                {
+                  "match": "equality"
+                }
+              ],
+              "combine": "AND"
+            },
+            "$.c": {
+              "matchers": [
+                {
+                  "match": "equality"
+                }
+              ],
+              "combine": "AND"
+            }
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": {}
+      }
+    }
+  ],
+  "metadata": {
+    "pact-specification": {
+      "version": "3.0.0"
+    },
+    "pact-laminat-android": {
+      "version": "3.6.0"
+    },
+    "pact-laminat-serialization-config": {
+      "maxLength": null
+    }
+  }
+}

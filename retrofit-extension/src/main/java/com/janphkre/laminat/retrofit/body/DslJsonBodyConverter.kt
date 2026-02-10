@@ -215,13 +215,13 @@ object DslJsonBodyConverter : DslBodyConverter {
     ): DslPart {
         return when {
             jsonPrimitive is Json.BooleanPrimitive && bodyMatches == null -> {
-                parent.equalTo(keyInParent, jsonPrimitive.asBoolean())
+                parent.equalTo(keyInParent, jsonPrimitive)
             }
             jsonPrimitive is Json.NumberPrimitive && bodyMatches == null -> {
-                parent.equalTo(keyInParent, jsonPrimitive.asNumber())
+                parent.equalTo(keyInParent, jsonPrimitive)
             }
             jsonPrimitive is Json.StringPrimitive && bodyMatches == null -> {
-                parent.equalTo(keyInParent, jsonPrimitive.asString())
+                parent.equalTo(keyInParent, jsonPrimitive)
             }
             jsonPrimitive is Json.StringPrimitive && bodyMatches != null -> {
                 parent.stringMatcher(keyInParent, bodyMatches.regex, jsonPrimitive.asString())

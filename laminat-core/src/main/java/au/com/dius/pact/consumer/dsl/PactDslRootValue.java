@@ -4,7 +4,6 @@ import com.mifmif.common.regex.Generex;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -12,6 +11,7 @@ import java.util.Calendar;
 import java.util.UUID;
 
 import au.com.dius.pact.consumer.InvalidMatcherException;
+import au.com.dius.pact.external.json.Json;
 import au.com.dius.pact.model.generators.Category;
 import au.com.dius.pact.model.generators.DateGenerator;
 import au.com.dius.pact.model.generators.DateTimeGenerator;
@@ -721,7 +721,7 @@ public class PactDslRootValue extends DslPart {
     if (example != null) {
       value.setValue(example);
     } else {
-      value.setValue(JSONObject.NULL);
+      value.setValue(Json.Null.INSTANCE);
     }
     value.matchers.setRules("", new MatchingRuleGroup(Arrays.asList(rules), RuleLogic.AND));
     return value;
@@ -737,7 +737,7 @@ public class PactDslRootValue extends DslPart {
     if (example != null) {
       value.setValue(example);
     } else {
-      value.setValue(JSONObject.NULL);
+      value.setValue(Json.Null.INSTANCE);
     }
     value.matchers.setRules("", new MatchingRuleGroup(Arrays.asList(rules), RuleLogic.OR));
     return value;

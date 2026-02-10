@@ -3,7 +3,6 @@ package au.com.dius.pact.consumer.dsl;
 import com.mifmif.common.regex.Generex;
 
 import org.apache.http.entity.ContentType;
-import org.json.JSONObject;
 import org.w3c.dom.Document;
 
 import java.util.HashMap;
@@ -13,6 +12,7 @@ import java.util.Map;
 import javax.xml.transform.TransformerException;
 
 import au.com.dius.pact.consumer.ConsumerPactBuilder;
+import au.com.dius.pact.external.json.Json;
 import au.com.dius.pact.model.OptionalBody;
 import au.com.dius.pact.model.PactReader;
 import au.com.dius.pact.model.generators.Generators;
@@ -195,7 +195,7 @@ public class PactDslRequestWithoutPath {
      *
      * @param body Request body in JSON form
      */
-    public PactDslRequestWithoutPath body(JSONObject body) {
+    public PactDslRequestWithoutPath body(Json body) {
         body(body.toString());
         if (!requestHeaders.containsKey(ContentType.CONTENT_TYPE)) {
             requestHeaders.put(ContentType.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());

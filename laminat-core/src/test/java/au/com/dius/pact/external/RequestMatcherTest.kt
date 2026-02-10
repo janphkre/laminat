@@ -309,7 +309,9 @@ class RequestMatcherTest {
 
     @Test
     fun pactMatcher_Serialize_Pact() {
-        PactJsonifier.generateJson(listOf(testPostArray), File("build/outputs/pact"))
+        val rootFile = File("build/outputs/pact")
+        rootFile.mkdirs()
+        PactJsonifier.generateJson(listOf(testPostArray), rootFile)
     }
 
     @Test

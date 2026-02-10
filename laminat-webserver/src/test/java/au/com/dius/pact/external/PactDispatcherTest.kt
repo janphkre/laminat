@@ -24,6 +24,7 @@ class PactDispatcherTest : AbstractRequestTest() {
                     .stringMatcher("regex2", ".{4}", "abcd")
                     .equalTo("stringType", "agbdfbdf")
                     .decimalType("decimal1", 50.99234)
+                    .equalTo("decimal2", 500.0)
             )
             .willRespondWith()
             .status(200)
@@ -38,7 +39,7 @@ class PactDispatcherTest : AbstractRequestTest() {
 
     @Test
     fun pactDispatcher_PostRequest_MatchingCorrectly() {
-        val request = "{ \"regex1\": \"123456789\", \"regex2\": \"abcd\", \"stringType\": \"agbdfbdf\", \"decimal1\": 50.99234}".toByteArray()
+        val request = "{ \"regex1\": \"123456789\", \"regex2\": \"abcd\", \"stringType\": \"agbdfbdf\", \"decimal1\": 50.99234, \"decimal2\": 500.0}".toByteArray()
 
         val dispatcher = PactDispatcher(false, 998)
         val incomingRequest = getRecordedRequest(request)

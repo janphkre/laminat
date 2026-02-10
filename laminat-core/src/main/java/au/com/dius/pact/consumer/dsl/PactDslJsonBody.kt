@@ -1,6 +1,7 @@
 package au.com.dius.pact.consumer.dsl
 
 import au.com.dius.pact.consumer.InvalidMatcherException
+import au.com.dius.pact.external.json.Json
 import au.com.dius.pact.model.generators.Category
 import au.com.dius.pact.model.generators.DateGenerator
 import au.com.dius.pact.model.generators.DateTimeGenerator
@@ -19,14 +20,13 @@ import au.com.dius.pact.model.matchingrules.RuleLogic
 import au.com.dius.pact.model.matchingrules.TypeMatcher
 import com.mifmif.common.regex.Generex
 import io.gatling.jsonpath.`Parser$`
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.time.DateFormatUtils
+import org.apache.commons.lang3.time.FastDateFormat
 import java.math.BigDecimal
 import java.util.Calendar
 import java.util.UUID
 import java.util.regex.Pattern
-import org.apache.commons.lang3.StringUtils
-import org.apache.commons.lang3.time.DateFormatUtils
-import org.apache.commons.lang3.time.FastDateFormat
-import org.json.JSONObject
 
 /**
  * DSL to define a JSON Object
@@ -35,7 +35,7 @@ import org.json.JSONObject
 class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: DslPart? = null) : DslPart(parent, rootPath, rootName) {
 
     private val exampleString = "Example \""
-    private var body = JSONObject()
+    private var body = Json.Object()
 
     override fun putObject(`object`: DslPart) {
         for (matcherName in `object`.matchers.matchingRules.keys) {
@@ -44,15 +44,15 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         generators.addGenerators(`object`.generators)
         val elementBase = StringUtils.difference(this.rootPath, `object`.rootPath)
         if (StringUtils.isNotEmpty(`object`.rootName)) {
-            body.put(`object`.rootName, `object`.body)
+            body.put(`object`.rootName, `object`.body as Json)
         } else {
             val name = StringUtils.strip(elementBase, ".")
             val p = Pattern.compile("\\['(.+)']")
             val matcher = p.matcher(name)
             if (matcher.matches()) {
-                body.put(matcher.group(1)!!, `object`.body)
+                body.put(matcher.group(1)!!, `object`.body as Json)
             } else {
-                body.put(name, `object`.body)
+                body.put(name, `object`.body as Json)
             }
         }
     }
@@ -63,9 +63,9 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         }
         generators.addGenerators(`object`.generators)
         if (StringUtils.isNotEmpty(`object`.rootName)) {
-            body.put(`object`.rootName, `object`.body)
+            body.put(`object`.rootName, `object`.body as Json)
         } else {
-            body.put(StringUtils.difference(this.rootPath, `object`.rootPath), `object`.body)
+            body.put(StringUtils.difference(this.rootPath, `object`.rootPath), `object`.body as Json)
         }
     }
 
@@ -80,9 +80,9 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      */
     fun stringValue(name: String, value: String?): PactDslJsonBody {
         if (value == null) {
-            body.put(name, JSONObject.NULL)
+            body.put(name, Json.Null)
         } else {
-            body.put(name, value)
+            body.put(name, Json.StringPrimitive(value))
         }
         return this
     }
@@ -93,7 +93,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param value number value
      */
     fun numberValue(name: String, value: Number): PactDslJsonBody {
-        body.put(name, value)
+        body.put(name, Json.NumberPrimitive(value))
         return this
     }
 
@@ -103,7 +103,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param value boolean value
      */
     fun booleanValue(name: String, value: Boolean?): PactDslJsonBody {
-        body.put(name, value!!)
+        body.put(name, Json.BooleanPrimitive(value!!))
         return this
     }
 
@@ -133,7 +133,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param example example value to use for generated bodies
      */
     fun stringType(name: String, example: String): PactDslJsonBody {
-        body.put(name, example)
+        body.put(name, Json.StringPrimitive(example))
         matchers.addRule(matcherKey(name), TypeMatcher)
         return this
     }
@@ -172,7 +172,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param number example number to use for generated bodies
      */
     fun numberType(name: String, number: Number): PactDslJsonBody {
-        body.put(name, number)
+        body.put(name, Json.NumberPrimitive(number))
         matchers.addRule(matcherKey(name), NumberTypeMatcher(NumberTypeMatcher.NumberType.NUMBER))
         return this
     }
@@ -204,7 +204,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param number example integer value to use for generated bodies
      */
     fun integerType(name: String, number: Long?): PactDslJsonBody {
-        body.put(name, number!!)
+        body.put(name, Json.NumberPrimitive(number!!))
         matchers.addRule(matcherKey(name), NumberTypeMatcher(NumberTypeMatcher.NumberType.INTEGER))
         return this
     }
@@ -215,7 +215,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param number example integer value to use for generated bodies
      */
     fun integerType(name: String, number: Int?): PactDslJsonBody {
-        body.put(name, number!!)
+        body.put(name, Json.NumberPrimitive(number!!))
         matchers.addRule(matcherKey(name), NumberTypeMatcher(NumberTypeMatcher.NumberType.INTEGER))
         return this
     }
@@ -265,7 +265,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param number example decimalType value
      */
     fun decimalType(name: String, number: BigDecimal): PactDslJsonBody {
-        body.put(name, number)
+        body.put(name, Json.NumberPrimitive(number))
         matchers.addRule(matcherKey(name), NumberTypeMatcher(NumberTypeMatcher.NumberType.DECIMAL))
         return this
     }
@@ -276,7 +276,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param number example decimalType value
      */
     fun decimalType(name: String, number: Double?): PactDslJsonBody {
-        body.put(name, number!!)
+        body.put(name, Json.NumberPrimitive(number!!))
         matchers.addRule(matcherKey(name), NumberTypeMatcher(NumberTypeMatcher.NumberType.DECIMAL))
         return this
     }
@@ -306,7 +306,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param example example boolean to use for generated bodies
      */
     fun booleanType(name: String, example: Boolean?): PactDslJsonBody {
-        body.put(name, example!!)
+        body.put(name, Json.BooleanPrimitive(example!!))
         matchers.addRule(matcherKey(name), TypeMatcher)
         return this
     }
@@ -324,7 +324,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
                     regex + "\""
             )
         }
-        body.put(name, value)
+        body.put(name, Json.StringPrimitive(value))
         matchers.addRule(matcherKey(name), regexp(regex))
         return this
     }
@@ -357,7 +357,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         generators.addGenerator(Category.BODY, matcherKey(name), DateTimeGenerator(pattern))
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = DATE_2000
-        body.put(name, DateFormatUtils.ISO_DATETIME_FORMAT.format(calendar))
+        body.put(name, Json.StringPrimitive(DateFormatUtils.ISO_DATETIME_FORMAT.format(calendar)))
         matchers.addRule(matcherKey(name), matchTimestamp(pattern))
         return this
     }
@@ -372,7 +372,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         val instance = FastDateFormat.getInstance(format)
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = DATE_2000
-        body.put(name, instance.format(calendar))
+        body.put(name, Json.StringPrimitive(instance.format(calendar)))
         matchers.addRule(matcherKey(name), matchTimestamp(format))
         return this
     }
@@ -385,7 +385,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      */
     fun timestamp(name: String, format: String, example: Calendar): PactDslJsonBody {
         val instance = FastDateFormat.getInstance(format)
-        body.put(name, instance.format(example))
+        body.put(name, Json.StringPrimitive(instance.format(example)))
         matchers.addRule(matcherKey(name), matchTimestamp(format))
         return this
     }
@@ -406,7 +406,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         generators.addGenerator(Category.BODY, matcherKey(name), DateGenerator(pattern))
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = DATE_2000
-        body.put(name, DateFormatUtils.ISO_DATE_FORMAT.format(calendar))
+        body.put(name, Json.StringPrimitive(DateFormatUtils.ISO_DATE_FORMAT.format(calendar)))
         matchers.addRule(matcherKey(name), matchDate(pattern))
         return this
     }
@@ -421,7 +421,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         val instance = FastDateFormat.getInstance(format)
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = DATE_2000
-        body.put(name, instance.format(calendar))
+        body.put(name, Json.StringPrimitive(instance.format(calendar)))
         matchers.addRule(matcherKey(name), matchDate(format))
         return this
     }
@@ -434,7 +434,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      */
     fun date(name: String, format: String, example: Calendar): PactDslJsonBody {
         val instance = FastDateFormat.getInstance(format)
-        body.put(name, instance.format(example))
+        body.put(name, Json.StringPrimitive(instance.format(example)))
         matchers.addRule(matcherKey(name), matchDate(format))
         return this
     }
@@ -455,7 +455,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         generators.addGenerator(Category.BODY, matcherKey(name), TimeGenerator(pattern))
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = DATE_2000
-        body.put(name, DateFormatUtils.ISO_TIME_FORMAT.format(calendar))
+        body.put(name, Json.StringPrimitive(DateFormatUtils.ISO_TIME_FORMAT.format(calendar)))
         matchers.addRule(matcherKey(name), matchTime(pattern))
         return this
     }
@@ -470,7 +470,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         val instance = FastDateFormat.getInstance(format)
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = DATE_2000
-        body.put(name, instance.format(calendar))
+        body.put(name, Json.StringPrimitive(instance.format(calendar)))
         matchers.addRule(matcherKey(name), matchTime(format))
         return this
     }
@@ -483,7 +483,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      */
     fun time(name: String, format: String, example: Calendar): PactDslJsonBody {
         val instance = FastDateFormat.getInstance(format)
-        body.put(name, instance.format(example))
+        body.put(name, Json.StringPrimitive(instance.format(example)))
         matchers.addRule(matcherKey(name), matchTime(format))
         return this
     }
@@ -493,7 +493,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param name attribute name
      */
     fun ipAddress(name: String): PactDslJsonBody {
-        body.put(name, "127.0.0.1")
+        body.put(name, Json.StringPrimitive("127.0.0.1"))
         matchers.addRule(matcherKey(name), regexp("(\\d{1,3}\\.)+\\d{1,3}"))
         return this
     }
@@ -792,7 +792,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      */
     fun id(name: String): PactDslJsonBody {
         generators.addGenerator(Category.BODY, matcherKey(name), RandomIntGenerator(0, Integer.MAX_VALUE))
-        body.put(name, 1234567890L)
+        body.put(name, Json.NumberPrimitive(1234567890L))
         matchers.addRule(matcherKey(name), TypeMatcher)
         return this
     }
@@ -803,7 +803,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param id example id to use for generated bodies
      */
     fun id(name: String, id: Long?): PactDslJsonBody {
-        body.put(name, id!!)
+        body.put(name, Json.NumberPrimitive(id!!))
         matchers.addRule(matcherKey(name), TypeMatcher)
         return this
     }
@@ -826,7 +826,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         if (!hexValue.matches(HEXADECIMAL.toRegex())) {
             throw InvalidMatcherException("$exampleString$hexValue\" is not a hexadecimal value")
         }
-        body.put(name, hexValue)
+        body.put(name, Json.StringPrimitive(hexValue))
         matchers.addRule(matcherKey(name), regexp("[0-9a-fA-F]+"))
         return this
     }
@@ -887,7 +887,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
         if (!uuid.matches(UUID_REGEX.toRegex())) {
             throw InvalidMatcherException("$exampleString$uuid\" is not an UUID")
         }
-        body.put(name, uuid)
+        body.put(name, Json.StringPrimitive(uuid))
         matchers.addRule(matcherKey(name), regexp(UUID_REGEX))
         return this
     }
@@ -897,7 +897,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param fieldName field name
      */
     fun nullValue(fieldName: String): PactDslJsonBody {
-        body.put(fieldName, JSONObject.NULL)
+        body.put(fieldName, Json.Null)
         return this
     }
 
@@ -1001,7 +1001,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param value Value to use for matching and generated bodies
      */
     fun eachKeyLike(exampleKey: String, value: PactDslJsonRootValue): PactDslJsonBody {
-        body.put(exampleKey, value.body)
+        body.put(exampleKey, value.body as Json)
         for (matcherName in value.matchers.matchingRules.keys) {
             matchers.addRules("$rootPath*$matcherName", value.matchers.matchingRules[matcherName]!!.rules)
         }
@@ -1014,7 +1014,7 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param value Value that must be included
      */
     fun includesStr(name: String, value: String): PactDslJsonBody {
-        body.put(name, value)
+        body.put(name, Json.StringPrimitive(value))
         matchers.addRule(matcherKey(name), includesMatcher(value))
         return this
     }
@@ -1024,7 +1024,40 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param name attribute name
      * @param value Value that will be used for comparisons
      */
-    fun equalTo(name: String, value: Any): PactDslJsonBody {
+    fun equalTo(name: String, value: String): PactDslJsonBody {
+        body.put(name, Json.StringPrimitive(value))
+        matchers.addRule(matcherKey(name), EqualsMatcher)
+        return this
+    }
+
+    /**
+     * Attribute that must be equal to the provided value.
+     * @param name attribute name
+     * @param value Value that will be used for comparisons
+     */
+    fun equalTo(name: String, value: Number): PactDslJsonBody {
+        body.put(name, Json.NumberPrimitive(value))
+        matchers.addRule(matcherKey(name), EqualsMatcher)
+        return this
+    }
+
+    /**
+     * Attribute that must be equal to the provided value.
+     * @param name attribute name
+     * @param value Value that will be used for comparisons
+     */
+    fun equalTo(name: String, value: Boolean): PactDslJsonBody {
+        body.put(name, Json.BooleanPrimitive(value))
+        matchers.addRule(matcherKey(name), EqualsMatcher)
+        return this
+    }
+
+    /**
+     * Attribute that must be equal to the provided value.
+     * @param name attribute name
+     * @param value Value that will be used for comparisons
+     */
+    fun equalTo(name: String, value: Json): PactDslJsonBody {
         body.put(name, value)
         matchers.addRule(matcherKey(name), EqualsMatcher)
         return this
@@ -1036,11 +1069,11 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param value Attribute example value
      * @param rules Matching rules to apply
      */
-    fun and(name: String, value: Any?, vararg rules: MatchingRule): PactDslJsonBody {
+    fun and(name: String, value: Json?, vararg rules: MatchingRule): PactDslJsonBody {
         if (value != null) {
             body.put(name, value)
         } else {
-            body.put(name, JSONObject.NULL)
+            body.put(name, Json.Null)
         }
         matchers.setRules(matcherKey(name), MatchingRuleGroup(mutableListOf(*rules), RuleLogic.AND))
         return this
@@ -1052,11 +1085,11 @@ class PactDslJsonBody(rootPath: String = ".", rootName: String = "", parent: Dsl
      * @param value Attribute example value
      * @param rules Matching rules to apply
      */
-    fun or(name: String, value: Any?, vararg rules: MatchingRule): PactDslJsonBody {
+    fun or(name: String, value: Json?, vararg rules: MatchingRule): PactDslJsonBody {
         if (value != null) {
             body.put(name, value)
         } else {
-            body.put(name, JSONObject.NULL)
+            body.put(name, Json.Null)
         }
         matchers.setRules(matcherKey(name), MatchingRuleGroup(mutableListOf(*rules), RuleLogic.OR))
         return this

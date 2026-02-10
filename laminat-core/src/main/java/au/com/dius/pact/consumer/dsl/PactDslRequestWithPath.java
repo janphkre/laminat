@@ -4,7 +4,6 @@ import com.mifmif.common.regex.Generex;
 
 import org.apache.http.entity.ContentType;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 import org.w3c.dom.Document;
 
 import java.util.Collections;
@@ -15,6 +14,7 @@ import java.util.Map;
 import javax.xml.transform.TransformerException;
 
 import au.com.dius.pact.consumer.ConsumerPactBuilder;
+import au.com.dius.pact.external.json.Json;
 import au.com.dius.pact.model.Consumer;
 import au.com.dius.pact.model.OptionalBody;
 import au.com.dius.pact.model.PactReader;
@@ -243,7 +243,7 @@ public class PactDslRequestWithPath {
      *
      * @param body Request body in JSON form
      */
-    public PactDslRequestWithPath body(JSONObject body) {
+    public PactDslRequestWithPath body(Json body) {
         if (!requestHeaders.containsKey(ContentType.CONTENT_TYPE)) {
             requestHeaders.put(ContentType.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
         }
