@@ -7,4 +7,5 @@ package au.com.dius.pact.external
  */
 public data class VerificationOptions(
     internal val exact: Int = 1,
+    internal val matchUniqueKey: Boolean = true,
 )

@@ -27,7 +27,7 @@ class RecordingEngineBehaviour(
     fun validateInteraction(interaction: RequestResponseInteraction, options: VerificationOptions) {
         val matches = synchronized(recordings) {
             recordings.filter {
-                interaction.uniqueKey() == it.interaction?.uniqueKey() &&
+                (!options.matchUniqueKey || interaction.uniqueKey() == it.interaction?.uniqueKey()) &&
                     interaction.request == it.interaction?.request
             }
         }
